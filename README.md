@@ -162,12 +162,12 @@ code will instead return a Python dict containing the named properties:
 System requirements
 -------------------
 
-* The latest [Nim language compiler](http://nim-lang.org/download.html)
+* The latest [Nim compiler](http://nim-lang.org/download.html)
 * Python 2.7
 * Python 2.7 C development headers
 * [Numpy](http://www.numpy.org)
 * Numpy C development headers
-* GCC
+* A C compiler [for use by Nim](http://nim-lang.org/download.html)
 
 What about calling Python from Nim?
 -----------------------------------
