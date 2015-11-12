@@ -70,39 +70,8 @@ This provides Pymod with a mapping from an already-defined Nim type to the
 corresponding Python & C-API types, enabling Pymod to generate the type-checking
 boilerplate for additional non-core-Python types.
 
-Docstrings
-----------
-
-Pymod will also auto-generate a Python docstring for each function in the
-extension module, specifying the function's parameter types & return type,
-based upon the parameter types & return types of the exported Nim proc.
-You can embed additional documentation in each Nim proc you want to export,
-using the supplied `docstring"""Text goes here."""` string type.  Any docstrings
-in the proc will be extracted automatically and included in the generated Python
-docstring.  There is an example of docstring usage in the code sample below.
-
-Function parameter & return types
----------------------------------
-
-Default parameters are supported to a limited extent, although the parameter
-types must be specified explicitly, and are currently restricted to `string`,
-`int` & `float` types.
-
-Procedure return values may be basic types (`int`, `float64`, `string`, `ptr X`)
-or a Nim tuple of those types.  Nested tuples are currently not supported.
-By default, named tuples in Nim are returned as raw tuples to Python:
-
-    # Nim                   # Python
-    tuple[ a, b: int ]  =>  (a_value, b_value)
-
-If `exportpy` is specified as `exportpy return_dict` then the generated
-code will instead return a Python dict containing the named properties:
-
-    # Nim                   # Python
-    tuple[ a, b: int ]  =>  { "a": a_value, "b": b_value }
-
-Example of Pymod usage
-----------------------
+Example
+-------
 
 Here's a short "Hello world" example (assumed to be in a file called `greeting.nim`):
 
@@ -158,6 +127,47 @@ You can also invoke the built-in Python interpreter `help` function about the `g
         Greet the specified audience with a familiar greeting.
 
         The string returned will be a greeting directed specifically at that audience.
+
+Docstrings
+----------
+
+Pymod will also auto-generate a Python docstring for each function in the
+extension module, specifying the function's parameter types & return type,
+based upon the parameter types & return types of the exported Nim proc.
+You can embed additional documentation in each Nim proc you want to export,
+using the supplied `docstring"""Text goes here."""` string type.  Any docstrings
+in the proc will be extracted automatically and included in the generated Python
+docstring.  There is an example of docstring usage in the code sample above.
+
+Function parameter & return types
+---------------------------------
+
+Default parameters are supported to a limited extent, although the parameter
+types must be specified explicitly, and are currently restricted to `string`,
+`int` & `float` types.
+
+Procedure return values may be basic types (`int`, `float64`, `string`, `ptr X`)
+or a Nim tuple of those types.  Nested tuples are currently not supported.
+By default, named tuples in Nim are returned as raw tuples to Python:
+
+    # Nim                   # Python
+    tuple[ a, b: int ]  =>  (a_value, b_value)
+
+If `exportpy` is specified as `exportpy return_dict` then the generated
+code will instead return a Python dict containing the named properties:
+
+    # Nim                   # Python
+    tuple[ a, b: int ]  =>  { "a": a_value, "b": b_value }
+
+System requirements
+-------------------
+
+* The latest [Nim language compiler](http://nim-lang.org/download.html)
+* Python 2.7
+* Python 2.7 C development headers
+* [Numpy](http://www.numpy.org)
+* Numpy C development headers
+* GCC
 
 What about calling Python from Nim?
 -----------------------------------
