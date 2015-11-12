@@ -182,10 +182,10 @@ System requirements
 -------------------
 
 * The latest [Nim compiler](http://nim-lang.org/download.html)
-* CPython 2.7
-* Python 2.7 C development headers
+* CPython 2.7 or CPython 3.2+
+* Python C development header files & static library
 * [Numpy](http://www.numpy.org)
-* Numpy C development headers
+* Numpy C development header files
 * A C compiler [for use by Nim](http://nim-lang.org/download.html)
 
 What about calling Python from Nim?

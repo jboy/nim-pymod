@@ -3,7 +3,7 @@ uname -osm
 python --version
 nim --version 2>&1 | head -1
 gcc --version | head -1
-python -c 'import numpy ; print "Numpy", numpy.__version__'
+python -c 'import numpy ; print("Numpy %s" % numpy.__version__)'
 date
 --
 Linux x86_64 GNU/Linux
@@ -12,3 +12,10 @@ Nim Compiler Version 0.11.3 (2015-10-26) [Linux: amd64]
 gcc (Ubuntu 4.8.4-2ubuntu1~14.04) 4.8.4
 Numpy 1.9.1
 Thu Nov 12 17:51:30 AEDT 2015
+--
+Linux x86_64 GNU/Linux
+Python 3.4.3
+Nim Compiler Version 0.11.3 (2015-10-26) [Linux: amd64]
+gcc (Ubuntu 4.8.4-2ubuntu1~14.04) 4.8.4
+Numpy 1.8.2
+Fri Nov 13 03:30:53 AEDT 2015
