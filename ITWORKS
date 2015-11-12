@@ -1,0 +1,14 @@
+# This file is a list of systems on which Pymod has been confirmed to work.
+uname -osm
+python --version
+nim --version 2>&1 | head -1
+gcc --version | head -1
+python -c 'import numpy ; print "Numpy", numpy.__version__'
+date
+--
+Linux x86_64 GNU/Linux
+Python 2.7.6
+Nim Compiler Version 0.11.3 (2015-10-26) [Linux: amd64]
+gcc (Ubuntu 4.8.4-2ubuntu1~14.04) 4.8.4
+Numpy 1.9.1
+Thu Nov 12 17:51:30 AEDT 2015
