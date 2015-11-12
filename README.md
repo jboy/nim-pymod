@@ -178,7 +178,7 @@ If instead you want to call Python functions (maybe even the interpreter)
 from Nim (ie, the control flows in the opposite direction), Pymod is not
 what you're looking for.
 
-In a situation like this, [python.nim](http://nim-lang.org/python.html)
+In a situation like this, [python.nim](https://github.com/nim-lang/python)
 or the [NimBorg project](https://github.com/micklat/NimBorg) might be what
 you're looking for.
 
@@ -186,7 +186,7 @@ Implementation details
 ----------------------
 
 We want to make existing Python types (and extended types like
-[Numpy arrays](https://scipy-lectures.github.io/intro/numpy/array_object.html)
+[Numpy arrays](https://scipy-lectures.github.io/intro/numpy/array_object.html))
 available in Nim procs.  The idea is that objects of these Python types will
 be created in the existing Python code, then passed through to Nim procs for
 processing, and then the results will be returned to the Python code for the
