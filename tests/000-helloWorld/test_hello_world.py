@@ -9,4 +9,4 @@
 import hw
 
 # Print "Hello, World!"
-print hw.greet("World")
+print(hw.greet("World"))

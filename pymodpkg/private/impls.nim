@@ -1289,7 +1289,7 @@ proc outputPyModuleNimCfg(mod_name: string, proc_names_node: NimNode)
       "header",
       "noMain",
       out_cfg,
-      "passL:\"-lpython2.7 -fPIC\"",
+      #"passL:\"-lpython2.7 -fPIC\"",
       ""  # Join an empty string, so the content ends with a newline.
   ].join("\n")
   let nim_mod_cfg_fname = "$1.cfg" % nim_mod_fname
