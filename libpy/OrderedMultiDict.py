@@ -4,7 +4,13 @@
 # This source code is licensed under the terms of the MIT license
 # found in the "LICENSE" file in the root directory of this source tree.
 
-from ConfigParser import RawConfigParser
+from __future__ import print_function
+
+import sys
+if sys.version_info.major >= 3:
+    from configparser import RawConfigParser
+else:
+    from ConfigParser import RawConfigParser
 
 
 class OrderedMultiDict(dict):
@@ -146,11 +152,11 @@ class KeyWithInteger(object):
 if __name__ == "__main__":
     c = RawConfigParser(dict_type=OrderedMultiDict)
     c.read("pymod-extensions.cfg")
-    print
-    print c._sections
-    print
-    print c._sections.items()
-    print
-    print c._sections["all"]
-    print
-    print c._sections["all"].items()
+    print()
+    print(c._sections)
+    print()
+    print(c._sections.items())
+    print()
+    print(c._sections["all"])
+    print()
+    print(c._sections["all"].items())

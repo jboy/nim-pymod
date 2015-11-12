@@ -4,16 +4,49 @@
 # This source code is licensed under the terms of the MIT license
 # found in the "LICENSE" file in the root directory of this source tree.
 
-import ConfigParser
+import sys
+if sys.version_info.major >= 3:
+    from configparser import RawConfigParser
+else:
+    from ConfigParser import RawConfigParser
 
-from OrderedMultiDict import OrderedMultiDict
+from .OrderedMultiDict import OrderedMultiDict
 
 
 class UsefulConfigParser(object):
     """A config parser that sucks less than those in module `ConfigParser`."""
 
     def __init__(self, filenames_to_try=[]):
-        self._cp = ConfigParser.RawConfigParser(dict_type=OrderedMultiDict)
+
+        # FUN FACT:  In Python 3.2, they spontaneously changed the behaviour of
+        # RawConfigParser so that it no longer considers ';' a comment delimiter
+        # for inline comments.
+        #
+        # Compare:
+        #   "Configuration files may include comments, prefixed by specific
+        #   characters (# and ;). Comments may appear on their own in an otherwise
+        #   empty line, or may be entered in lines holding values or section names.
+        #   In the latter case, they need to be preceded by a whitespace character
+        #   to be recognized as a comment. (For backwards compatibility, only ;
+        #   starts an inline comment, while # does not.)"
+        #  -- https://docs.python.org/2/library/configparser.html
+        # vs:
+        #   "Comment prefixes are strings that indicate the start of a valid comment
+        #   within a config file. comment_prefixes are used only on otherwise empty
+        #   lines (optionally indented) whereas inline_comment_prefixes can be used
+        #   after every valid value (e.g. section names, options and empty lines as
+        #   well). By default inline comments are disabled and '#' and ';' are used
+        #   as prefixes for whole line comments.
+        #   Changed in version 3.2: In previous versions of configparser behaviour
+        #   matched comment_prefixes=('#',';') and inline_comment_prefixes=(';',)."
+        #  -- https://docs.python.org/3/library/configparser.html#customizing-parser-behaviour
+        #
+        # Grrr...
+        if sys.version_info.major >= 3:
+            self._cp = RawConfigParser(dict_type=OrderedMultiDict, inline_comment_prefixes=(';',))
+        else:
+            self._cp = RawConfigParser(dict_type=OrderedMultiDict)
+
         if isinstance(filenames_to_try, str):
             filenames_to_try = [filenames_to_try]
         self._filenames_to_try = filenames_to_try[:]
@@ -83,6 +116,6 @@ class UsefulConfigParser(object):
         # https://docs.python.org/2/library/configparser.html#ConfigParser.RawConfigParser.getboolean
         ovs_lower = optval_str.lower()
         if ovs_lower not in self._boolean_states:
-            raise ValueError, "Not a boolean: %s" % optval_str
+            raise ValueError("Not a boolean: %s" % optval_str)
         return self._boolean_states[ovs_lower]
 
