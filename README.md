@@ -159,11 +159,30 @@ code will instead return a Python dict containing the named properties:
     # Nim                   # Python
     tuple[ a, b: int ]  =>  { "a": a_value, "b": b_value }
 
+Per-project configuration
+-------------------------
+
+If there is a file `pymod.cfg` in the same directory as the Nim module you want
+to wrap, Pymod will read this as a configuration file for that project.
+
+By default, Pymod runs the Nim compiler in **non-release** mode, and additionally
+performs per-dereference bounds-checking of the `PyArrayObject` iterators.
+This is safe (and catches all sorts of pesky bugs!) but slow.
+
+If the file `pymod.cfg` in the current directory contains the following directives:
+
+    [all]
+    nimSetIsRelease: true
+
+then the Nim compiler will be invoked in **release mode**, and bounds-checking
+of the `PyArrayObject` iterators will be switched off.  Your code will now run
+much faster!
+
 System requirements
 -------------------
 
 * The latest [Nim compiler](http://nim-lang.org/download.html)
-* Python 2.7
+* CPython 2.7
 * Python 2.7 C development headers
 * [Numpy](http://www.numpy.org)
 * Numpy C development headers
