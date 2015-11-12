@@ -12,24 +12,24 @@ def run_test(curr_test, test_num, num_tests):
         actual_result = func(*args_tup)
     except TypeError as e:
         if expected_result == TypeError:
-            print "%02d / %d:  %s%s  ->  exception TypeError  (as expected).  TEST PASSED." % \
-                    (test_num, num_tests, func_descr, args_tup)
+            print("%02d / %d:  %s%s  ->  exception TypeError  (as expected).  TEST PASSED." % \
+                    (test_num, num_tests, func_descr, args_tup))
         else:
-            print "\n** %02d / %d:  %s%s  ->  exception TypeError  (which was NOT expected).  TEST FAILED.  :(\n" % \
-                    (test_num, num_tests, func_descr, args_tup)
+            print("\n** %02d / %d:  %s%s  ->  exception TypeError  (which was NOT expected).  TEST FAILED.  :(\n" % \
+                    (test_num, num_tests, func_descr, args_tup))
         return
     except Exception as e:
-        print "\n** %02d / %d:  %s%s  ->  exception %s  (which was NOT expected).  TEST FAILED.  :(\n" % \
-                (test_num, num_tests, func_descr, args_tup, e.__class__.__name__)
+        print("\n** %02d / %d:  %s%s  ->  exception %s  (which was NOT expected).  TEST FAILED.  :(\n" % \
+                (test_num, num_tests, func_descr, args_tup, e.__class__.__name__))
         return
 
     # If we got to here, there was no exception raised.  So, check the result.
     if actual_result == expected_result:
-        print "%02d / %d:  %s%s  ->  %s  (as expected).  TEST PASSED." % \
-                (test_num, num_tests, func_descr, args_tup, actual_result)
+        print("%02d / %d:  %s%s  ->  %s  (as expected).  TEST PASSED." % \
+                (test_num, num_tests, func_descr, args_tup, actual_result))
     else:
-        print "\n** %02d / %d:  %s%s  ->  %s  (which was NOT expected).  TEST FAILED.  :(\n" % \
-                (test_num, num_tests, func_descr, args_tup, actual_result)
+        print("\n** %02d / %d:  %s%s  ->  %s  (which was NOT expected).  TEST FAILED.  :(\n" % \
+                (test_num, num_tests, func_descr, args_tup, actual_result))
 
 
 TESTS = [

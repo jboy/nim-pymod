@@ -105,4 +105,4 @@ TEST_FUNCTIONS = [
 
 for func_name, test_func in TEST_FUNCTIONS:
     test_func()
-    print "Test passed: %s" % func_name
+    print("Test passed: %s" % func_name)
