@@ -981,20 +981,57 @@ proc extendWithPyMethodDefs(output_lines: var seq[string],
   output_lines << "};"
 
 
-proc extendWithPyModinitFunc(output_lines: var seq[string],
-    extra_init_node: NimNode, mod_name: string) {. compileTime .} =
-  output_lines << ""
-  output_lines << "PyMODINIT_FUNC"
-  output_lines << "init$1(void)" % mod_name
-  output_lines << "{"
-  output_lines << "\t(void) Py_InitModule(\"$1\", methods);" % mod_name
+when defined(python3):
+  proc extendWithPyModinitFunc(output_lines: var seq[string],
+      extra_init_node: NimNode, mod_name: string) {. compileTime .} =
+    output_lines << ""
+    output_lines << "/*"
+    output_lines << " * This port to Python3 is based upon the example code at:"
+    output_lines << " *  https://docs.python.org/3/howto/cporting.html"
+    output_lines << " */"
+    output_lines << "struct module_state {"
+    output_lines << "\tPyObject *error;"
+    output_lines << "};"
+    output_lines << ""
+    output_lines << "static struct PyModuleDef module_def = {"
+    output_lines << "\tPyModuleDef_HEAD_INIT,"
+    output_lines << "\t\"$1\",                         /* m_name */" % mod_name
+    output_lines << "\t\"\",                             /* m_doc */"
+    output_lines << "\tsizeof(struct module_state),    /* m_size */"
+    output_lines << "\tmethods,                        /* m_methods */"
+    output_lines << "\tNULL,                           /* m_reload */"
+    output_lines << "\tNULL,                           /* m_traverse */"
+    output_lines << "\tNULL,                           /* m_clear */"
+    output_lines << "\tNULL,                           /* m_free */"
+    output_lines << "};"
+    output_lines << ""
+    output_lines << "PyMODINIT_FUNC"
+    output_lines << "PyInit_$1(void) {" % mod_name
+    output_lines << "\tPyObject *module = PyModule_Create(&module_def);"
 
-  let num_extra_init = extra_init_node.len
-  for i in 0.. <num_extra_init:
-    let ei = $extra_init_node[i]
-    output_lines << "\t$1" % ei
-  output_lines << "\tNimMain();"
-  output_lines << "}"
+    let num_extra_init = extra_init_node.len
+    for i in 0.. <num_extra_init:
+      let ei = $extra_init_node[i]
+      output_lines << "\t$1" % ei
+    output_lines << "\tNimMain();"
+    output_lines << "\treturn module;"
+    output_lines << "}"
+
+else:
+  proc extendWithPyModinitFunc(output_lines: var seq[string],
+      extra_init_node: NimNode, mod_name: string) {. compileTime .} =
+    output_lines << ""
+    output_lines << "PyMODINIT_FUNC"
+    output_lines << "init$1(void)" % mod_name
+    output_lines << "{"
+    output_lines << "\t(void) Py_InitModule(\"$1\", methods);" % mod_name
+
+    let num_extra_init = extra_init_node.len
+    for i in 0.. <num_extra_init:
+      let ei = $extra_init_node[i]
+      output_lines << "\t$1" % ei
+    output_lines << "\tNimMain();"
+    output_lines << "}"
 
 
 proc outputPyModuleC(

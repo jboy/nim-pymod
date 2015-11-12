@@ -69,7 +69,7 @@ PMGEN_PREFIX = "pmgen"
 PMGEN_RULE_TARGET = "pmgen"
 
 MAKEFILE_FNAME_TEMPLATE = "Makefile.pmgen-%s"
-MAKEFILE_PMGEN_VARIABLE = """PMGEN = --define:pmgen --noLinking --noMain"""
+MAKEFILE_PMGEN_VARIABLE = """PMGEN = --define:pmgen %s --noLinking --noMain"""
 MAKEFILE2_FNAME_TEMPLATE = "Makefile"
 
 MAKEFILE_CLEAN_RULES = """allclean: clean soclean
@@ -290,7 +290,7 @@ def generate_pmgen_files(nim_modfiles, pminc_basename):
     with open(makefile_fname, "w") as f:
         f.write(MAKEFILE_CONTENT % dict(
                 datestamp=datestamp,
-                variables=MAKEFILE_PMGEN_VARIABLE,
+                variables=MAKEFILE_PMGEN_VARIABLE % define_python3_maybe(),
                 build_rules=compile_rule,
                 clean_rules=makefile_clean_rules))
 
@@ -345,13 +345,21 @@ def compile_generated_nim_wrappers(nim_wrapper_fnames, pymodule_fnames,
     with open(makefile_fname, "w") as f:
         f.write(MAKEFILE_CONTENT % dict(
                 datestamp=datestamp,
-                variables=MAKEFILE_PMGEN_VARIABLE,
+                variables=MAKEFILE_PMGEN_VARIABLE % define_python3_maybe(),
                 build_rules="\n\n".join(build_rules),
                 clean_rules=makefile_clean_rules))
 
     make_command = [MAKE_EXE_PATH, "-f", makefile_fname]
     print(" ".join(make_command))
     subprocess.check_call(make_command)
+
+
+def define_python3_maybe():
+    python_ver = sys.version_info
+    if python_ver.major >= 3:
+        return "--define:python3"
+    else:
+        return ""
 
 
 def determine_python_includes_ldflags():
