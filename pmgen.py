@@ -58,6 +58,7 @@ listCmd
 parallelBuild:"1"
 passC:"-Wall -O3 -fPIC"
 passL:"-O3 %(python_ldflags)s -fPIC"
+nimcache:"nimcache"
 path:"%(pymod_root_dir)s"
 %(any_other_module_paths)s
 verbosity:"2"
