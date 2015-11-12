@@ -77,9 +77,9 @@ Pymod will also auto-generate a Python docstring for each function in the
 extension module, specifying the function's parameter types & return type,
 based upon the parameter types & return types of the exported Nim proc.
 You can embed additional documentation in each Nim proc you want to export,
-using the supplied `docstring""" """` srting type.  Any docstrings in the proc
-will be extracted automatically and included in the generated Python docstring.
-There is an example of docstring usage in the code sample below.
+using the supplied `docstring"""Text goes here."""` string type.  Any docstrings
+in the proc will be extracted automatically and included in the generated Python
+docstring.  There is an example of docstring usage in the code sample below.
 
 Function parameter & return types
 ---------------------------------
