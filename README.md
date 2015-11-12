@@ -19,6 +19,11 @@ auto-generated Python docstrings that have been extracted from the Nim procs.
 There's even a type (`ptr PyArrayObject`) that provides a Nim interface to Numpy arrays,
 so you can pass Numpy arrays into your Nim procs and access them natively.
 
+Pymod is definitely still in the **alpha** phase of software maturity, and it's
+far from feature-complete, but it's been usable for our work for about 9 months now
+(and we've been using it regularly during that time).  There's a lot of hacky code
+in there, but it gets the job done.
+
 Motivation
 ----------
 
@@ -127,6 +132,8 @@ You can also invoke the built-in Python interpreter `help` function about the `g
         Greet the specified audience with a familiar greeting.
 
         The string returned will be a greeting directed specifically at that audience.
+
+There is additional example code in the `tests` directory.
 
 Docstrings
 ----------
