@@ -221,19 +221,43 @@ Pymod also wraps many C functions from the
 [Numpy C-API](http://docs.scipy.org/doc/numpy/reference/c-api.html)
 for Numpy array manipulation & attribute access.
 To review the full list of `PyArrayObject` procs that Pymod provides, browse
-the Pymod source file `pymodpkg/pyarrayobject.nim`.  To get you started,
-here is a very incomplete selection of the Numpy array attributes that Pymod offers:
-`arr.data`, `arr.nd`, `arr.dimensions`, `arr.shape`, `arr.strides`, `arr.descr`,
-`arr.dtype`.
+the Pymod source file `pymodpkg/pyarrayobject.nim`.
 
-**Note** that, due to its Pythonic origin, `ptr PyArrayObject` is not a
-Nim generic type.  So the element data-type of a `ptr PyArrayObject` instance
-is unknown to Nim.  The preferred method of accessing the (appropriately-typed)
-elements of a `ptr PyArrayObject` instance is to use one of the two supplied
-`PyArrayIterator` types:
+Here are some the Numpy array attributes that Pymod exposes:
 
-* `PyArrayForwardIterator[T]` (returned by `arr.iterateForward(T)`)
-* `PyArrayRandomAccessIterator[T]` (returned by `arr.accessFlat(T)`)
+* `.data` (returns `pointer`)
+* `.data(T)` (returns `ptr T`)
+* `.nd`
+* `.ndim` (an alias for `.nd`)
+* `.dimensions`
+* `.shape` (an alias for `.dimensions`)
+* `.strides`
+* `.descr`
+* `.dtype`
+
+Here are some of the Numpy functions for array creation & manipulation that Pymod wraps:
+
+* `createSimpleNew(dims, npType)`
+* `createNewCopyNewData(oldArray, order)`
+* `copy(oldArray)`  (an alias for `createNewCopyNewData`)
+* `createAsTypeNewData(oldArray, newType)`
+* `doCopyInto(destArray, srcArray)`
+* `doFILLWBYTE(destArray, val)`
+* `doResizeDataInplace(oldArray, newShape, doRefCheck)`
+
+**Note** that, due to its typeless Pythonic origin, `PyArrayObject` is not a
+Nim generic type.  So the element data-type of a `PyArrayObject` instance
+is unknown to Nim.  The Nim code must **specify the correct element data-type**
+for the `PyArrayObject` elements.  The preferred method of accessing the
+(appropriately-typed) elements of a `PyArrayObject` instance is to use one of
+the two supplied `PyArrayIterator` types:
+
+* `PyArrayForwardIterator[T]`
+  * returned by `.iterateForward(T)`
+  * can only be incremented & dereferenced
+* `PyArrayRandomAccessIterator[T]`
+  * returned by `.accessFlat(T)`
+  * can be incremented, decremented, added, subtracted, dereferenced, indexed by any integer
 
 Both of the `PyArrayIterator` types offer **1-D iteration & indexing** over
 a "flat" interpretation of the Numpy array data.  These two iterator types
