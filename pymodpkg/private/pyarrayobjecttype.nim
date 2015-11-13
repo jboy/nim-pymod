@@ -71,15 +71,17 @@ proc `[]`*[T](ap: CArrayProxy[T], idx: int): T {. inline .} =
     return offset_ptr(ap.p, idx)[]
 
 
-proc `$`*[T](ap: CArrayProxy[T]): seq[string] =
+proc `$`*[T](ap: CArrayProxy[T]): string =
   # Use memory allocation (a `seq[T]` instance) for a string representation.
   #
   # Based upon the usage example at:
   #  http://nim-lang.org/docs/system.html#newSeq,seq[T],Natural
   let num_elems = ap.getLen
-  newSeq(result, num_elems)
+  var ss: seq[string]
+  newSeq(ss, num_elems)
   for i in 0..<num_elems:
-    result[i] = $(ap[i])
+    ss[i] = $(ap[i])
+  result = $ss
 
 
 iterator items*[T](ap: CArrayProxy[T]): T =
