@@ -188,7 +188,9 @@ much faster!
 System requirements
 -------------------
 
-* The latest [Nim compiler](http://nim-lang.org/download.html)
+* The [latest Nim compiler from Github](http://nim-lang.org/download.html#installation-from-github)
+  * either the `stable` or `devel` branches
+  * but **not the recent [Nim 0.12.0 release](http://nim-lang.org/news.html#Z2015-10-27-version-0-12-0-released)**. :(
 * CPython 2.7 or CPython 3.2+
 * Python C development header files & static library
 * [Numpy](http://www.numpy.org)
