@@ -334,6 +334,32 @@ The output from running this script will look something like this:
       File "pmgen_myModule_wrap.nim", line 26, in exportpy_addOne
       File "arr1.nim", line 16, in addOne
 
+Observe the `while`-loop that was used in `addOne` to iterate over the array.
+This is the most flexible loop idiom for forward-iterating over an array,
+since you are able to control where, and how many times, the forward iterator
+will be incremented within the body of the loop:
+
+    let bounds = arr.getBounds(int32)  # Iterator bounds
+    var iter = arr.iterateForward(int32)  # Forward iterator
+    while iter in bounds:
+      iter[] += 1
+      inc(iter)
+
+However, this `while`-loop idiom is more verbose than it often needs to be.
+Often, you will only need to increment the forward iterator once per iteration,
+at the end of the body of the loop; if this is all you need, there is a shorter
+`for`-loop idiom that you can use:
+
+    for iter in arr.iterateForward(int32):
+      iter[] += 1
+
+And if you don't need to modify the array data at all, there is an even shorter
+`for`-loop idiom that yields a succession of (read-only) array values:
+
+    var maxVal: int32 = low(int32)
+    for val in arr.values(int32):
+      if val > maxVal:
+        maxVal = val
 
 Tips, warnings & gotchas
 ------------------------
