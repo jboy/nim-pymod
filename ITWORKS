@@ -33,3 +33,10 @@ Nim Compiler Version 0.12.0 (2015-11-13) [Linux: amd64]
 gcc (Ubuntu 4.8.4-2ubuntu1~14.04) 4.8.4
 Numpy 1.8.2
 Fri Nov 13 14:36:01 AEDT 2015
+--
+Linux x86_64 GNU/Linux
+Python 2.7.10 :: Continuum Analytics, Inc.
+Nim Compiler Version 0.12.1 (2015-11-13) [Linux: amd64]
+gcc (Ubuntu 4.9.2-10ubuntu13) 4.9.2
+Numpy 1.10.1
+ven 13 nov 2015, 12.58.17, CET
