@@ -384,6 +384,24 @@ template iterateForward*(arr: ptr PyArrayObject, NimT: typedesc[NumpyCompatibleN
   iterateForwardImpl(arr, NimT, ii, "iterateForward")
 
 
+iterator iterateForward*(arr: ptr PyArrayObject, NimT: typedesc[NumpyCompatibleNimType]):
+    PyArrayForwardIterator[NimT] {.inline.} =
+  let bounds = arr.getBounds(NimT)
+  var iter = arr.iterateForward(NimT)
+  while iter in bounds:
+    yield iter
+    inc(iter)
+
+
+iterator data*(arr: ptr PyArrayObject, NimT: typedesc[NumpyCompatibleNimType]):
+    NimT {.inline.} =
+  let bounds = arr.getBounds(NimT)
+  var iter = arr.iterateForward(NimT)
+  while iter in bounds:
+    yield iter[]
+    inc(iter)
+
+
 proc accessFlatImpl(arr: ptr PyArrayObject, NimT: typedesc[NumpyCompatibleNimType],
     ii: tuple[filename: string, line: int], procname: string{lit}):
     PyArrayRandomAccessIterator[NimT] =
@@ -432,6 +450,15 @@ template accessFlat*(arr: ptr PyArrayObject, NimT: typedesc[NumpyCompatibleNimTy
   # http://nim-lang.org/system.html#instantiationInfo,
   let ii = instantiationInfo()
   accessFlatImpl(arr, NimT, ii, "accessFlat")
+
+
+iterator accessFlat*(arr: ptr PyArrayObject, NimT: typedesc[NumpyCompatibleNimType]):
+    PyArrayRandomAccessIterator[NimT] {.inline.} =
+  let bounds = arr.getBounds(NimT)
+  var iter = arr.accessFlat(NimT)
+  while iter in bounds:
+    yield iter
+    inc(iter)
 
 
 proc getBoundsImpl(arr: ptr PyArrayObject, NimT: typedesc[NumpyCompatibleNimType],
