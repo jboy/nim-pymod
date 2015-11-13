@@ -106,7 +106,7 @@ Use the Python script `pmgen.py` to auto-generate & compile the boilerplate code
     python path/to/pmgen.py greeting.nim
 
 There will now be a compiled Python extension module `hw.so` in the current directory.
-(It is called `hw` because is the name that was specified in the `initPyModule()` macro).
+(It is called `hw` because that is the name that was specified in the `initPyModule()` macro).
 
 In a Python interpreter, you can import the module and invoke the `greet` function:
 
@@ -149,7 +149,8 @@ System requirements
 * Python C development header files & static library
 * [Numpy](http://www.numpy.org)
 * Numpy C development header files
-* A C compiler [for use by Nim](http://nim-lang.org/download.html)
+* a [Make](https://en.wikipedia.org/wiki/Make_%28software%29) utility
+* a C compiler [for use by Nim](http://nim-lang.org/download.html)
 
 Per-project configuration
 -------------------------
@@ -223,7 +224,7 @@ for Numpy array manipulation & attribute access.
 To review the full list of `PyArrayObject` procs that Pymod provides, browse
 the Pymod source file `pymodpkg/pyarrayobject.nim`.
 
-Here are some the Numpy array attributes that Pymod exposes:
+Here are some of the Numpy array attributes that Pymod exposes:
 
 * `.data` (returns `pointer`)
 * `.data(T)` (returns `ptr T`)
