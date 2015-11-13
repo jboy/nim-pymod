@@ -135,36 +135,17 @@ You can also invoke the built-in Python interpreter `help` function about the `g
 
 There is additional example code in the `tests` directory.
 
-Docstrings
-----------
+System requirements
+-------------------
 
-Pymod will also auto-generate a Python docstring for each function in the
-extension module, specifying the function's parameter types & return type,
-based upon the parameter types & return types of the exported Nim proc.
-You can embed additional documentation in each Nim proc you want to export,
-using the supplied `docstring"""Text goes here."""` string type.  Any docstrings
-in the proc will be extracted automatically and included in the generated Python
-docstring.  There is an example of docstring usage in the code sample above.
-
-Function parameter & return types
----------------------------------
-
-Default parameters are supported to a limited extent, although the parameter
-types must be specified explicitly, and are currently restricted to `string`,
-`int` & `float` types.
-
-Procedure return values may be basic types (`int`, `float64`, `string`, `ptr X`)
-or a Nim tuple of those types.  Nested tuples are currently not supported.
-By default, named tuples in Nim are returned as raw tuples to Python:
-
-    # Nim                   # Python
-    tuple[ a, b: int ]  =>  (a_value, b_value)
-
-If `exportpy` is specified as `exportpy return_dict` then the generated
-code will instead return a Python dict containing the named properties:
-
-    # Nim                   # Python
-    tuple[ a, b: int ]  =>  { "a": a_value, "b": b_value }
+* The [latest Nim compiler from Github](http://nim-lang.org/download.html#installation-from-github)
+  * either the `stable` or `devel` branches
+  * but **not the recent [Nim 0.12.0 release](http://nim-lang.org/news.html#Z2015-10-27-version-0-12-0-released)**. :(
+* CPython 2.7 or CPython 3.2+
+* Python C development header files & static library
+* [Numpy](http://www.numpy.org)
+* Numpy C development header files
+* A C compiler [for use by Nim](http://nim-lang.org/download.html)
 
 Per-project configuration
 -------------------------
@@ -185,17 +166,39 @@ then the Nim compiler will be invoked in **release mode**, and bounds-checking
 of the `PyArrayObject` iterators will be switched off.  Your code will now run
 much faster!
 
-System requirements
--------------------
+Docstrings
+----------
 
-* The [latest Nim compiler from Github](http://nim-lang.org/download.html#installation-from-github)
-  * either the `stable` or `devel` branches
-  * but **not the recent [Nim 0.12.0 release](http://nim-lang.org/news.html#Z2015-10-27-version-0-12-0-released)**. :(
-* CPython 2.7 or CPython 3.2+
-* Python C development header files & static library
-* [Numpy](http://www.numpy.org)
-* Numpy C development header files
-* A C compiler [for use by Nim](http://nim-lang.org/download.html)
+Pymod will also auto-generate a Python docstring for each function in the
+extension module, specifying the function's parameter types & return type,
+based upon the parameter types & return types of the exported Nim proc.
+You can embed additional documentation in each Nim proc you want to export,
+using the supplied `docstring"""Text goes here."""` string type.  Any docstrings
+in the proc will be extracted automatically and included in the generated Python
+docstring.  There is an example of docstring usage in the code sample above.
+
+Procedure parameter & return types
+----------------------------------
+
+Procedure parameters may be basic types (`int`, `int{64,32,16,8}`, `uint`,
+`uint{64,32,16,8}`, `float`, `float{64,32}` or `string`) or `ptr PyArrayObject`.
+Default parameters are supported to a limited extent, although the parameter
+type must be specified explicitly, and is currently restricted to the `string`,
+integer & floating-point types.
+
+Procedure return values may be basic types (`int`, `int{64,32,16,8}`, `uint`,
+`uint{64,32,16,8}`, `float`, `float{64,32}` or `string`), `ptr PyArrayObject` or
+a Nim tuple of any of these types.  Nested tuples are currently not supported.
+By default, named tuples in Nim are returned as raw tuples to Python:
+
+    # Nim                   # Python
+    tuple[ a, b: int ]  =>  (a_value, b_value)
+
+If `exportpy` is specified as `exportpy return_dict` then the generated
+code will instead return a Python dict containing the named properties:
+
+    # Nim                   # Python
+    tuple[ a, b: int ]  =>  { "a": a_value, "b": b_value }
 
 What about calling Python from Nim?
 -----------------------------------
