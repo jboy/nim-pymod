@@ -84,7 +84,7 @@ proc `$`*[T](ap: CArrayProxy[T]): string =
   result = $ss
 
 
-iterator items*[T](ap: CArrayProxy[T]): T =
+iterator items*[T](ap: CArrayProxy[T]): T {. inline .} =
   let p: ptr T = ap.getPtr
   let n: cint = ap.getLen
   var i: cint = 0
