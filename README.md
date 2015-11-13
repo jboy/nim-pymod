@@ -235,7 +235,7 @@ elements of a `ptr PyArrayObject` instance is to use one of the two supplied
 * `PyArrayForwardIterator[T]` (returned by `arr.iterateForward(T)`)
 * `PyArrayRandomAccessIterator[T]` (returned by `arr.accessFlat(T)`)
 
-Both of the `PyArrayIterator` types offer **1-D** iteration & indexing over
+Both of the `PyArrayIterator` types offer **1-D iteration & indexing** over
 a "flat" interpretation of the Numpy array data.  These two iterator types
 are inspired by the [C++ iterator category model](http://www.cplusplus.com/reference/iterator/).
 By default, the iterators implement per-dereference bounds-checking.
@@ -268,7 +268,7 @@ Here is a simple example of how to use `PyArrayObject` & `PyArrayForwardIterator
           iter[] += 1
           inc(iter)
       else:
-        let msg = "expected input array of dtype $1, received dtype $2" % [$np_int32, $dt]
+        let msg = "expected array of dtype $1, received dtype $2" % [$np_int32, $dt]
         raise newException(ValueError, msg)
 
     initPyModule("_myModule", addOne)
