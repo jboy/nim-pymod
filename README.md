@@ -143,13 +143,13 @@ System requirements
 -------------------
 
 * The [latest Nim compiler from Github](http://nim-lang.org/download.html#installation-from-github)
-  * either the `stable` or `devel` branches
+  * either the `master` or `devel` branches
   * but **not the recent [Nim 0.12.0 release](http://nim-lang.org/news.html#Z2015-10-27-version-0-12-0-released)**. :(
 * CPython 2.7 or CPython 3.2+
 * Python C development header files & static library
 * [Numpy](http://www.numpy.org)
 * Numpy C development header files
-* a [Make](https://en.wikipedia.org/wiki/Make_%28software%29) utility
+* [Make](https://en.wikipedia.org/wiki/Make_%28software%29)
 * a C compiler [for use by Nim](http://nim-lang.org/download.html)
 
 Per-project configuration
@@ -338,8 +338,8 @@ The output from running this script will look something like this:
 Tips, warnings & gotchas
 ------------------------
 
-Here are some helpful hints about a few sharp edges of Pymod (mostly due to
-sharp edges in Nim that we haven't been able to cover over completely) that
+Here are some helpful hints about a few sharp edges of Pymod (some of them due
+to sharp edges in Nim that we haven't been able to cover over completely) that
 can trip you up (and then confuse you with obscure compiler error messages):
 
 * If you want to `exportpy` a proc using Pymod, **don't** give your proc the
