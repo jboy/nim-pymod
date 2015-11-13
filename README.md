@@ -258,7 +258,7 @@ Here is a simple example of how to use `PyArrayObject` & `PyArrayForwardIterator
     import pymod
     import pymodpkg/pyarrayobject
 
-    proc addOne*(arr: ptr PyArrayObject) {.exportpy} =
+    proc addOne*(arr: ptr PyArrayObject) {.exportpy.} =
       let dt = arr.dtype
       echo "PyArrayObject has shape $1 and dtype $2" % [$arr.shape, $dt]
       if dt == np_int32:
