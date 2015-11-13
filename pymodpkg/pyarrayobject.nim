@@ -393,7 +393,7 @@ iterator iterateForward*(arr: ptr PyArrayObject, NimT: typedesc[NumpyCompatibleN
     inc(iter)
 
 
-iterator data*(arr: ptr PyArrayObject, NimT: typedesc[NumpyCompatibleNimType]):
+iterator values*(arr: ptr PyArrayObject, NimT: typedesc[NumpyCompatibleNimType]):
     NimT {.inline.} =
   let bounds = arr.getBounds(NimT)
   var iter = arr.iterateForward(NimT)
