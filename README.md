@@ -207,10 +207,10 @@ Here are some helpful hints about a few sharp edges of Pymod (mostly due to
 sharp edges in Nim that we haven't been able to cover over completely) that
 can trip you up (and confuse you with obscure compiler error messages):
 
-* If you want to exportpy a proc using Pymod, **don't** give your proc the
+* If you want to `exportpy` a proc using Pymod, **don't** give your proc the
   same name as the Nim module that contains the proc (or in fact, the same name
   as any other procs in that same module).
-* If you want to exportpy a proc using Pymod, ensure that the proc is also
+* If you want to `exportpy` a proc using Pymod, ensure that the proc is also
   [exported in Nim](http://nim-lang.org/docs/manual.html#procedures-export-marker)
   by marking it with an asterisk after the proc-name.
 
