@@ -12,11 +12,13 @@ Python module that exposes the Nim procs in Python.
 
 The auto-generated C-API boilerplate code handles the parsing & type-checking
 of the function arguments passed from Python, including correct handling of
-ref-counts if a type error occurs.  The boilerplate code also translates Nim exceptions
-(including back-traces) to Python exceptions.  Finally, the boilerplate code provides
-auto-generated Python docstrings that have been extracted from the Nim procs.
+ref-counts if a type error occurs or an exception is raised.  The boilerplate
+code also translates Nim exceptions (including back-traces) to Python exceptions.
+Finally, the boilerplate code provides auto-generated Python docstrings that
+have been extracted from the Nim procs.
 
-There's even a type (`ptr PyArrayObject`) that provides a Nim interface to Numpy arrays,
+There's even a type (`PyArrayObject`) that provides a Nim interface to
+[Numpy arrays](http://www.scipy-lectures.org/intro/numpy/array_object.html),
 so you can pass Numpy arrays into your Nim procs and access them natively.
 
 Pymod is definitely still in the **alpha** phase of software maturity, and it's
@@ -40,7 +42,9 @@ You can write
 to wrap your Nim procs, but all the
 [C-API boilerplate](https://docs.python.org/2/c-api/)
 is a huge drag, especially if you check types and manage reference counts
-and handle Nim exceptions properly.  That's what Pymod is for.
+and handle Nim exceptions properly.
+
+That's what Pymod is for.
 
 Usage
 -----
@@ -205,7 +209,7 @@ Tips, warnings & gotchas
 
 Here are some helpful hints about a few sharp edges of Pymod (mostly due to
 sharp edges in Nim that we haven't been able to cover over completely) that
-can trip you up (and confuse you with obscure compiler error messages):
+can trip you up (and then confuse you with obscure compiler error messages):
 
 * If you want to `exportpy` a proc using Pymod, **don't** give your proc the
   same name as the Nim module that contains the proc (or in fact, the same name
