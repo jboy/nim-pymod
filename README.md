@@ -11,7 +11,7 @@ After Pymod has been run, there will be an auto-generated, auto-compiled
 Python module that exposes the Nim procs in Python.
 
 The auto-generated C-API boilerplate code handles the parsing & type-checking
-of the function arguments passed from Python, including correct handling of
+of the function arguments passed from Python, including correct handling of Python
 ref-counts if a type error occurs or an exception is raised.  The boilerplate
 code also translates Nim exceptions (including back-traces) to Python exceptions.
 Finally, the boilerplate code provides auto-generated Python docstrings that
@@ -203,6 +203,112 @@ code will instead return a Python dict containing the named properties:
 
     # Nim                   # Python
     tuple[ a, b: int ]  =>  { "a": a_value, "b": b_value }
+
+PyArrayObject type
+------------------
+
+Pymod provides the `PyArrayObject` type to allow Python code to pass
+[Numpy ndarrays](http://docs.scipy.org/doc/numpy/reference/arrays.ndarray.html)
+into Nim procs with appropriate type-safety.  To access the `PyArrayObject`
+Nim type definition, import `pymodpkg/pyarrayobject` in your Nim module (after
+you have already imported `pymod`).
+
+Because the Numpy array object was allocated in Python, the type of the Nim
+proc parameter or return value is `ptr PyArrayObject`.  **Note** that it is a
+Nim `ptr` not a Nim `ref`.  Your code should pass around `ptr PyArrayObject`.
+
+Pymod also wraps many C functions from the
+[Numpy C-API](http://docs.scipy.org/doc/numpy/reference/c-api.html)
+for Numpy array manipulation & attribute access.
+To review the full list of `PyArrayObject` procs that Pymod provides, browse
+the Pymod source file `pymodpkg/pyarrayobject.nim`.  To get you started,
+here is a very incomplete selection of the Numpy array attributes that Pymod offers:
+`arr.data`, `arr.nd`, `arr.dimensions`, `arr.shape`, `arr.strides`, `arr.descr`,
+`arr.dtype`.
+
+**Note** that, due to its Pythonic origin, `ptr PyArrayObject` is not a
+Nim generic type.  So the element data-type of a `ptr PyArrayObject` instance
+is unknown to Nim.  The preferred method of accessing the (appropriately-typed)
+elements of a `ptr PyArrayObject` instance is to use one of the two supplied
+`PyArrayIterator` types:
+
+* `PyArrayForwardIterator[T]` (returned by `arr.iterateForward(T)`)
+* `PyArrayRandomAccessIterator[T]` (returned by `arr.accessFlat(T)`)
+
+Both of the `PyArrayIterator` types offer **1-D** iteration & indexing over
+a "flat" interpretation of the Numpy array data.  These two iterator types
+are inspired by the [C++ iterator category model](http://www.cplusplus.com/reference/iterator/).
+By default, the iterators implement per-dereference bounds-checking.
+This bounds-checking can be disabled, as described above in the section
+_Per-project configuration_.
+
+**Note** that the `PyArrayIterator` types can't handle any of the following
+usage scenarios:
+
+ * non-C-contiguous array memory
+ * strides
+ * multi-dimensional indexing
+
+PyArrayObject & PyArrayIterator usage example
+---------------------------------------------
+
+Here is a simple example of how to use `PyArrayObject` & `PyArrayForwardIterator[T]`:
+
+    import strutils  # `%`
+    import pymod
+    import pymodpkg/pyarrayobject
+
+    proc addOne*(arr: ptr PyArrayObject) {.exportpy} =
+      let dt = arr.dtype
+      echo "PyArrayObject has shape $1 and dtype $2" % [$arr.shape, $dt]
+      if dt == np_int32:
+        let bounds = arr.getBounds(int32)  # Iterator bounds
+        var iter = arr.iterateForward(int32)  # Forward iterator
+        while iter in bounds:
+          iter[] += 1
+          inc(iter)
+      else:
+        let msg = "expected input array of dtype $1, received dtype $2" % [$np_int32, $dt]
+        raise newException(ValueError, msg)
+
+    initPyModule("_myModule", addOne)
+
+You can test the Pymod-wrapped Nim proc `addOne` using a Python script like this:
+
+    import numpy as np
+    import _myModule as mm
+
+    a = np.arange(10, dtype=np.int32).reshape((2, 5))
+    print(a)
+    mm.addOne(a)
+    print(a)
+
+    print("")
+
+    b = np.arange(10, dtype=np.float32).reshape((2, 5))
+    print(b)
+    mm.addOne(b)  # Uh-oh!  ValueError will be raised here!
+    print(b)
+
+The output from running this script will look something like this:
+
+    [[0 1 2 3 4]
+     [5 6 7 8 9]]
+    PyArrayObject has shape @[2, 5] and dtype numpy.int32
+    [[ 1  2  3  4  5]
+     [ 6  7  8  9 10]]
+
+    [[ 0.  1.  2.  3.  4.]
+     [ 5.  6.  7.  8.  9.]]
+    PyArrayObject has shape @[2, 5] and dtype numpy.float32
+    Traceback (most recent call last):
+      File "test_arr1.py", line 13, in <module>
+        mm.addOne(b)  # Uh-oh!  ValueError will be raised here!
+    ValueError: expected input array of dtype numpy.int32, received dtype numpy.float32
+    Nim traceback (most recent call last):
+      File "pmgen_myModule_wrap.nim", line 26, in exportpy_addOne
+      File "arr1.nim", line 16, in addOne
+
 
 Tips, warnings & gotchas
 ------------------------
