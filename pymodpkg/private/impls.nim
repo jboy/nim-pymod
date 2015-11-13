@@ -149,6 +149,23 @@ proc verifyBuiltinNimType(nim_type_node: NimNode): TypeFmtTuple
 
   # https://docs.python.org/2/c-api/arg.html
   case nim_type
+  of "float":
+    # NOTE:  The `float` type is defined only as "default floating point type".
+    #   -- http://nim-lang.org/docs/system.html#float
+    # The Nim Manual elaborates:
+    #   "float
+    #     the generic floating point type; its size is platform dependent
+    #     (the compiler chooses the processor's fastest floating point type).
+    #     This type should be used in general."
+    #   -- http://nim-lang.org/docs/manual.html#types-pre-defined-floating-point-types
+    #
+    # So, we'll have to find out whether `float` is `float32` or `float64`...
+    if sizeof(float) == sizeof(float32):
+      # It appears that `float` is `float32`.
+      result = (nim_type, "cfloat", "float", "f", nil, nil)
+    else:
+      # It appears that `float` is `float64`.
+      result = (nim_type, "cdouble", "float", "d", nil, nil)
   of "float32":
     # http://nim-lang.org/system.html#cfloat
     result = (nim_type, "cfloat", "float", "f", nil, nil)
