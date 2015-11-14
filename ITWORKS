@@ -54,3 +54,10 @@ Nim Compiler Version 0.12.1 (2015-11-12) [Linux: amd64]
 gcc (Gentoo 5.2.0 p1.0, pie-0.6.3) 5.2.0
 Numpy 1.10.1
 Fri Nov 13 09:37:15 EST 2015
+--
+Linux x86_64 GNU/Linux
+Python 3.5.0
+Nim Compiler Version 0.12.0 (2015-10-30) [Linux: amd64]
+gcc (GCC) 5.2.0
+Numpy 1.10.1
+Sat Nov 14 01:07:57 CET 2015
