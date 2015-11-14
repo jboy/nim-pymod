@@ -145,6 +145,8 @@ System requirements
 * The [latest Nim compiler from Github](http://nim-lang.org/download.html#installation-from-github)
   * either the `master` or `devel` branches
   * but **not the recent [Nim 0.12.0 release](http://nim-lang.org/news.html#Z2015-10-27-version-0-12-0-released)**. :(
+  * (A [suggested fix for this Nim 0.12.0 packaging problem](http://forum.nim-lang.org/t/1797/2#11256)
+    has been proposed on the Nim forums.)
 * CPython 2.7 or CPython 3.2+
 * Python C development header files & static library
 * [Numpy](http://www.numpy.org)
@@ -216,7 +218,7 @@ you have already imported `pymod`).
 
 Because the Numpy array object was allocated in Python, the type of the Nim
 proc parameter or return value is `ptr PyArrayObject`.  **Note** that it is a
-Nim `ptr` not a Nim `ref`.  Your code should pass around `ptr PyArrayObject`.
+Nim `ptr`, not a Nim `ref`.  Your code should pass around `ptr PyArrayObject`.
 
 Pymod also wraps many C functions from the
 [Numpy C-API](http://docs.scipy.org/doc/numpy/reference/c-api.html)
@@ -228,13 +230,13 @@ Here are some of the Numpy array attributes that Pymod exposes:
 
 * `.data` (returns `pointer`)
 * `.data(T)` (returns `ptr T`)
+* `.descr`
+* `.dimensions`
+* `.dtype`
 * `.nd`
 * `.ndim` (an alias for `.nd`)
-* `.dimensions`
 * `.shape` (an alias for `.dimensions`)
 * `.strides`
-* `.descr`
-* `.dtype`
 
 Here are some of the Numpy functions for array creation & manipulation that Pymod wraps:
 
