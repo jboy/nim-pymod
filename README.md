@@ -52,9 +52,9 @@ Usage
 Using Pymod is a 4-step process, preceded by an optional zeroth step:
 
 1. At the top of your Nim source code module, import the module `pymod`.
-   You might additionally wish to import `pymodpkg/docstrings` (to enable
-   Python-like docstrings) and/or `pymodpkg/pyarrayobject` (to enable the
-   `PyArrayObject` type that corresponds to Numpy's array type).
+  * **Tip:** You might additionally wish to import `pymodpkg/docstrings` (to
+    enable Python-like docstrings) and/or `pymodpkg/pyarrayobject` (to enable
+    the `PyArrayObject` type that corresponds to Numpy's array type).
 2. In your Nim source code module, annotate each Nim proc to be exported
    with the `{.exportpy.}` pragma (named by analogy with the standard Nim
    `{.exportc.}` pragma).
@@ -62,6 +62,9 @@ Using Pymod is a 4-step process, preceded by an optional zeroth step:
    the `initPyModule()` macro, specifying the desired module name as a string
    (without a filename suffix), followed by the names of the Nim procs that
    should be compiled into the Python module.
+  * **Tip:** You can use the `initPyModule()` macro multiple times at the end
+    of your Nim module, with different module names & different combinations of
+    Nim procs, to create multiple Pythom modules.
 4. Invoke the supplied Python script `pmgen.py` with the filename of your
    Nim source code module as a command-line argument, to auto-generate &
    invoke a set of Makefiles that will in turn initiate & run the Pymod process.
@@ -78,6 +81,13 @@ in Pymod's type-mapping registry, using the `definePyObjectType()` macro.
 This provides Pymod with a mapping from an already-defined Nim type to the
 corresponding Python & C-API types, enabling Pymod to generate the type-checking
 boilerplate for additional non-core-Python types.
+
+**Note** that the `{.exportpy.}` pragma & `initPyModule()` macro are
+**inert by default** (that is, they have no effect), so you can add them to
+existing Nim code without breaking that Nim code.  It's only when you run
+the script `pmgen.py` (which, among other actions, supplies the switch
+`--define:pmgen` to the Nim compiler) that the `{.exportpy.}` pragma &
+`initPyModule()` macro are activated.
 
 Example
 -------
