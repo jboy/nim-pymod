@@ -338,19 +338,19 @@ The output from running this script will look something like this:
     [[0 1 2 3 4]
      [5 6 7 8 9]]
     PyArrayObject has shape @[2, 5] and dtype numpy.int32
-    [[ 101 102 103 104 105]
-     [ 106 107 108 109 110]]
+    [[101 102 103 104 105]
+     [106 107 108 109 110]]
 
     [[ 0.  1.  2.  3.  4.]
      [ 5.  6.  7.  8.  9.]]
     PyArrayObject has shape @[2, 5] and dtype numpy.float32
     Traceback (most recent call last):
-      File "test_arr1.py", line 13, in <module>
+      File "test_addvalmod.py", line 13, in <module>
         mm.addVal(b, 101)  # Uh-oh!  ValueError will be raised here!
-    ValueError: expected input array of dtype numpy.int32, received dtype numpy.float32
+    ValueError: expected array of dtype numpy.int32, received dtype numpy.float32
     Nim traceback (most recent call last):
       File "pmgen_myModule_wrap.nim", line 26, in exportpy_addVal
-      File "addvalmod.nim", line 16, in addVal
+      File "addvalmod.nim", line 22, in addVal
 
 Observe the `while`-loop that was used in `addVal` to iterate over the array.
 This is the most flexible loop idiom for forward-iterating over an array,
