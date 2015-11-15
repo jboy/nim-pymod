@@ -323,7 +323,7 @@ You can test the Pymod-wrapped Nim proc `addVal` using a Python script like this
 
     a = np.arange(10, dtype=np.int32).reshape((2, 5))
     print(a)
-    mm.addval(a, 101)
+    mm.addVal(a, 101)
     print(a)
 
     print("")
