@@ -11,6 +11,8 @@ FUNCS_TO_RUN = [
         ("findMax1", fm.findMax1),
         ("findMax2", fm.findMax2),
         ("findMax3", fm.findMax3),
+        ("findMax4", fm.findMax4),
+        ("findMax5", fm.findMax5),
 ]
 
 for name, func in FUNCS_TO_RUN:
