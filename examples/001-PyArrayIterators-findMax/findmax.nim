@@ -115,7 +115,7 @@ proc findMax5*(arr: ptr PyArrayObject): int32 {.exportpy} =
   echo "PyArrayObject has shape $1 and dtype $2" % [$arr.shape, $dt]
   if dt == np_int32:
     let bounds = arr.getBounds(int32)  # Iterator bounds
-    var iter = arr.accessFlat(int32)  # Randem access iterator
+    var iter = arr.accessFlat(int32)  # Random access iterator
     while iter in bounds:
       if iter[] > result:
         result = iter[]

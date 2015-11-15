@@ -20,7 +20,7 @@ for name, func in FUNCS_TO_RUN:
     a = np.random.randint(0, 30, 10).astype(np.int32).reshape((2, 5))
     print(a)
     print("")
-    m = fm.findMax1(a)
+    m = func(a)
     print("\n=> Max is %d\n\n---" % m)
 
 
