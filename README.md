@@ -392,6 +392,8 @@ and:
     for iter in arr.accessFlat(int32, incDelta):
       iter[] += val
 
+These code examples are all available in full in the `examples` directory.
+
 Tips, warnings & gotchas
 ------------------------
 
