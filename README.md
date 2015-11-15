@@ -64,7 +64,7 @@ Using Pymod is a 4-step process, preceded by an optional zeroth step:
    that should be compiled into the Python module.
   * **Tip:** You can use the `initPyModule()` macro multiple times at the end
     of your Nim module, with different Python module names & different
-    combinations of Nim procs, to create multiple Pythom modules.
+    combinations of Nim procs, to create multiple Python modules.
 4. Invoke the supplied Python script `pmgen.py` with the filename of your
    Nim source code module as a command-line argument, to auto-generate &
    invoke a set of Makefiles that will in turn initiate & run the Pymod process.
@@ -147,7 +147,7 @@ You can also invoke the built-in Python interpreter `help` function about the `g
 
         The string returned will be a greeting directed specifically at that audience.
 
-There is additional example code in the `tests` directory.
+There is additional example code in the `examples` directory.
 
 System requirements
 -------------------

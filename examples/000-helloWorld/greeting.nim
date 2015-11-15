@@ -7,7 +7,7 @@
 ## A simple "Hello, World!" example of how to use Pymod.
 ##
 ## Compile this Nim module using the following command:
-##   python path/to/pmgen.py greeting.nim
+##   python ../../pmgen.py greeting.nim
 
 import strutils  # `%` operator
 
