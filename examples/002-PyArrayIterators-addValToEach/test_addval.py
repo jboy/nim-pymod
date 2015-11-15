@@ -7,13 +7,13 @@
 import numpy as np
 import _addval as av
 
-FUNCS_TO_RUN = [
+FUNCS_TO_RUN1 = [
         ("addVal1", av.addVal1),
         ("addVal2", av.addVal2),
         ("addVal3", av.addVal3),
 ]
 
-for name, func in FUNCS_TO_RUN:
+for name, func in FUNCS_TO_RUN1:
     print("\n%s:\nInput array =" % name)
     a = np.random.randint(0, 30, 10).astype(np.int32).reshape((2, 5))
     print(a)
@@ -25,14 +25,19 @@ for name, func in FUNCS_TO_RUN:
     print("\n---")
 
 
-(name, func) = ("addValEachDelta", av.addValEachDelta)
-print("\n%s:\nInput array =" % name)
-a = np.random.randint(0, 30, 10).astype(np.int32).reshape((2, 5))
-print(a)
-print("")
-val = 100
-incDelta = 3
-func(a, val, incDelta)
-print("\n=> After %s(a, %d, %d), array is now =" % (name, val, incDelta))
-print(a)
-print("\n---")
+FUNCS_TO_RUN2 = [
+        ("addValEachDelta1", av.addValEachDelta1),
+        ("addValEachDelta2", av.addValEachDelta2),
+]
+
+for name, func in FUNCS_TO_RUN2:
+    print("\n%s:\nInput array =" % name)
+    a = np.random.randint(0, 30, 10).astype(np.int32).reshape((2, 5))
+    print(a)
+    print("")
+    val = 101
+    incDelta = 3
+    func(a, val, incDelta)
+    print("\n=> After %s(a, %d, %d), array is now =" % (name, val, incDelta))
+    print(a)
+    print("\n---")

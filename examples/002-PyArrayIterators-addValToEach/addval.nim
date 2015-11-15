@@ -75,7 +75,7 @@ proc addVal3*(arr: ptr PyArrayObject, val: int32) {.exportpy} =
     raise newException(ValueError, msg)
 
 
-proc addValEachDelta*(arr: ptr PyArrayObject, val: int32, incDelta: int) {.exportpy} =
+proc addValEachDelta1*(arr: ptr PyArrayObject, val: int32, incDelta: int) {.exportpy} =
   docstring"""Add `val` to each element in the supplied Numpy array
   that is reached by incrementing the iterator by `delta`.
 
@@ -83,7 +83,7 @@ proc addValEachDelta*(arr: ptr PyArrayObject, val: int32, incDelta: int) {.expor
   raised.  The elements in the array will be modified in-place.
 
   This example shows the `while`-loop idiom with a
-  `PyArrayRandomAccessIterator[T]`.
+  `PyArrayRandomAccessIterator[T]` and an increment delta.
   """
   let dt = arr.dtype
   echo "PyArrayObject has shape $1 and dtype $2" % [$arr.shape, $dt]
@@ -98,4 +98,24 @@ proc addValEachDelta*(arr: ptr PyArrayObject, val: int32, incDelta: int) {.expor
     raise newException(ValueError, msg)
 
 
-initPyModule("_addval", addVal1, addVal2, addVal3, addValEachDelta)
+proc addValEachDelta2*(arr: ptr PyArrayObject, val: int32, incDelta: int) {.exportpy} =
+  docstring"""Add `val` to each element in the supplied Numpy array
+  that is reached by incrementing the iterator by `delta`.
+
+  The array is assumed to have dtype `int32`; otherwise, a ValueError will be
+  raised.  The elements in the array will be modified in-place.
+
+  This example shows the `for`-loop idiom with a
+  `PyArrayRandomAccessIterator[T]` and an increment delta.
+  """
+  let dt = arr.dtype
+  echo "PyArrayObject has shape $1 and dtype $2" % [$arr.shape, $dt]
+  if dt == np_int32:
+    for iter in arr.accessFlat(int32, incDelta):  # Flat-iterate through the array.
+      iter[] += val
+  else:
+    let msg = "expected input array of dtype $1, received dtype $2" % [$np_int32, $dt]
+    raise newException(ValueError, msg)
+
+
+initPyModule("_addval", addVal1, addVal2, addVal3, addValEachDelta1, addValEachDelta2)
