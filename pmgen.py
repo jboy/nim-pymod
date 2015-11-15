@@ -26,6 +26,18 @@
 # Usage:
 #  python pmgen.py nimmodule.nim
 
+# The original intention of "pmgen.py" was simply to auto-generate Makefiles
+# for the Pymod build process (to ensure that the phases of Pymod compilation
+# were invoked in the correct order, with the appropriate compiler flags).
+# It was implemented in Python purely because Python was more convenient for
+# string-munging & for-looping than Unix utilities.
+#
+# Since then, we've discovered a significant, unplanned benefit of "pmgen.py":
+# We can now use the Python instance that's executing "pmgen.py" to determine
+# the actual Python system settings, to configure the appropriate Python C-API
+# build settings (including those for Numpy).  We can then write these settings
+# out to "pmgen/nim.cfg" and the appropriate Makefiles.
+
 from __future__ import print_function
 
 import datetime
@@ -47,6 +59,8 @@ NIM_COMPILER_FLAG_OPTIONS = dict(
 NIM_COMPILER_COMMAND = "%s %s" % (NIM_COMPILER_EXE_PATH, " ".join(NIM_COMPILER_FLAGS))
 
 MAKE_EXE_PATH = "make"
+
+NUMPY_C_INCLUDE_RELPATH = "core/include"
 
 
 NIM_CFG_FNAME = "nim.cfg"
@@ -132,11 +146,12 @@ def main():
     os.chdir(PMGEN_DIRNAME)
 
     (python_includes, python_ldflags) = determine_python_includes_ldflags()
-    generate_nim_cfg_file(pymod_root_dir, python_includes, python_ldflags)
+    numpy_paths = test_that_numpy_is_installed()
+    generate_nim_cfg_file(pymod_root_dir, python_includes, python_ldflags, numpy_paths)
     pminc_basename = generate_pminc_file(nim_modnames)
     pmgen_fnames = generate_pmgen_files(nim_modfiles, pminc_basename)
 
-    # FIXME:  This (simply globbing by filenames) is highly dodgy.
+    # FIXME:  This approach (of simply globbing by filenames) is highly dodgy.
     # Work out a better way of doing this.
     nim_wrapper_glob = "%(pmgen_prefix)s*_wrap.nim" % dict(
             pmgen_prefix=PMGEN_PREFIX)
@@ -203,7 +218,7 @@ def get_datestamp():
     return datetime.datetime.now().strftime("%Y-%m-%d at %H:%M:%S")
 
 
-def generate_nim_cfg_file(pymod_root_dir, python_includes, python_ldflags):
+def generate_nim_cfg_file(pymod_root_dir, python_includes, python_ldflags, numpy_paths):
     datestamp = get_datestamp()
 
     any_other_module_paths = []
@@ -218,20 +233,29 @@ def generate_nim_cfg_file(pymod_root_dir, python_includes, python_ldflags):
         any_other_module_paths.append('path:"%s"' % path)
     #print("nimAddModulePath:", any_other_module_paths)
 
-    python_includes_uniq = [
+    numpy_include_paths = [os.path.join(p, NUMPY_C_INCLUDE_RELPATH) for p in numpy_paths]
+    numpy_includes = ["-I" + p for p in numpy_include_paths if os.path.isdir(p)]
+    print("Determined Numpy C-API includes\n - includes = %s" % numpy_includes)
+    python_includes.extend(numpy_includes)
+
+    python_includes_uniq = sorted([
             # Remove the leading "-I", if present.
             ipath[2:] if ipath.startswith("-I") else ipath
-            for ipath in set(python_includes)]
+            for ipath in set(python_includes)])
     python_cincludes = "\n".join([
             'cincludes:"%s"' % path
             for path in python_includes_uniq])
+
+    python_ldflags = " ".join(python_ldflags)
+    any_other_module_paths = "\n".join(any_other_module_paths)
+
     with open(NIM_CFG_FNAME, "w") as f:
         f.write(NIM_CFG_CONTENT % dict(
                 datestamp=datestamp,
                 pymod_root_dir=pymod_root_dir,
                 python_cincludes=python_cincludes,
-                python_ldflags=" ".join(python_ldflags),
-                any_other_module_paths="\n".join(any_other_module_paths)))
+                python_ldflags=python_ldflags,
+                any_other_module_paths=any_other_module_paths))
 
 
 def stripAnyQuotes(s):
@@ -363,6 +387,22 @@ def define_python3_maybe():
         return ""
 
 
+def test_that_numpy_is_installed():
+    try:
+        import numpy
+    except ImportError as e:
+        die("unable to import Python module `numpy`")
+
+    numpy_inst_path = numpy.__file__
+    if not os.path.isdir(numpy_inst_path):
+        numpy_inst_path = os.path.dirname(numpy_inst_path)
+    print("Found Numpy installation at: %s" % numpy_inst_path)
+
+    numpy_paths = numpy.__path__
+    print("Numpy installation paths: %s" % numpy_paths)
+    return numpy_paths
+
+
 def determine_python_includes_ldflags():
     # The most likely-to-be-correct way:  Use the script "python-config" that
     # comes with the Python installation.
@@ -370,28 +410,29 @@ def determine_python_includes_ldflags():
             determine_python_includes_ldflags_use_python_config()
     if includes is not None and ldflags is not None:
         # Success!
-        print("Determined includes & ldflags using command `%s`" % python_config_exe_name)
-        print("includes = %s" % includes)
-        print("ldflags = %s" % ldflags)
+        print("Determined Python C-API includes & ldflags using command `%s`" % python_config_exe_name)
+        print(" - includes = %s" % includes)
+        print(" - ldflags = %s" % ldflags)
         return (includes, ldflags)
 
     # Otherwise, fall back on Plan B:  Guess what we can, using variables in
-    # the modules `sys`, `sysconfig` & `platform`.
-    #  https://docs.python.org/2/library/sys.html#sys.platform
-    #  https://docs.python.org/2/library/sys.html#sys.prefix
-    #  https://docs.python.org/2/library/sys.html#sys.version_info
+    # the `sysconfig` module.
     #  https://docs.python.org/2/library/sysconfig.html
-    #  https://docs.python.org/3/library/sys.html
     #  https://docs.python.org/3/library/sysconfig.html
     (includes, ldflags) = guess_python_includes_ldflags_use_sysconfig()
     if includes is not None and ldflags is not None:
         # Success!
-        print("Determined includes & ldflags using Python `sysconfig` module")
-        print("includes = %s" % includes)
-        print("ldflags = %s" % ldflags)
+        print("Determined Python C-API includes & ldflags using Python `sysconfig` module")
+        print(" - includes = %s" % includes)
+        print(" - ldflags = %s" % ldflags)
         return (includes, ldflags)
 
-    # Otherwise, Plan C:  Assume we're on an unusually-undemanding UNIX system.
+    # Otherwise, Plan C:  Assume we're on an unusually-undemanding UNIX system,
+    # and make some optimistic guesses based upon info in the `sys` module.
+    #  https://docs.python.org/2/library/sys.html#sys.platform
+    #  https://docs.python.org/2/library/sys.html#sys.prefix
+    #  https://docs.python.org/2/library/sys.html#sys.version_info
+    #  https://docs.python.org/3/library/sys.html
     python_ver = sys.version_info
     python_header_comp = "python%d.%d" % (python_ver.major, python_ver.minor)
     python_header_path = os.path.join(sys.prefix, "include", python_header_comp)
@@ -400,9 +441,9 @@ def determine_python_includes_ldflags():
     python_lib_name = "python%d.%d" % (python_ver.major, python_ver.minor)
     ldflags = ["-l" + python_lib_name]
 
-    print("Last resort: determined just a few includes & ldflags using Python `sys` module")
-    print("includes = %s" % includes)
-    print("ldflags = %s" % ldflags)
+    print("Last resort: Guessed Python C-API includes & ldflags using Python `sys` module")
+    print(" - includes = %s" % includes)
+    print(" - ldflags = %s" % ldflags)
     return (includes, ldflags)
 
 
