@@ -59,12 +59,12 @@ Using Pymod is a 4-step process, preceded by an optional zeroth step:
    with the `{.exportpy.}` pragma (named by analogy with the standard Nim
    `{.exportc.}` pragma).
 3. At the end of your Nim source code model, configure the Python module using
-   the `initPyModule()` macro, specifying the desired module name as a string
-   (without a filename suffix), followed by the names of the Nim procs that
-   should be compiled into the Python module.
+   the `initPyModule()` macro, specifying the desired Python module name as a
+   string (without a filename suffix), followed by the names of the Nim procs
+   that should be compiled into the Python module.
   * **Tip:** You can use the `initPyModule()` macro multiple times at the end
-    of your Nim module, with different module names & different combinations of
-    Nim procs, to create multiple Pythom modules.
+    of your Nim module, with different Python module names & different
+    combinations of Nim procs, to create multiple Pythom modules.
 4. Invoke the supplied Python script `pmgen.py` with the filename of your
    Nim source code module as a command-line argument, to auto-generate &
    invoke a set of Makefiles that will in turn initiate & run the Pymod process.
@@ -372,6 +372,19 @@ And if you don't need to modify the array data at all, there is an even shorter
     for val in arr.values(int32):
       if val > maxVal:
         maxVal = val
+
+Likewise for `PyArrayRandomAccessIterator[T]`:
+
+    let bounds = arr.getBounds(int32)  # Iterator bounds
+    var iter = arr.accessFlat(int32)  # Random access iterator
+    while iter in bounds:
+      iter[] += 1
+      inc(iter, 3)
+
+and:
+
+    for iter in arr.accessFlat(int32, 3):
+      iter[] += 1
 
 Tips, warnings & gotchas
 ------------------------
