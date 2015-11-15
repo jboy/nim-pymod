@@ -461,6 +461,15 @@ iterator accessFlat*(arr: ptr PyArrayObject, NimT: typedesc[NumpyCompatibleNimTy
     inc(iter)
 
 
+iterator accessFlat*(arr: ptr PyArrayObject, NimT: typedesc[NumpyCompatibleNimType],
+    delta: int): PyArrayRandomAccessIterator[NimT] {.inline.} =
+  let bounds = arr.getBounds(NimT)
+  var iter = arr.accessFlat(NimT)
+  while iter in bounds:
+    yield iter
+    inc(iter, delta)
+
+
 proc getBoundsImpl(arr: ptr PyArrayObject, NimT: typedesc[NumpyCompatibleNimType],
     ii: tuple[filename: string, line: int], procname: string{lit}):
     PyArrayIteratorBounds[NimT] =
