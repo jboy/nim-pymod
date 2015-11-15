@@ -293,38 +293,44 @@ Here is a simple example of how to use `PyArrayObject` & `PyArrayForwardIterator
 
     import strutils  # `%`
     import pymod
+    import pymodpkg/docstrings
     import pymodpkg/pyarrayobject
 
-    proc addOne*(arr: ptr PyArrayObject) {.exportpy.} =
+    proc addVal*(arr: ptr PyArrayObject, val: int32) {.exportpy} =
+      docstring"""Add `val` to each element in the supplied Numpy array.
+
+      The array is assumed to have dtype `int32`; otherwise, a ValueError will be
+      raised.  The elements in the array will be modified in-place.
+      """
       let dt = arr.dtype
       echo "PyArrayObject has shape $1 and dtype $2" % [$arr.shape, $dt]
       if dt == np_int32:
         let bounds = arr.getBounds(int32)  # Iterator bounds
         var iter = arr.iterateForward(int32)  # Forward iterator
         while iter in bounds:
-          iter[] += 1
-          inc(iter)
+          iter[] += val
+          inc(iter)  # Increment the iterator manually.
       else:
         let msg = "expected array of dtype $1, received dtype $2" % [$np_int32, $dt]
         raise newException(ValueError, msg)
 
-    initPyModule("_myModule", addOne)
+    initPyModule("_myModule", addVal)
 
-You can test the Pymod-wrapped Nim proc `addOne` using a Python script like this:
+You can test the Pymod-wrapped Nim proc `addVal` using a Python script like this:
 
     import numpy as np
     import _myModule as mm
 
     a = np.arange(10, dtype=np.int32).reshape((2, 5))
     print(a)
-    mm.addOne(a)
+    mm.addval(a, 101)
     print(a)
 
     print("")
 
     b = np.arange(10, dtype=np.float32).reshape((2, 5))
     print(b)
-    mm.addOne(b)  # Uh-oh!  ValueError will be raised here!
+    mm.addVal(b, 101)  # Uh-oh!  ValueError will be raised here!
     print(b)
 
 The output from running this script will look something like this:
@@ -332,21 +338,21 @@ The output from running this script will look something like this:
     [[0 1 2 3 4]
      [5 6 7 8 9]]
     PyArrayObject has shape @[2, 5] and dtype numpy.int32
-    [[ 1  2  3  4  5]
-     [ 6  7  8  9 10]]
+    [[ 101 102 103 104 105]
+     [ 106 107 108 109 110]]
 
     [[ 0.  1.  2.  3.  4.]
      [ 5.  6.  7.  8.  9.]]
     PyArrayObject has shape @[2, 5] and dtype numpy.float32
     Traceback (most recent call last):
       File "test_arr1.py", line 13, in <module>
-        mm.addOne(b)  # Uh-oh!  ValueError will be raised here!
+        mm.addVal(b, 101)  # Uh-oh!  ValueError will be raised here!
     ValueError: expected input array of dtype numpy.int32, received dtype numpy.float32
     Nim traceback (most recent call last):
-      File "pmgen_myModule_wrap.nim", line 26, in exportpy_addOne
-      File "arr1.nim", line 16, in addOne
+      File "pmgen_myModule_wrap.nim", line 26, in exportpy_addVal
+      File "addvalmod.nim", line 16, in addVal
 
-Observe the `while`-loop that was used in `addOne` to iterate over the array.
+Observe the `while`-loop that was used in `addVal` to iterate over the array.
 This is the most flexible loop idiom for forward-iterating over an array,
 since you are able to control where, and how many times, the forward iterator
 will be incremented within the body of the loop:
@@ -354,8 +360,8 @@ will be incremented within the body of the loop:
     let bounds = arr.getBounds(int32)  # Iterator bounds
     var iter = arr.iterateForward(int32)  # Forward iterator
     while iter in bounds:
-      iter[] += 1
-      inc(iter)
+      iter[] += val
+      inc(iter)  # Increment the iterator manually
 
 However, this `while`-loop idiom is more verbose than it often needs to be.
 Often, you will only need to increment the forward iterator once per iteration,
@@ -363,7 +369,7 @@ at the end of the body of the loop; if this is all you need, there is a shorter
 `for`-loop idiom that you can use:
 
     for iter in arr.iterateForward(int32):
-      iter[] += 1
+      iter[] += val
 
 And if you don't need to modify the array data at all, there is an even shorter
 `for`-loop idiom that yields a succession of (read-only) array values:
@@ -378,13 +384,13 @@ Likewise for `PyArrayRandomAccessIterator[T]`:
     let bounds = arr.getBounds(int32)  # Iterator bounds
     var iter = arr.accessFlat(int32)  # Random access iterator
     while iter in bounds:
-      iter[] += 1
-      inc(iter, 3)
+      iter[] += val
+      inc(iter, incDelta)  # Increment the iterator manually
 
 and:
 
-    for iter in arr.accessFlat(int32, 3):
-      iter[] += 1
+    for iter in arr.accessFlat(int32, incDelta):
+      iter[] += val
 
 Tips, warnings & gotchas
 ------------------------
