@@ -122,32 +122,36 @@ There will now be a compiled Python extension module `hw.so` in the current dire
 
 In a Python interpreter, you can import the module and invoke the `greet` function:
 
-    >>> import hw
-    >>> hw.greet
-    <built-in function greet>
-    >>> hw.greet("World")
-    'Hello, World!'
-    >>>
+```Python
+>>> import hw
+>>> hw.greet
+<built-in function greet>
+>>> hw.greet("World")
+'Hello, World!'
+>>>
+```
 
 You can also invoke the built-in Python interpreter `help` function about the `greet` function:
 
-    >>> help(hw.greet)
-    Help on built-in function greet in module hw:
+```Python
+>>> help(hw.greet)
+Help on built-in function greet in module hw:
 
-    greet(...)
-        greet(audience: str) -> (str)
+greet(...)
+    greet(audience: str) -> (str)
 
-        Parameters
-        ----------
-        audience : str -> string
+    Parameters
+    ----------
+    audience : str -> string
 
-        Returns
-        -------
-        out : (str) <- (string)
+    Returns
+    -------
+    out : (str) <- (string)
 
-        Greet the specified audience with a familiar greeting.
+    Greet the specified audience with a familiar greeting.
 
-        The string returned will be a greeting directed specifically at that audience.
+    The string returned will be a greeting directed specifically at that audience.
+```
 
 There is additional example code in the `examples` directory.
 
