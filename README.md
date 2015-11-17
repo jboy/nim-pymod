@@ -447,9 +447,24 @@ But the Python types we want to use in Nim are already defined in Python!
 So `ctypes` would be more applicable to us if we wanted to make existing
 Nim data-structures available in Python, rather than the other way around.
 
-In the future, we might investigate the use of
-[CFFI](http://cffi.readthedocs.org/en/release-0.8/) &
-[cffiwrap](http://cffiwrap.readthedocs.org/en/latest/).
-These look (at a first, superficial glance) like they might be more
-Python-type-friendly than `ctypes`.
+On an initial reading,
+[Python CFFI](http://cffi.readthedocs.org/en/release-0.8/) &
+[cffiwrap](http://cffiwrap.readthedocs.org/en/latest/) appear to be more
+useful for exposing
+[existing Python types in C](http://cffi.readthedocs.org/en/latest/using.html#reference-conversions)
+than `ctypes` is.
+
+However, for the initial implementation of Pymod, we chose the
+[CPython C-API](https://docs.python.org/2/extending/index.html) &
+[Numpy C-API](http://docs.scipy.org/doc/numpy-1.10.0/reference/c-api.html)
+over `cffi` and/or `cffiwrap`.
+We reasoned that Nim is going to produce & auto-compile its own C code anyway,
+so if we generate C-API C code for our Python integration, this C code can be
+compiled & linked into a shared library by the Nim compiler itself -- thus
+ensuring that the same compiler settings are used for both the compilation &
+linking stages.
+
+We are considering implementing an additional `cffi` back-end for
+Pymod in the future.  This would be a significant step towards compatibility
+with the [PyPy Python interpreter](http://pypy.org/).
 
