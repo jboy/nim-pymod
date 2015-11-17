@@ -25,7 +25,7 @@ const pymod_c_mod_fname_template = "pmgen$1_capi.c"
 import hashes
 import macros
 #import parsecfg  # Can't seem to use this at compile-time
-import strutils
+import strutils  # `normalize`, `cmpIgnoreStyle`, `%`
 
 import pymodpkg/docstrings
 
@@ -270,7 +270,7 @@ proc parseModNameFromLineinfo(filename, mod_name: var string, li: string): bool 
 
 
 proc canonical(s: string): string {. compileTime .} =
-  return s.toLower.replace(", ", "")
+  return s.normalize()
 
 
 proc verifyProcNameUnique(proc_name: string, proc_def_node: NimNode) {. compileTime .} =
@@ -533,10 +533,9 @@ proc hasPragma(proc_def_node: NimNode; pragma_name: string): bool {. compileTime
     let node = proc_def_node[i]
     if node.kind == nnkPragma:
       for j in 0 .. <node.len:
-        if $(node[j]) == pragma_name:
+        if cmpIgnoreStyle($(node[j]), pragma_name) == 0:
           return true
   return false
-
 
 
 proc exportpyImpl*(
@@ -554,7 +553,7 @@ proc exportpyImpl*(
   let return_type_node = proc_params[0]  # This will always exist, even if Empty.
   let return_type_fmt_tuple = getReturnType(pyObjectTypeDefs, return_type_node)
 
-  let return_dict = proc_def_node.hasPragma("return_dict")
+  let return_dict = proc_def_node.hasPragma("returnDict")
 
   # NOTE:  We expect that each `param_node` is of kind `nnkIdentDefs`:
   # it defines an identifier as a parameter-name with a type.  However,
@@ -1194,7 +1193,7 @@ proc extendWithOneNimWrapperProcDef(output_lines: var seq[string],
         else:
           "Create a new PyObject value from the Nim value."
       if pp.return_dict:
-        comment = comment & " Ignoring \"return_dict\" pragma for non-tuple."
+        comment = comment & " Ignoring \"returnDict\" pragma for non-tuple."
 
       return_val = "Py_BuildValue(\"$1\", return_val)" % return_type_fmt_str
     elif pp.return_dict:
