@@ -94,22 +94,24 @@ Example
 
 Here's a short "Hello world" example (assumed to be in a file called `greeting.nim`):
 
-    ## Compile this Nim module using the following command:
-    ##   python path/to/pmgen.py greeting.nim
+'''Nimrod
+## Compile this Nim module using the following command:
+##   python path/to/pmgen.py greeting.nim
 
-    import strutils  # `%` operator
+import strutils  # `%` operator
 
-    import pymod
-    import pymodpkg/docstrings
+import pymod
+import pymodpkg/docstrings
 
-    proc greet*(audience: string): string {.exportpy.} =
-      docstring"""Greet the specified audience with a familiar greeting.
+proc greet*(audience: string): string {.exportpy.} =
+  docstring"""Greet the specified audience with a familiar greeting.
 
-      The string returned will be a greeting directed specifically at that audience.
-      """
-      return "Hello, $1!" % audience
+  The string returned will be a greeting directed specifically at that audience.
+  """
+  return "Hello, $1!" % audience
 
-    initPyModule("hw", greet)
+initPyModule("hw", greet)
+'''
 
 Use the Python script `pmgen.py` to auto-generate & compile the boilerplate code:
 
@@ -291,47 +293,51 @@ PyArrayObject & PyArrayIterator usage example
 
 Here is a simple example of how to use `PyArrayObject` & `PyArrayForwardIterator[T]`:
 
-    import strutils  # `%`
-    import pymod
-    import pymodpkg/docstrings
-    import pymodpkg/pyarrayobject
+'''Nimrod
+import strutils  # `%`
+import pymod
+import pymodpkg/docstrings
+import pymodpkg/pyarrayobject
 
-    proc addVal*(arr: ptr PyArrayObject, val: int32) {.exportpy} =
-      docstring"""Add `val` to each element in the supplied Numpy array.
+proc addVal*(arr: ptr PyArrayObject, val: int32) {.exportpy} =
+  docstring"""Add `val` to each element in the supplied Numpy array.
 
-      The array is assumed to have dtype `int32`; otherwise, a ValueError will be
-      raised.  The elements in the array will be modified in-place.
-      """
-      let dt = arr.dtype
-      echo "PyArrayObject has shape $1 and dtype $2" % [$arr.shape, $dt]
-      if dt == np_int32:
-        let bounds = arr.getBounds(int32)  # Iterator bounds
-        var iter = arr.iterateForward(int32)  # Forward iterator
-        while iter in bounds:
-          iter[] += val
-          inc(iter)  # Increment the iterator manually.
-      else:
-        let msg = "expected array of dtype $1, received dtype $2" % [$np_int32, $dt]
-        raise newException(ValueError, msg)
+  The array is assumed to have dtype `int32`; otherwise, a ValueError will be
+  raised.  The elements in the array will be modified in-place.
+  """
+  let dt = arr.dtype
+  echo "PyArrayObject has shape $1 and dtype $2" % [$arr.shape, $dt]
+  if dt == np_int32:
+    let bounds = arr.getBounds(int32)  # Iterator bounds
+    var iter = arr.iterateForward(int32)  # Forward iterator
+    while iter in bounds:
+      iter[] += val
+      inc(iter)  # Increment the iterator manually.
+  else:
+    let msg = "expected array of dtype $1, received dtype $2" % [$np_int32, $dt]
+    raise newException(ValueError, msg)
 
-    initPyModule("_myModule", addVal)
+initPyModule("_myModule", addVal)
+'''
 
 You can test the Pymod-wrapped Nim proc `addVal` using a Python script like this:
 
-    import numpy as np
-    import _myModule as mm
+'''Python
+import numpy as np
+import _myModule as mm
 
-    a = np.arange(10, dtype=np.int32).reshape((2, 5))
-    print(a)
-    mm.addVal(a, 101)
-    print(a)
+a = np.arange(10, dtype=np.int32).reshape((2, 5))
+print(a)
+mm.addVal(a, 101)
+print(a)
 
-    print("")
+print("")
 
-    b = np.arange(10, dtype=np.float32).reshape((2, 5))
-    print(b)
-    mm.addVal(b, 101)  # Uh-oh!  ValueError will be raised here!
-    print(b)
+b = np.arange(10, dtype=np.float32).reshape((2, 5))
+print(b)
+mm.addVal(b, 101)  # Uh-oh!  ValueError will be raised here!
+print(b)
+'''
 
 The output from running this script will look something like this:
 
@@ -357,40 +363,50 @@ This is the most flexible loop idiom for forward-iterating over an array,
 since you are able to control where, and how many times, the forward iterator
 will be incremented within the body of the loop:
 
-    let bounds = arr.getBounds(int32)  # Iterator bounds
-    var iter = arr.iterateForward(int32)  # Forward iterator
-    while iter in bounds:
-      iter[] += val
-      inc(iter)  # Increment the iterator manually
+'''Nimrod
+let bounds = arr.getBounds(int32)  # Iterator bounds
+var iter = arr.iterateForward(int32)  # Forward iterator
+while iter in bounds:
+  iter[] += val
+  inc(iter)  # Increment the iterator manually
+'''
 
 However, this `while`-loop idiom is more verbose than it often needs to be.
 Often, you will only need to increment the forward iterator once per iteration,
 at the end of the body of the loop; if this is all you need, there is a shorter
 `for`-loop idiom that you can use:
 
-    for iter in arr.iterateForward(int32):
-      iter[] += val
+'''Nimrod
+for iter in arr.iterateForward(int32):
+  iter[] += val
+'''
 
 And if you don't need to modify the array data at all, there is an even shorter
 `for`-loop idiom that yields a succession of (read-only) array values:
 
-    var maxVal: int32 = low(int32)
-    for val in arr.values(int32):
-      if val > maxVal:
-        maxVal = val
+'''Nimrod
+var maxVal: int32 = low(int32)
+for val in arr.values(int32):
+  if val > maxVal:
+    maxVal = val
+'''
 
 Likewise for `PyArrayRandomAccessIterator[T]`:
 
-    let bounds = arr.getBounds(int32)  # Iterator bounds
-    var iter = arr.accessFlat(int32)  # Random access iterator
-    while iter in bounds:
-      iter[] += val
-      inc(iter, incDelta)  # Increment the iterator manually
+'''Nimrod
+let bounds = arr.getBounds(int32)  # Iterator bounds
+var iter = arr.accessFlat(int32)  # Random access iterator
+while iter in bounds:
+  iter[] += val
+  inc(iter, incDelta)  # Increment the iterator manually
+'''
 
 and:
 
-    for iter in arr.accessFlat(int32, incDelta):
-      iter[] += val
+'''Nimrod
+for iter in arr.accessFlat(int32, incDelta):
+  iter[] += val
+'''
 
 These code examples are all available in full in the `examples` directory.
 
