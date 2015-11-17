@@ -94,7 +94,7 @@ Example
 
 Here's a short "Hello world" example (assumed to be in a file called `greeting.nim`):
 
-'''Nimrod
+```Nimrod
 ## Compile this Nim module using the following command:
 ##   python path/to/pmgen.py greeting.nim
 
@@ -111,7 +111,7 @@ proc greet*(audience: string): string {.exportpy.} =
   return "Hello, $1!" % audience
 
 initPyModule("hw", greet)
-'''
+```
 
 Use the Python script `pmgen.py` to auto-generate & compile the boilerplate code:
 
@@ -293,7 +293,7 @@ PyArrayObject & PyArrayIterator usage example
 
 Here is a simple example of how to use `PyArrayObject` & `PyArrayForwardIterator[T]`:
 
-'''Nimrod
+```Nimrod
 import strutils  # `%`
 import pymod
 import pymodpkg/docstrings
@@ -318,11 +318,11 @@ proc addVal*(arr: ptr PyArrayObject, val: int32) {.exportpy} =
     raise newException(ValueError, msg)
 
 initPyModule("_myModule", addVal)
-'''
+```
 
 You can test the Pymod-wrapped Nim proc `addVal` using a Python script like this:
 
-'''Python
+```Python
 import numpy as np
 import _myModule as mm
 
@@ -337,7 +337,7 @@ b = np.arange(10, dtype=np.float32).reshape((2, 5))
 print(b)
 mm.addVal(b, 101)  # Uh-oh!  ValueError will be raised here!
 print(b)
-'''
+```
 
 The output from running this script will look something like this:
 
@@ -363,50 +363,50 @@ This is the most flexible loop idiom for forward-iterating over an array,
 since you are able to control where, and how many times, the forward iterator
 will be incremented within the body of the loop:
 
-'''Nimrod
+```Nimrod
 let bounds = arr.getBounds(int32)  # Iterator bounds
 var iter = arr.iterateForward(int32)  # Forward iterator
 while iter in bounds:
   iter[] += val
   inc(iter)  # Increment the iterator manually
-'''
+```
 
 However, this `while`-loop idiom is more verbose than it often needs to be.
 Often, you will only need to increment the forward iterator once per iteration,
 at the end of the body of the loop; if this is all you need, there is a shorter
 `for`-loop idiom that you can use:
 
-'''Nimrod
+```Nimrod
 for iter in arr.iterateForward(int32):
   iter[] += val
-'''
+```
 
 And if you don't need to modify the array data at all, there is an even shorter
 `for`-loop idiom that yields a succession of (read-only) array values:
 
-'''Nimrod
+```Nimrod
 var maxVal: int32 = low(int32)
 for val in arr.values(int32):
   if val > maxVal:
     maxVal = val
-'''
+```
 
 Likewise for `PyArrayRandomAccessIterator[T]`:
 
-'''Nimrod
+```Nimrod
 let bounds = arr.getBounds(int32)  # Iterator bounds
 var iter = arr.accessFlat(int32)  # Random access iterator
 while iter in bounds:
   iter[] += val
   inc(iter, incDelta)  # Increment the iterator manually
-'''
+```
 
 and:
 
-'''Nimrod
+```Nimrod
 for iter in arr.accessFlat(int32, incDelta):
   iter[] += val
-'''
+```
 
 These code examples are all available in full in the `examples` directory.
 
