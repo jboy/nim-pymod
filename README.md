@@ -153,7 +153,8 @@ greet(...)
     The string returned will be a greeting directed specifically at that audience.
 ```
 
-There is additional example code in the `examples` directory.
+There is additional example code in the
+[examples](https://github.com/jboy/nim-pymod/tree/master/examples) directory.
 
 System requirements
 -------------------
@@ -412,7 +413,8 @@ for iter in arr.accessFlat(int32, incDelta):
   iter[] += val
 ```
 
-These code examples are all available in full in the `examples` directory.
+These code examples are all available in full in the
+[examples](https://github.com/jboy/nim-pymod/tree/master/examples) directory.
 
 Tips, warnings & gotchas
 ------------------------
