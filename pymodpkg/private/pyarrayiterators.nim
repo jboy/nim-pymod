@@ -60,15 +60,14 @@ type PyArrayForwardIterator*[T] = object
     high: ptr T
 
 
-proc initPyArrayForwardIterator*[T](
-    fi: var PyArrayForwardIterator[T],
-    arr: ptr PyArrayObject) {. inline .} =
+proc initPyArrayForwardIterator*[T](arr: ptr PyArrayObject):
+    PyArrayForwardIterator[T] {. inline .} =
   let (low, high) = getLowHighBounds[T](arr)
-  fi.pos = low
   when doIterRangeChecks:
     # Check ranges.  Catch mistakes.
-    fi.low = low
-    fi.high = high
+    result = PyArrayForwardIterator[T](pos: low, low: low, high: high)
+  else:
+    result = PyArrayForwardIterator[T](pos: low)
 
 
 when doIterRangeChecks:
@@ -170,15 +169,14 @@ type PyArrayRandomAccessIterator*[T] = object
     high: ptr T
 
 
-proc initPyArrayRandomAccessIterator*[T](
-    rai: var PyArrayRandomAccessIterator[T],
-    arr: ptr PyArrayObject) {. inline .} =
+proc initPyArrayRandomAccessIterator*[T](arr: ptr PyArrayObject):
+    PyArrayRandomAccessIterator[T] {. inline .} =
   let (low, high) = getLowHighBounds[T](arr)
-  rai.pos = low
   when doIterRangeChecks:
     # Check ranges.  Catch mistakes.
-    rai.low = low
-    rai.high = high
+    result = PyArrayRandomAccessIterator[T](pos: low, low: low, high: high)
+  else:
+    result = PyArrayRandomAccessIterator[T](pos: low)
 
 
 when doIterRangeChecks:
@@ -324,12 +322,10 @@ type PyArrayIteratorBounds*[T] = object
   high: ptr T
 
 
-proc initPyArrayIteratorBounds*[T](
-    bounds: var PyArrayIteratorBounds[T];
-    arr: ptr PyArrayObject) {. inline .} =
+proc initPyArrayIteratorBounds*[T](arr: ptr PyArrayObject):
+    PyArrayIteratorBounds[T] {. inline .} =
   let (low, high) = getLowHighBounds[T](arr)
-  bounds.low = low
-  bounds.high = high
+  result = PyArrayIteratorBounds[T](low: low, high: high)
 
 
 template contains*[T](

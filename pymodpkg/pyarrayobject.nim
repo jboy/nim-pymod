@@ -364,7 +364,7 @@ proc iterateForwardImpl(arr: ptr PyArrayObject, NimT: typedesc[NumpyCompatibleNi
     PyArrayForwardIterator[NimT] =
   assertArrayType(arr, NimT, ii, procname)
   assertArrayCContigForIterator(arr, ii, procname)
-  initPyArrayForwardIterator(result, arr)
+  result = initPyArrayForwardIterator[NimT](arr)
 
 
 template iterateForward*(arr: ptr PyArrayObject, NimT: typedesc[NumpyCompatibleNimType]):
@@ -421,7 +421,7 @@ proc accessFlatImpl(arr: ptr PyArrayObject, NimT: typedesc[NumpyCompatibleNimTyp
     PyArrayRandomAccessIterator[NimT] =
   assertArrayType(arr, NimT, ii, procname)
   assertArrayCContigForIterator(arr, ii, procname)
-  initPyArrayRandomAccessIterator(result, arr)
+  result = initPyArrayRandomAccessIterator[NimT](arr)
 
 
 template accessFlat*(arr: ptr PyArrayObject, NimT: typedesc[NumpyCompatibleNimType]):
@@ -488,7 +488,7 @@ proc getBoundsImpl(arr: ptr PyArrayObject, NimT: typedesc[NumpyCompatibleNimType
     ii: InstantiationInfoTuple, procname: string{lit}):
     PyArrayIteratorBounds[NimT] =
   assertArrayType(arr, NimT, ii, procname)
-  initPyArrayIteratorBounds(result, arr)
+  result = initPyArrayIteratorBounds[NimT](arr)
 
 
 template getBounds*(arr: ptr PyArrayObject, NimT: typedesc[NumpyCompatibleNimType]):
