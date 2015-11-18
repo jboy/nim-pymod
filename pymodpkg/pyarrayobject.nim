@@ -593,7 +593,7 @@ template createSimpleNew*(dims: CArrayProxy[npy_intp], nptype: NpType):
       WhereItCameFrom.AllocInNim, "createSimpleNew", ii)
 
 
-proc assertNewshapeNotExceedMaxDims(dims: openarray[int],
+proc assertNewShapeLengthLessEqualMaxDims(dims: openarray[int],
     created_at: InstantiationInfoTuple, procname: string) =
   # To see for yourself that Python-Numpy enforces a limit on the length of
   # the tuple of dimensions a caller is allowed to supply, run this little
@@ -611,38 +611,40 @@ proc assertNewshapeNotExceedMaxDims(dims: openarray[int],
   # It will raise a ValueError("sequence too large; must be smaller than 32")
   # when the length of `t` is 33 or larger.
   if dims.len > NPY_MAXDIMS:
-    let msg = "$1: Supplied shape array is too long ($2 elems); must be <= Numpy max of $3 [File \"$4\", line $5]" %
+    let msg = "$1: Supplied Numpy shape array is too long: supplied length == $2, but Numpy upper limit == $3 [File \"$4\", line $5]" %
         [procname, $(dims.len), $NPY_MAXDIMS, created_at.filename, $created_at.line]
     # http://nim-lang.org/docs/system.html#ValueError
     raise newException(ValueError, msg)
 
+{.push warning[Uninit]: off.}
 
 proc createSimpleNewOpenArrayImpl(dims: openarray[int], nptype: NpType,
     created_at: InstantiationInfoTuple, procname: string{lit}):
     ptr PyArrayObject =
-  # Since we're passing an array into C, the size (ie, number of bytes)
-  # of each element will be used to step from one element to the next.
+  # Since we're passing an array into C, the size of (ie, number of bytes of)
+  # each element will be used to step from one element to the next.
   # Hence, while `int` is a convenient element type for us to use in Nim
   # (since `int` is the type of an unadorned integer literal), we must ensure
-  # that the array we pass into C is of the appropriately-sized element.
+  # that the array we pass into C is of the appropriately-sized element type.
   #
-  # Create a new temporary array of `npy_intp` elements (the type that the
-  # Numpy C-API expects), in case `npy_intp` is not the same size as `int`.
+  # Create a new temporary array of `npy_intp` elements (the element type that
+  # the Numpy C-API expects), in case `npy_intp` is not the same size as `int`.
   var dims_holder: array[NPY_MAXDIMS, npy_intp]
 
   # Complain if the shape specified by the caller has more dimensions than
   # `NPY_MAXDIMS` (the maximum number of dimensions that Numpy allows).
-  assertNewshapeNotExceedMaxDims(dims, created_at, procname)
+  assertNewShapeLengthLessEqualMaxDims(dims, created_at, procname)
 
-  # We've ensured that (dims.len <= NPY_MAXDIMS), so there's no chance we will
-  # overrun the buffer here.
-  let num_dims = dims.len
+  # We've already ensured that (dims.len <= NPY_MAXDIMS), so there's no chance
+  # we can overrun the buffer here.
+  let num_dims = min(dims.len, NPY_MAXDIMS)
   for i in 0.. <num_dims:
     dims_holder[i] = npy_intp(dims[i])
 
   let dims_ptr = addr(dims_holder[0])
   result = createSimpleNewImpl(cint(num_dims), dims_ptr, ord(nptype.toCNpyTypes))
 
+{.pop.}  # {.push warning[Uninit]: off.}
 
 template createSimpleNew*(dims: openarray[int], nptype: NpType):
     ptr PyArrayObject =
@@ -767,6 +769,8 @@ proc doResizeDataInplaceImpl(old: ptr PyArrayObject, nd: cint, dims: ptr npy_int
   ## http://docs.scipy.org/doc/numpy/reference/c-api.array.html#c.PyArray_Resize
 
 
+{.push warning[Uninit]: off.}
+
 proc doResizeDataInplaceOpenArrayImpl(old: ptr PyArrayObject, newShape: openarray[int], doRefCheck: bool,
     created_at: InstantiationInfoTuple, procname: string) =
   # Since we're passing an array into C, the size (ie, number of bytes)
@@ -781,16 +785,18 @@ proc doResizeDataInplaceOpenArrayImpl(old: ptr PyArrayObject, newShape: openarra
 
   # Complain if the shape specified by the caller has more dimensions than
   # `NPY_MAXDIMS` (the maximum number of dimensions that Numpy allows).
-  assertNewshapeNotExceedMaxDims(newShape, created_at, procname)
+  assertNewShapeLengthLessEqualMaxDims(newShape, created_at, procname)
 
-  # We've ensured that (dims.len <= NPY_MAXDIMS), so there's no chance we will
-  # overrun the buffer here.
-  let num_dims = newShape.len
+  # We've already ensured that (dims.len <= NPY_MAXDIMS), so there's no chance
+  # we can overrun the buffer here.
+  let num_dims = min(newShape.len, NPY_MAXDIMS)
   for i in 0.. <num_dims:
     dims_holder[i] = npy_intp(newShape[i])
 
   let dims_ptr = addr(dims_holder[0])
   doResizeDataInplaceImpl(old, cint(num_dims), dims_ptr, cint(doRefCheck))
+
+{.pop.}  # {.push warning[Uninit]: off.}
 
 
 template doResizeDataInplace*(old: ptr PyArrayObject, newShape: openarray[int], doRefCheck: bool=true) =
@@ -823,13 +829,15 @@ template doResizeDataInplace*(old: ptr PyArrayObject, newShape: openarray[int], 
   doResizeDataInplaceOpenArrayImpl(old, newShape, doRefCheck, ii, "doResizeDataInplace")
 
 
+{.push warning[Uninit]: off.}
+
 proc doResizeDataInplaceNumRows*(old: ptr PyArrayObject, newNumRows: int, doRefCheck: bool=true) =
   # Create a new temporary array of `npy_intp` elements (the type that
   # the Numpy C-API expects) containing the desired new shape.
   var dims_holder: array[NPY_MAXDIMS, npy_intp]
 
   # The number of dimensions must already be valid (or else the PyArrayObject
-  # wouldn't exist!), so there's no chance we will overrun the buffer here.
+  # wouldn't exist!), so there's no chance we can overrun the buffer here.
   for i, d in old.enumerateDimensions:
     dims_holder[i] = d
 
@@ -838,3 +846,5 @@ proc doResizeDataInplaceNumRows*(old: ptr PyArrayObject, newNumRows: int, doRefC
 
   let dims_ptr = addr(dims_holder[0])
   doResizeDataInplaceImpl(old, old.ndim, dims_ptr, cint(doRefCheck))
+
+{.pop.}  # {.push warning[Uninit]: off.}

@@ -9,6 +9,10 @@
   * http://stackoverflow.com/questions/9316179/what-is-the-correct-way-to-pass-a-boolean-to-a-python-c-extension
 * After that, enable `bool` parameter to be a default parameter.
   * Start at proc `getDefaultValue` in "pymodpkg/private/impls.nim".
+* When a `ptr PyArrayObject` is being returned from an `exportpy`-ed Nim proc, annotate it `not nil`.
+  * http://nim-lang.org/docs/manual.html#types-not-nil-annotation
+  * This will enable compile-time checking to ensure you haven't forgotten to assign a result.
+  * Otherwise, the C-API conversion-back-to-Python code receives a NULL pointer, and fails.
 * Do the tests in the "tests" directory properly.  Probably using Python's `unittest` or `nose2`?
   * http://www.drdobbs.com/testing/unit-testing-with-python/240165163
   * http://pythontesting.net/framework/unittest/unittest-introduction/
