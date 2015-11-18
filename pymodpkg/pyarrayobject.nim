@@ -50,20 +50,31 @@
 ##  - PyArray_CopyInto -> doCopyInto
 ##  - PyArray_FILLWBYTE -> doFILLWBYTE
 ##
-## The functions to create new arrays require both a shape parameter & a dtype
-## parameter.  There are 3 ways to specify a shape parameter:
-##  1. (nd: cint, dims: ptr npy_intp), as per the Numpy C-API.
-##  2. CArrayProxy[npy_intp], a wrapper around (nd: cint, dims: ptr npy_intp)
-##      that's returned by the `.dimensions` & `.shape` accessors of PyArrayObject.
-##  3. openarray[int], so you can pass Nim array literals [5, 4, 3].
+## The Numpy C functions to create new arrays require both a shape parameter &
+## a dtype parameter.
+##
+## In the Numpy C-API, an array's shape is described using the attribute pair
+## `(nd: cint, dims: ptr npy_intp)`.  This pair of attributes is also supplied
+## to Numpy C-API array creation functions to specify the shape of a new array.
+## Pymod provides the wrapper procs `arr.getNDIM()` & `arr.getDIMS()` to access
+## these attributes.
+##
+## However, it is not necessary to use these two wrapper procs; Pymod makes it
+## easier to specify a shape parameter.  In Pymod, there are 2 ways to specify
+## a shape parameter:
+##  1. `CArrayProxy[npy_intp]`, a simple Nim wrapper type around
+##     `(nd: cint, dims: ptr npy_intp)`.  A `CArrayProxy[npy_intp]` instance
+##     is returned by the PyArrayObject accessors `.dimensions`, `strides` &
+##     `.shape`.
+##  2. `openArray[int]`, so you can supply Nim array literals; eg, `[5, 4, 3]`.
 ##
 ## There are 4 ways to specify a dtype parameter:
-##  1, dtype: ptr PyArrayDescr, as per the Numpy C-API.
-##  2. typenum: cint, also as per the Numpy C-API.
-##  3. typenum: NpyTypeNums, a Nim enum that matches the C `NPY_TYPES` from <numpy/ndarraytypes.h>;
-##      eg: NPY_UBYTE.
-##  4. nptype: NpType, a Nim enum that contains only the dtypes that Pymod supports; eg: np_uint8.
-##
+##  1, `dtype: ptr PyArrayDescr`, as per the Numpy C-API.
+##  2. `typenum: cint`, as per the Numpy C-API.
+##  3. `typenum: NpyTypeNums`, a Nim enum that matches the C `NPY_TYPES` from
+##     `<numpy/ndarraytypes.h>`; eg: `NPY_UBYTE`.
+##  4. `nptype: NpType`, a Nim enum that contains *only* the dtypes that Pymod
+##     supports; eg: `np_uint8`.  This is the recommended method in Pymod.
 ##
 ## Any proc that either allocates a new PyObject that must be memory-managed
 ## (such as a PyArrayObject), or could raise an exception, will be provided as
@@ -82,7 +93,6 @@
 ##  - createNewLikeArray(prototype: ptr PyArrayObject, order: NpyOrderAlternatives,
 ##        dtype: ptr PyArrayDescr, subOk: bool): ptr PyArrayObject
 ##
-##  - createSimpleNew(nd: cint, dims: ptr npy_intp, typenum: NpyTypeNums): ptr PyArrayObject
 ##  - createSimpleNew(dims: CArrayProxy[npy_intp], nptype: NpType): ptr PyArrayObject
 ##  - createSimpleNew(dims: openarray[int], nptype: NpType): ptr PyArrayObject
 ##
@@ -568,15 +578,6 @@ proc createSimpleNewImpl(nd: cint, dims: ptr npy_intp, typenum: cint): ptr PyArr
   ## given).
   ##
   ## http://docs.scipy.org/doc/numpy/reference/c-api.array.html#c.PyArray_SimpleNew
-
-
-template createSimpleNew*(nd: cint, dims: ptr npy_intp, typenum: NpyTypeNums):
-    ptr PyArrayObject =
-  # http://nim-lang.org/system.html#instantiationInfo,
-  let ii = instantiationInfo()
-  registerNewPyObject(
-      createSimpleNewImpl(nd, dims, ord(typenum)),
-      WhereItCameFrom.AllocInNim, "createSimpleNew", ii)
 
 
 template createSimpleNew*(dims: CArrayProxy[npy_intp], nptype: NpType):
