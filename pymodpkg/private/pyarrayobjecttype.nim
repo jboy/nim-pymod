@@ -176,8 +176,7 @@ proc elcount*(arr: ptr PyArrayObject): npy_intp {. inline .} =
 
 
 proc dimensions*(arr: ptr PyArrayObject): CArrayProxy[npy_intp] {. inline .} =
-  result.n = arr.nd
-  result.p = getDIMS(arr)
+  CArrayProxy[npy_intp](p: getDIMS(arr), n: arr.nd)
 
 
 proc shape*(arr: ptr PyArrayObject): CArrayProxy[npy_intp] {. inline .} =
@@ -185,8 +184,7 @@ proc shape*(arr: ptr PyArrayObject): CArrayProxy[npy_intp] {. inline .} =
   ## since there's already `PyArray_SHAPE` as a synonym for `PyArray_DIMS`,
   ## and the Python object attribute is `shape`, I figure we might as well
   ## offer a `shape` attribute here too.
-  result.n = arr.nd
-  result.p = getSHAPE(arr)
+  CArrayProxy[npy_intp](p: getDIMS(arr), n: arr.nd)
 
 
 iterator enumerateStrides*(arr: ptr PyArrayObject): tuple[idx: cint, val: npy_intp] {. inline .} =
@@ -200,8 +198,7 @@ iterator enumerateStrides*(arr: ptr PyArrayObject): tuple[idx: cint, val: npy_in
 
 
 proc strides*(arr: ptr PyArrayObject): CArrayProxy[npy_intp] {. inline .} =
-  result.n = arr.nd
-  result.p = getSTRIDES(arr)
+  CArrayProxy[npy_intp](p: getSTRIDES(arr), n: arr.nd)
 
 
 template descr*(arr: ptr PyArrayObject): ptr PyArrayDescr =
