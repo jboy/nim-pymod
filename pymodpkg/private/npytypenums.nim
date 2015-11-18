@@ -80,7 +80,7 @@ proc toNpType*(type_num: cint): NpType =
     raise newException(ValueError, msg)
 
 
-proc toNpyTypeNums*(nptype: NpType): NpyTypeNums =
+proc toNpyTypeNums*(nptype: NpType): NpyTypeNums {. inline, nosideEffect .} =
   case nptype
   of np_bool: result = NpyTypeNums.NPY_BOOL
   of np_int8: result = NpyTypeNums.NPY_BYTE
