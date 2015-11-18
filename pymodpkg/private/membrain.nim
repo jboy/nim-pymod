@@ -115,12 +115,6 @@ proc registerNewPyObject*[T](obj: ptr T,
   return cast[ptr T](registerNewPyObjectImpl(py_obj, from_where, which_func, created_at))
 
 
-# NOTE:  We no longer register PyObjects that were passed in from Python.
-#template registerPyObjectFromPython*[T](obj: ptr T, which_func: string) =
-#  let ii = instantiationinfo()
-#  discard registerNewPyObject(obj, WhereItCameFrom.AllocInPython, which_func, ii)
-
-
 proc decRefAllRegisteredPyObjects*() =
   when DoPrintDebugInfo:
     echo("\ndecRefAllRegisteredPyObjects()...")
@@ -129,8 +123,7 @@ proc decRefAllRegisteredPyObjects*() =
     when DoPrintDebugInfo:
       rpo.echoInfo("Processing registered PyObject")
 
-# NOTE:  We no longer register PyObjects that were passed in from Python.
-#
+# We don't register PyObjects that were passed in from Python.
 #    if rpo.from_where == WhereItCameFrom.AllocInPython:
 #      # This PyObject was passed in from Python through the C API.
 #      #
