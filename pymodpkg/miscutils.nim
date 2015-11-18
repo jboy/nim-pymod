@@ -55,28 +55,35 @@ proc getGenericTypeName*[X](x: X): string =
     result = n.substr(0, bracket_idx-1)  # -1 to exclude the `[`
 
 
-proc parseStackTraceLine(line: string,
-    filename: var string, linenum: var int, funcname: var string): bool =
-  let i = line.find('(')
-  if i == -1:
-    return false
-  let filename_part: string = line.substr(0, i-1)
-  let rest: string = line.substr(i+1)
+proc parseStackTraceLine(line: string):
+    tuple[filename: string; linenum: int; funcname: string; success: bool] =
+  # FIXME:  Is there a better way to accomplish this?  ie, a stdlib Nim proc?
+  result = (nil, 0, nil, false)
 
-  let j = rest.find(')')
-  if j == -1:
-    return false
-  let linenum_part = rest.substr(0, j-1)
-  let funcname_part = rest.substr(j+1)
+  # A stack trace line should look something like one of these:
+  #   testpymod3_pymod_wrap.nim(102) exportpy_myNumpyAdd
+  #   testPymod.nim(163)       myNumpyAdd
+  #   pyarrayiterators.nim(51) []
+  let lparen_idx = line.find('(')
+  if lparen_idx == -1:  # not found
+    return
+  if lparen_idx == 0:  # zero-length filename??
+    return
+  let filename_part = line.substr(0, lparen_idx-1)
+  let after_lparen = line.substr(lparen_idx+1)
+
+  let rparen_idx = after_lparen.find(')')
+  if rparen_idx == -1:  # not found
+    return
+  let linenum_part = after_lparen.substr(0, rparen_idx-1)
+  let funcname_part = after_lparen.substr(rparen_idx+1)
   for c in linenum_part:
     if c notin Digits:
-      return false
+      return
 
-  filename = filename_part
-  linenum = parseInt(linenum_part)
-  funcname = funcname_part.strip()
-
-  return true
+  let linenum: int = parseInt(linenum_part)
+  let funcname: string = funcname_part.strip()
+  result = (filename_part, linenum, funcname, true)
 
 
 proc prettyPrintStackTrace*(input: string): string =
@@ -103,9 +110,8 @@ proc prettyPrintStackTrace*(input: string): string =
   #   pyarrayiterators.nim(51) []
   for i in 1.. <num_lines:
     let line = lines[i]
-    var filename, funcname: string
-    var linenum: int
-    if not parseStackTraceLine(line, filename, linenum, funcname):
+    let (filename, linenum, funcname, success) = parseStackTraceLine(line)
+    if not success:
       # Unable to parse line.  Just store it, unparsed.
       output_lines.add(line)
       continue

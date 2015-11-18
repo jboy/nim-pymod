@@ -258,10 +258,11 @@ proc verifyProcDef(proc_def_node: NimNode, error_msg: string): string {. compile
   result = proc_name_without_asterisk
 
 
-proc parseModNameFromLineinfo(li: string): tuple[path_and_filename, mod_name: string] {. compileTime .} =
+proc parseModNameFromLineinfo(li: string):
+    tuple[path_and_filename, mod_name: string; success: bool] {. compileTime .} =
   # FIXME:  Is there a better way to accomplish this?  ie, a stdlib Nim proc?
+  result = (nil, nil, false)
 
-  result = (nil, nil)
   # The NimNode.lineinfo string takes the form "path/to/filename(line, col)".
   #  -- http://nim-lang.org/docs/macros.html#lineinfo,NimNode
   #
@@ -275,15 +276,15 @@ proc parseModNameFromLineinfo(li: string): tuple[path_and_filename, mod_name: st
   if ext != ".nim":
     return
 
-  result = (path_and_filename, mod_name)
+  result = (path_and_filename, mod_name, true)
 
 
 proc verifyProcNameUnique(proc_name: string, proc_def_node: NimNode) {. compileTime .} =
   # Is the identifier-to-be of `proc_name` already in use as the module name?
   # If so, warn now, or it will cause cryptic problems later.
   let li: string = proc_def_node.lineinfo
-  let (path_and_filename, mod_name) = parseModNameFromLineinfo(li)
-  if mod_name == nil:
+  let (path_and_filename, mod_name, success) = parseModNameFromLineinfo(li)
+  if not success:
     # It didn't work.  Oh well, we were only trying to help.
     return
 
