@@ -236,10 +236,10 @@ export nptypes.NumpyCompatibleNimType
 export nptypes.NpType
 export nptypes.toNpType
 
-import pymodpkg/private/npytypenums
-export npytypenums.NpyTypeNums
-export npytypenums.toNpType
-export npytypenums.toNpyTypeNums
+import pymodpkg/private/cnpytypes
+export cnpytypes.NpyTypeNums
+export cnpytypes.toNpType
+export cnpytypes.toNpyTypeNums
 
 import pymodpkg/private/pyarraydescrtype
 export pyarraydescrtype.PyArrayDescr

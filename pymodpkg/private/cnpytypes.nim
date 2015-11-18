@@ -27,6 +27,8 @@ import pymodpkg/private/nptypes
 # or an enum, but I couldn't work out how to do that -- neither directly from
 # the Numpy header, nor from my own C header/source file.)
 #
+# FIXME:  Work out how to load/mirror this enum directly from the C header.
+#
 # Also potentially of interest: enum NPY_TYPECHAR in the same header.
 type NpyTypeNums* {. pure .} = enum
   NPY_BOOL = 0,
