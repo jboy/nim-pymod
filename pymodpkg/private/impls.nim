@@ -25,6 +25,7 @@ const pymod_c_mod_fname_template = "pmgen$1_capi.c"
 import hashes
 import macros
 #import parsecfg  # Can't seem to use this at compile-time
+import os  # `splitFile`
 import strutils  # `normalize`, `cmpIgnoreStyle`, `%`
 
 import pymodpkg/docstrings
@@ -246,7 +247,7 @@ proc verifyProcDef(proc_def_node: NimNode, error_msg: string): string {. compile
     # The proc hasn't been exported.  We can't allow unexported procs,
     # because we need to be able to call the procs from the generated
     # module.
-    let msg1 = "can't export proc `$1` [$2] because it isn't marked for export from the module."
+    let msg1 = "can't exportpy proc `$1` [$2] because it isn't marked for export from the module."
     let msg2 = "\nHint: Add an asterisk (`*`) after the proc name, as described here:\n $3\n"
     let url = "http://nim-lang.org/manual.html#export-marker"
     let msg = (msg1 & msg2) % [proc_name, lineinfo(proc_def_node), url]
@@ -257,34 +258,38 @@ proc verifyProcDef(proc_def_node: NimNode, error_msg: string): string {. compile
   result = proc_name_without_asterisk
 
 
-proc parseModNameFromLineinfo(filename, mod_name: var string, li: string): bool {. compileTime .} =
+proc parseModNameFromLineinfo(li: string): tuple[path_and_filename, mod_name: string] {. compileTime .} =
+  # FIXME:  Is there a better way to accomplish this?  ie, a stdlib Nim proc?
+
+  result = (nil, nil)
+  # The NimNode.lineinfo string takes the form "path/to/filename(line, col)".
+  #  -- http://nim-lang.org/docs/macros.html#lineinfo,NimNode
+  #
+  # So `li` will look something like "/tmp/tests/foo.nim(3,0)".
   let i = li.find('(')
   if i == -1:
-    return false
-  let filename_part: string = li.substr(0, i-1)
-  if not filename_part.endsWith(".nim"):
-    return false
-  filename = filename_part
-  mod_name = filename_part.substr(0, filename_part.high-4)
-  return true
+    return
 
+  let path_and_filename: string = li.substr(0, i-1)
+  let (_, mod_name, ext) = splitFile(path_and_filename)
+  if ext != ".nim":
+    return
 
-proc canonical(s: string): string {. compileTime .} =
-  return s.normalize()
+  result = (path_and_filename, mod_name)
 
 
 proc verifyProcNameUnique(proc_name: string, proc_def_node: NimNode) {. compileTime .} =
   # Is the identifier-to-be of `proc_name` already in use as the module name?
   # If so, warn now, or it will cause cryptic problems later.
   let li: string = proc_def_node.lineinfo
-  var filename, mod_name: string
-  if not parseModNameFromLineinfo(filename, mod_name, li):
+  let (path_and_filename, mod_name) = parseModNameFromLineinfo(li)
+  if mod_name == nil:
     # It didn't work.  Oh well, we were only trying to help.
     return
 
-  if mod_name.canonical == proc_name.canonical:
-    let msg = "can't export proc `$1` [$2] that has the same canonical name as its Nim module \"$3\"" %
-        [proc_name, li, filename]
+  if mod_name.normalize == proc_name.normalize:
+    let msg = "can't exportpy proc `$1` [$2] that has the same normalized name as its Nim module \"$3\"" %
+        [proc_name, li, path_and_filename]
     error(msg)
 
 
@@ -543,8 +548,7 @@ proc exportpyImpl*(
     procPrototypes: var ProcPrototypeTable,
     proc_def_node: NimNode): NimNode {. compileTime .} =
 
-  let proc_name = verifyProcDef(proc_def_node,
-      "unnamed proc can't be exported to Python")
+  let proc_name = verifyProcDef(proc_def_node, "can't exportpy unnamed proc")
   #hint("proc name: " & proc_name)
   verifyProcNameUnique(proc_name, proc_def_node)
 
@@ -637,7 +641,7 @@ proc exportpyImpl*(
   let prev_proc_with_this_name = proc_prototypes.get(proc_name)
   if prev_proc_with_this_name != nil:
     let prev_line_info = prev_proc_with_this_name.proc_line_info
-    let msg = "proc name `$1` [$2] has already been exported [previously at $3]" %
+    let msg = "proc name `$1` [$2] has already been exportpy-ed [previously at $3]" %
         [proc_name, lineinfo(proc_def_node), prev_line_info]
     error(msg)
 
