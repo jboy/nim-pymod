@@ -45,10 +45,13 @@ type WhereItCameFrom* {. pure .} = enum
   AllocInPython = "AllocInPython",
   AllocInNim = "AllocInNim",
 
+# http://nim-lang.org/system.html#instantiationInfo,
+type InstantiationInfoTuple = tuple[filename: string, line: int]
+
 type RegisteredPyObjectInfo = object
   from_where: WhereItCameFrom
   which_func: string  # name of the allocation func that created the PyObject
-  created_at: tuple[filename: string, line: int]  # where the func was called
+  created_at: InstantiationInfoTuple  # where the func was called
 
 type RegisteredPyObject* = object
   # Instances `RegisteredPyObject` will be contained directly in the `seq`,
@@ -81,7 +84,7 @@ when DoPrintDebugInfo:
 
 proc registerNewPyObjectImpl*(obj: ptr PyObject,
     from_where: WhereItCameFrom, which_func: string,
-    created_at: tuple[filename: string, line: int]): ptr PyObject =
+    created_at: InstantiationInfoTuple): ptr PyObject =
   var info: ref RegisteredPyObjectInfo
   new(info)
   info.from_where = from_where
@@ -110,7 +113,7 @@ proc registerNewPyObjectImpl*(obj: ptr PyObject,
 # should NOT be implicitly convertible back to its derived types.
 proc registerNewPyObject*[T](obj: ptr T,
     from_where: WhereItCameFrom, which_func: string,
-    created_at: tuple[filename: string, line: int]): ptr T =
+    created_at: InstantiationInfoTuple): ptr T =
   let py_obj: ptr PyObject = obj  # <- implicit conversion occurs here
   return cast[ptr T](registerNewPyObjectImpl(py_obj, from_where, which_func, created_at))
 

@@ -328,8 +328,12 @@ converter toPyObject*(obj: ptr PyArrayObject): ptr PyObject = cast[ptr PyObject]
 converter toPyObject*(obj: ptr PyArrayDescr): ptr PyObject = cast[ptr PyObject](obj)
 
 
+# http://nim-lang.org/system.html#instantiationInfo,
+type InstantiationInfoTuple = tuple[filename: string, line: int]
+
+
 proc assertArrayType*(obj: ptr PyArrayObject, NT: typedesc[NumpyCompatibleNimType],
-    ii: tuple[filename: string, line: int], procname: string) =
+    ii: InstantiationInfoTuple, procname: string) =
   let obj_dtype = obj.dtype  # This requires a lookup in a case statement.
   if toNpType(NT) != obj_dtype:
     let msg = "$1: PyArrayObject supplied dtype `$2` does not match specified Nim type `$3` [File \"$4\", line $5]" %
@@ -338,7 +342,7 @@ proc assertArrayType*(obj: ptr PyArrayObject, NT: typedesc[NumpyCompatibleNimTyp
 
 
 proc assertArrayNdim*(obj: ptr PyArrayObject, expected_nd: Positive,
-    ii: tuple[filename: string, line: int], procname: string) =
+    ii: InstantiationInfoTuple, procname: string) =
   let obj_nd = obj.nd
   if expected_nd != obj_nd:
     let msg = "$1: PyArrayObject supplied ndim (== $2) does not match specified ndim (== $3) [File \"$4\", line $5]" %
@@ -347,7 +351,7 @@ proc assertArrayNdim*(obj: ptr PyArrayObject, expected_nd: Positive,
 
 
 proc assertArrayCContigForIterator*(obj: ptr PyArrayObject,
-    ii: tuple[filename: string, line: int], procname: string) =
+    ii: InstantiationInfoTuple, procname: string) =
   let is_c_contig: bool = flagBitIsOn(getFLAGS(obj), c_contiguous)
   if not is_c_contig:
     let msg = "$1: PyArrayObject iterator can only be used with C-contiguous data [File \"$2\", line $3]" %
@@ -356,7 +360,7 @@ proc assertArrayCContigForIterator*(obj: ptr PyArrayObject,
 
 
 proc iterateForwardImpl(arr: ptr PyArrayObject, NimT: typedesc[NumpyCompatibleNimType],
-    ii: tuple[filename: string, line: int], procname: string{lit}):
+    ii: InstantiationInfoTuple, procname: string{lit}):
     PyArrayForwardIterator[NimT] =
   assertArrayType(arr, NimT, ii, procname)
   assertArrayCContigForIterator(arr, ii, procname)
@@ -413,7 +417,7 @@ iterator values*(arr: ptr PyArrayObject, NimT: typedesc[NumpyCompatibleNimType])
 
 
 proc accessFlatImpl(arr: ptr PyArrayObject, NimT: typedesc[NumpyCompatibleNimType],
-    ii: tuple[filename: string, line: int], procname: string{lit}):
+    ii: InstantiationInfoTuple, procname: string{lit}):
     PyArrayRandomAccessIterator[NimT] =
   assertArrayType(arr, NimT, ii, procname)
   assertArrayCContigForIterator(arr, ii, procname)
@@ -481,7 +485,7 @@ iterator accessFlat*(arr: ptr PyArrayObject, NimT: typedesc[NumpyCompatibleNimTy
 
 
 proc getBoundsImpl(arr: ptr PyArrayObject, NimT: typedesc[NumpyCompatibleNimType],
-    ii: tuple[filename: string, line: int], procname: string{lit}):
+    ii: InstantiationInfoTuple, procname: string{lit}):
     PyArrayIteratorBounds[NimT] =
   assertArrayType(arr, NimT, ii, procname)
   initPyArrayIteratorBounds(result, arr)
@@ -590,7 +594,7 @@ template createSimpleNew*(dims: CArrayProxy[npy_intp], nptype: NpType):
 
 
 proc assertNewshapeNotExceedMaxDims(dims: openarray[int],
-    created_at: tuple[filename: string, line: int], procname: string) =
+    created_at: InstantiationInfoTuple, procname: string) =
   # To see for yourself that Python-Numpy enforces a limit on the length of
   # the tuple of dimensions a caller is allowed to supply, run this little
   # Python script:
@@ -614,7 +618,7 @@ proc assertNewshapeNotExceedMaxDims(dims: openarray[int],
 
 
 proc createSimpleNewOpenArrayImpl(dims: openarray[int], nptype: NpType,
-    created_at: tuple[filename: string, line: int], procname: string{lit}):
+    created_at: InstantiationInfoTuple, procname: string{lit}):
     ptr PyArrayObject =
   # Since we're passing an array into C, the size (ie, number of bytes)
   # of each element will be used to step from one element to the next.
@@ -693,7 +697,7 @@ proc doCopyIntoImpl(dest: ptr PyArrayObject, src: ptr PyArrayObject): cint {.
 
 
 proc doCopyIntoRaiseOnError(dest: ptr PyArrayObject, src: ptr PyArrayObject,
-    ii: tuple[filename: string, line: int], procname: string{lit}) =
+    ii: InstantiationInfoTuple, procname: string{lit}) =
   let res: cint = doCopyIntoImpl(dest, src)
   if res != 0:
     let msg = "$1: Error during PyArray_CopyInto from type num $2 into type num $3 [File \"$4\", line $5]" %
@@ -710,7 +714,7 @@ template doCopyInto*(dest: ptr PyArrayObject, src: ptr PyArrayObject) =
 
 
 proc createAsTypeNewDataImpl(old: ptr PyArrayObject, newtype: NpType,
-    ii: tuple[filename: string, line: int], procname: string{lit}): ptr PyArrayObject =
+    ii: InstantiationInfoTuple, procname: string{lit}): ptr PyArrayObject =
   # This function is based loosely upon the ACTUAL, ORIGINAL `array_astype`
   # function in Numpy (exposed as `.astype(dtype)` in Python).
   #
@@ -764,7 +768,7 @@ proc doResizeDataInplaceImpl(old: ptr PyArrayObject, nd: cint, dims: ptr npy_int
 
 
 proc doResizeDataInplaceOpenArrayImpl(old: ptr PyArrayObject, newShape: openarray[int], doRefCheck: bool,
-    created_at: tuple[filename: string, line: int], procname: string) =
+    created_at: InstantiationInfoTuple, procname: string) =
   # Since we're passing an array into C, the size (ie, number of bytes)
   # of each element will be used to step from one element to the next.
   # Hence, while `int` is a convenient element type for us to use in Nim
