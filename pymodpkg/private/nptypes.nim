@@ -24,8 +24,8 @@ type NumpyCompatibleNimType* = bool or
 #  http://nim-lang.org/manual.html#ordinal-types
 #  http://nim-lang.org/manual.html#enumeration-types
 #
-# NOTE:  The ordering of these enum fields doesn't match the ordering of the
-# corresponding enum fields in `enum NpyTypeNums`.  There are missing fields
+# NOTE:  The ordering of these enum fields does *NOT* match the ordering of
+# the corresponding enum fields in `enum CNpyTypes`.  There are missing fields
 # in this list (for example, there is nothing corresponding to `NPY_LONGLONG`
 # because we don't support the C `long long` type), and in fact I've actually
 # re-ordered the elements so that all the signed types occur before all the

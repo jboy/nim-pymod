@@ -71,8 +71,8 @@
 ## There are 4 ways to specify a dtype parameter:
 ##  1, `dtype: ptr PyArrayDescr`, as per the Numpy C-API.
 ##  2. `typenum: cint`, as per the Numpy C-API.
-##  3. `typenum: NpyTypeNums`, a Nim enum that matches the C `NPY_TYPES` from
-##     `<numpy/ndarraytypes.h>`; eg: `NPY_UBYTE`.
+##  3. `typenum: CNpyTypes`, a Nim enum that matches the C-API enum `NPY_TYPES`
+##     in `<numpy/ndarraytypes.h>`; eg: `CNpyTypes.NPY_UBYTE`.
 ##  4. `nptype: NpType`, a Nim enum that contains *only* the dtypes that Pymod
 ##     supports; eg: `np_uint8`.  This is the recommended method in Pymod.
 ##
@@ -84,7 +84,7 @@
 ## Here's the full list of procs & templates:
 ##
 ##  - getDescrFromType(typenum: cint): ptr PyArrayDescr
-##  - getDescrFromType(typenum: NpyTypeNums): ptr PyArrayDescr
+##  - getDescrFromType(typenum: CNpyTypes): ptr PyArrayDescr
 ##  - getDescrFromType(nptype: NpType): ptr PyArrayDescr
 ##
 ##  - canCastArrayTo(arr: ptr PyArrayObject, toType: ptr PyArray_Descr,
@@ -126,7 +126,7 @@
 ##        isFortranOrder: bool=false): ptr PyArrayObject
 ##  - createEmpty(nd: cint, dims: ptr npy_intp, typenum: cint,
 ##        isFortranOrder: bool=false): ptr PyArrayObject
-##  - createEmpty(nd: cint, dims: ptr npy_intp, typenum: NpyTypeNums,
+##  - createEmpty(nd: cint, dims: ptr npy_intp, typenum: CNpyTypes,
 ##        isFortranOrder: bool=false): ptr PyArrayObject
 ##  - createEmpty(nd: cint, dims: ptr npy_intp, nptype: NpType,
 ##        isFortranOrder: bool=false): ptr PyArrayObject
@@ -135,7 +135,7 @@
 ##        isFortranOrder: bool=false): ptr PyArrayObject
 ##  - createEmpty(dims: CArrayProxy[npy_intp], typenum: cint,
 ##        isFortranOrder: bool=false): ptr PyArrayObject
-##  - createEmpty(dims: CArrayProxy[npy_intp], typenum: NpyTypeNums,
+##  - createEmpty(dims: CArrayProxy[npy_intp], typenum: CNpyTypes,
 ##        isFortranOrder: bool=false): ptr PyArrayObject
 ##  - createEmpty(dims: CArrayProxy[npy_intp], nptype: NpType,
 ##        isFortranOrder: bool=false): ptr PyArrayObject
@@ -144,7 +144,7 @@
 ##        isFortranOrder: bool=false): ptr PyArrayObject
 ##  - createEmpty(dims: openarray[int], typenum: cint,
 ##        isFortranOrder: bool=false): ptr PyArrayObject
-##  - createEmpty(dims: openarray[int], typenum: NpyTypeNums,
+##  - createEmpty(dims: openarray[int], typenum: CNpyTypes,
 ##        isFortranOrder: bool=false): ptr PyArrayObject
 ##  - createEmpty(dims: openarray[int], nptype: NpType,
 ##        isFortranOrder: bool=false): ptr PyArrayObject
@@ -153,7 +153,7 @@
 ##        isFortranOrder: bool=false): ptr PyArrayObject
 ##  - createZeros(nd: cint, dims: ptr npy_intp, typenum: cint,
 ##        isFortranOrder: bool=false): ptr PyArrayObject
-##  - createZeros(nd: cint, dims: ptr npy_intp, typenum: NpyTypeNums,
+##  - createZeros(nd: cint, dims: ptr npy_intp, typenum: CNpyTypes,
 ##        isFortranOrder: bool=false): ptr PyArrayObject
 ##  - createZeros(nd: cint, dims: ptr npy_intp, nptype: NpType,
 ##        isFortranOrder: bool=false): ptr PyArrayObject
@@ -162,7 +162,7 @@
 ##        isFortranOrder: bool=false): ptr PyArrayObject
 ##  - createZeros(dims: CArrayProxy[npy_intp], typenum: cint,
 ##        isFortranOrder: bool=false): ptr PyArrayObject
-##  - createZeros(dims: CArrayProxy[npy_intp], typenum: NpyTypeNums,
+##  - createZeros(dims: CArrayProxy[npy_intp], typenum: CNpyTypes,
 ##        isFortranOrder: bool=false): ptr PyArrayObject
 ##  - createZeros(dims: CArrayProxy[npy_intp], nptype: NpType,
 ##        isFortranOrder: bool=false): ptr PyArrayObject
@@ -171,7 +171,7 @@
 ##        isFortranOrder: bool=false): ptr PyArrayObject
 ##  - createZeros(dims: openarray[int], typenum: cint,
 ##        isFortranOrder: bool=false): ptr PyArrayObject
-##  - createZeros(dims: openarray[int], typenum: NpyTypeNums,
+##  - createZeros(dims: openarray[int], typenum: CNpyTypes,
 ##        isFortranOrder: bool=false): ptr PyArrayObject
 ##  - createZeros(dims: openarray[int], nptype: NpType,
 ##        isFortranOrder: bool=false): ptr PyArrayObject
@@ -180,7 +180,7 @@
 ##        isFortranOrder: bool=false): ptr PyArrayObject
 ##  - createFull(nd: cint, dims: ptr npy_intp, fillValue: double, typenum: cint,
 ##        isFortranOrder: bool=false): ptr PyArrayObject
-##  - createFull(nd: cint, dims: ptr npy_intp, fillValue: double, typenum: NpyTypeNums,
+##  - createFull(nd: cint, dims: ptr npy_intp, fillValue: double, typenum: CNpyTypes,
 ##        isFortranOrder: bool=false): ptr PyArrayObject
 ##  - createFull(nd: cint, dims: ptr npy_intp, fillValue: double, nptype: NpType,
 ##        isFortranOrder: bool=false): ptr PyArrayObject
@@ -189,7 +189,7 @@
 ##        isFortranOrder: bool=false): ptr PyArrayObject
 ##  - createFull(nd: cint, dims: CArrayProxy[npy_intp], fillValue: double, typenum: cint,
 ##        isFortranOrder: bool=false): ptr PyArrayObject
-##  - createFull(nd: cint, dims: CArrayProxy[npy_intp], fillValue: double, typenum: NpyTypeNums,
+##  - createFull(nd: cint, dims: CArrayProxy[npy_intp], fillValue: double, typenum: CNpyTypes,
 ##        isFortranOrder: bool=false): ptr PyArrayObject
 ##  - createFull(nd: cint, dims: CArrayProxy[npy_intp], fillValue: double, nptype: NpType,
 ##        isFortranOrder: bool=false): ptr PyArrayObject
@@ -198,7 +198,7 @@
 ##        isFortranOrder: bool=false): ptr PyArrayObject
 ##  - createFull(dims: openarray[int], fillValue: double, typenum: cint,
 ##        isFortranOrder: bool=false): ptr PyArrayObject
-##  - createFull(dims: openarray[int], fillValue: double, typenum: NpyTypeNums,
+##  - createFull(dims: openarray[int], fillValue: double, typenum: CNpyTypes,
 ##        isFortranOrder: bool=false): ptr PyArrayObject
 ##  - createFull(dims: openarray[int], fillValue: double, nptype: NpType,
 ##        isFortranOrder: bool=false): ptr PyArrayObject
@@ -237,9 +237,9 @@ export nptypes.NpType
 export nptypes.toNpType
 
 import pymodpkg/private/cnpytypes
-export cnpytypes.NpyTypeNums
+export cnpytypes.CNpyTypes
 export cnpytypes.toNpType
-export cnpytypes.toNpyTypeNums
+export cnpytypes.toCNpyTypes
 
 import pymodpkg/private/pyarraydescrtype
 export pyarraydescrtype.PyArrayDescr
@@ -508,12 +508,12 @@ proc getDescrFromType*(typenum: cint): ptr PyArrayDescr {.
   ## http://docs.scipy.org/doc/numpy/reference/c-api.array.html#c.PyArray_DescrFromType
 
 
-template getDescrFromType*(typenum: NpyTypeNums): ptr PyArrayDescr =
+template getDescrFromType*(typenum: CNpyTypes): ptr PyArrayDescr =
   getDescrFromType(ord(typenum))
 
 
 template getDescrFromType*(nptype: NpType): ptr PyArrayDescr =
-  getDescrFromType(ord(nptype.toNpyTypeNums))
+  getDescrFromType(ord(nptype.toCNpyTypes))
 
 
 ## Converting data types:
@@ -585,7 +585,7 @@ template createSimpleNew*(dims: CArrayProxy[npy_intp], nptype: NpType):
   # http://nim-lang.org/system.html#instantiationInfo,
   let ii = instantiationInfo()
   registerNewPyObject(
-      createSimpleNewImpl(dims.getLen, dims.getPtr, ord(nptype.toNpyTypeNums)),
+      createSimpleNewImpl(dims.getLen, dims.getPtr, ord(nptype.toCNpyTypes)),
       WhereItCameFrom.AllocInNim, "createSimpleNew", ii)
 
 
@@ -637,7 +637,7 @@ proc createSimpleNewOpenArrayImpl(dims: openarray[int], nptype: NpType,
     dims_holder[i] = npy_intp(dims[i])
 
   let dims_ptr = addr(dims_holder[0])
-  result = createSimpleNewImpl(cint(num_dims), dims_ptr, ord(nptype.toNpyTypeNums))
+  result = createSimpleNewImpl(cint(num_dims), dims_ptr, ord(nptype.toCNpyTypes))
 
 
 template createSimpleNew*(dims: openarray[int], nptype: NpType):

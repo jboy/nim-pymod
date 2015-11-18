@@ -4,7 +4,7 @@
 # This source code is licensed under the terms of the MIT license
 # found in the "LICENSE" file in the root directory of this source tree.
 
-## Definition of `NpyTypeNums`, a Nim wrapper enum for the C enum `NPY_TYPES`
+## Definition of `CNpyTypes`, a Nim wrapper enum for the C enum `NPY_TYPES`
 ## in the Numpy C-API Data Type API.
 ##
 ## We only wrap the `NPY_TYPES` enum fields that Pymod supports.
@@ -30,7 +30,7 @@ import pymodpkg/private/nptypes
 # FIXME:  Work out how to load/mirror this enum directly from the C header.
 #
 # Also potentially of interest: enum NPY_TYPECHAR in the same header.
-type NpyTypeNums* {. pure .} = enum
+type CNpyTypes* {. pure .} = enum
   NPY_BOOL = 0,
   NPY_BYTE,
   NPY_UBYTE,
@@ -66,33 +66,33 @@ type NpyTypeNums* {. pure .} = enum
 #  http://nim-lang.org/manual.html#reference-and-pointer-types
 proc toNpType*(type_num: cint): NpType =
   case type_num
-  of ord(NpyTypeNums.NPY_BOOL): result = np_bool
-  of ord(NpyTypeNums.NPY_BYTE): result = np_int8
-  of ord(NpyTypeNums.NPY_UBYTE): result = np_uint8
-  of ord(NpyTypeNums.NPY_SHORT): result = np_int16
-  of ord(NpyTypeNums.NPY_USHORT): result = np_uint16
-  of ord(NpyTypeNums.NPY_INT): result = np_int32
-  of ord(NpyTypeNums.NPY_UINT): result = np_uint32
-  of ord(NpyTypeNums.NPY_LONG): result = np_int64
-  of ord(NpyTypeNums.NPY_ULONG): result = np_uint64
-  of ord(NpyTypeNums.NPY_FLOAT): result = np_float32
-  of ord(NpyTypeNums.NPY_DOUBLE): result = np_float64
+  of ord(CNpyTypes.NPY_BOOL): result = np_bool
+  of ord(CNpyTypes.NPY_BYTE): result = np_int8
+  of ord(CNpyTypes.NPY_UBYTE): result = np_uint8
+  of ord(CNpyTypes.NPY_SHORT): result = np_int16
+  of ord(CNpyTypes.NPY_USHORT): result = np_uint16
+  of ord(CNpyTypes.NPY_INT): result = np_int32
+  of ord(CNpyTypes.NPY_UINT): result = np_uint32
+  of ord(CNpyTypes.NPY_LONG): result = np_int64
+  of ord(CNpyTypes.NPY_ULONG): result = np_uint64
+  of ord(CNpyTypes.NPY_FLOAT): result = np_float32
+  of ord(CNpyTypes.NPY_DOUBLE): result = np_float64
   else:
     let msg = "Numpy type num $1 is not supported" % $type_num
     raise newException(ValueError, msg)
 
 
-proc toNpyTypeNums*(nptype: NpType): NpyTypeNums {. inline, nosideEffect .} =
+proc toCNpyTypes*(nptype: NpType): CNpyTypes {. inline, nosideEffect .} =
   case nptype
-  of np_bool: result = NpyTypeNums.NPY_BOOL
-  of np_int8: result = NpyTypeNums.NPY_BYTE
-  of np_int16: result = NpyTypeNums.NPY_SHORT
-  of np_int32: result = NpyTypeNums.NPY_INT
-  of np_int64: result = NpyTypeNums.NPY_LONG
-  of np_uint8: result = NpyTypeNums.NPY_UBYTE
-  of np_uint16: result = NpyTypeNums.NPY_USHORT
-  of np_uint32: result = NpyTypeNums.NPY_UINT
-  of np_uint64: result = NpyTypeNums.NPY_ULONG
-  of np_float32: result = NpyTypeNums.NPY_FLOAT
-  of np_float64: result = NpyTypeNums.NPY_DOUBLE
+  of np_bool: result = CNpyTypes.NPY_BOOL
+  of np_int8: result = CNpyTypes.NPY_BYTE
+  of np_int16: result = CNpyTypes.NPY_SHORT
+  of np_int32: result = CNpyTypes.NPY_INT
+  of np_int64: result = CNpyTypes.NPY_LONG
+  of np_uint8: result = CNpyTypes.NPY_UBYTE
+  of np_uint16: result = CNpyTypes.NPY_USHORT
+  of np_uint32: result = CNpyTypes.NPY_UINT
+  of np_uint64: result = CNpyTypes.NPY_ULONG
+  of np_float32: result = CNpyTypes.NPY_FLOAT
+  of np_float64: result = CNpyTypes.NPY_DOUBLE
 
