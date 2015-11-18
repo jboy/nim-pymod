@@ -1277,8 +1277,8 @@ proc outputPyModuleNim(
   # However, this sin is also made by `definePyObjectType(PyArrayObject,`
   # in "pymod.nim".
   output_lines << "import pymodpkg/pyarrayobject"
-  for modname in nimModulesToImport:
-    output_lines << "import $1" % modname
+  for nm in nimModulesToImport:
+    output_lines << "import $1" % nm
   output_lines << ""
   extendWithAllNimWrapperProcDefs(output_lines, proc_prototypes, proc_names_node, mod_name)
 
