@@ -23,7 +23,7 @@ proc offset_ptr*[T](p: ptr T, idx: int): ptr T {. noSideEffect, inline .} =
   # Nim defines its `int` type to be the same size as pointers:
   #  http://nim-lang.org/system.html#int
   let ip = cast[int](p)
-  let ip_offset = ip + idx * sizeof(T)
+  let ip_offset = ip +% idx * sizeof(T)
   return cast[ptr T](ip_offset)
 
 
@@ -37,7 +37,7 @@ proc offset_ptr*[T](p: ptr T): ptr T {. noSideEffect, inline .} =
   # Nim defines its `int` type to be the same size as pointers:
   #  http://nim-lang.org/system.html#int
   let ip = cast[int](p)
-  let ip_offset = ip + sizeof(T)
+  let ip_offset = ip +% sizeof(T)
   return cast[ptr T](ip_offset)
 
 
@@ -52,7 +52,7 @@ proc offset_var_ptr*[T](p: var ptr T, idx: int) {. noSideEffect, inline .} =
   # Nim defines its `int` type to be the same size as pointers:
   #  http://nim-lang.org/system.html#int
   let ip = cast[int](p)
-  let ip_offset = ip + idx * sizeof(T)
+  let ip_offset = ip +% idx * sizeof(T)
   p = cast[ptr T](ip_offset)
 
 
@@ -66,7 +66,7 @@ proc offset_var_ptr*[T](p: var ptr T) {. noSideEffect, inline .} =
   # Nim defines its `int` type to be the same size as pointers:
   #  http://nim-lang.org/system.html#int
   let ip = cast[int](p)
-  let ip_offset = ip + sizeof(T)
+  let ip_offset = ip +% sizeof(T)
   p = cast[ptr T](ip_offset)
 
 
@@ -98,7 +98,7 @@ proc offset_ptr_in_bytes*[T](p: ptr T, num_bytes: int): ptr T {. noSideEffect, i
   # Nim defines its `int` type to be the same size as pointers:
   #  http://nim-lang.org/system.html#int
   let ip = cast[int](p)
-  let ip_offset = ip + num_bytes
+  let ip_offset = ip +% num_bytes
   return cast[ptr T](ip_offset)
 
 
@@ -113,7 +113,7 @@ template offset_void_ptr_in_bytes*(p: pointer, num_bytes: int): pointer =
   # Nim defines its `int` type to be the same size as pointers:
   #  http://nim-lang.org/system.html#int
   let ip = cast[int](p)
-  let ip_offset = ip + num_bytes
+  let ip_offset = ip +% num_bytes
   cast[pointer](ip_offset)
 
 
@@ -128,6 +128,6 @@ proc offset_var_ptr_in_bytes*[T](p: var ptr T, num_bytes: int) {. noSideEffect, 
   # Nim defines its `int` type to be the same size as pointers:
   #  http://nim-lang.org/system.html#int
   let ip = cast[int](p)
-  let ip_offset = ip + num_bytes
+  let ip_offset = ip +% num_bytes
   p = cast[ptr T](ip_offset)
 
