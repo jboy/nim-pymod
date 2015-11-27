@@ -102,6 +102,16 @@ def chdir_into_test_dir(request):
 
 
 @pytest.fixture
+def pmgen_py_compile(python_exe_fullpath, pmgen_py_fullpath):
+    import subprocess
+    def compile_py_mod(py_mod_name):
+        nim_mod_fname = py_mod_name + ".nim"
+        subprocess.check_call([python_exe_fullpath, pmgen_py_fullpath, nim_mod_fname])
+
+    return compile_py_mod
+
+
+@pytest.fixture
 def pymod_test_mod():
     return importlib.import_module("_pymod_test")
 
