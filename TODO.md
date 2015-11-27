@@ -1,7 +1,10 @@
 * Placate all the new Nim compiler warnings that have appeared recently.
-* Allow the user to specify their own choice of directory rather than `pmgen`.
+* Allow the user to specify their own choice of build directory name rather than `pmgen`.
+  * Ultimately, this should be something that can be specified in "pymod-extensions.cfg".
+  * For now, start with a command-line option `--pmgen_dir=DIRPATH`.
   * Note: After the Python module `.so` file is built, the Makefile moves it to `..`.
   * So `pmgen.py` needs to write the current absolute path, rather than `..`, into the Makefile.
+* Add a command-line option `--pymod_name=MODNAME` to override the modname that is specified in `initPyModule`.
 * Enable `bool` as a Nim type that can be exported as a Python type.
   * Note that the Python C-API doesn't actually offer `bool` as a conversion type.
   * https://docs.python.org/2/c-api/arg.html
