@@ -1,5 +1,6 @@
 import importlib
 import subprocess
+import sys
 
 import pytest
 
@@ -102,7 +103,6 @@ def python_exe_fullpath(request):
     This also tells us the version of Python (ie, 2 or 3) that is being used.
     """
     # https://docs.python.org/2/library/sys.html#sys.executable
-    import sys
     python_exe_path = sys.executable
     if not python_exe_path:
         # "If Python is unable to retrieve the real path to its executable,
@@ -110,6 +110,13 @@ def python_exe_fullpath(request):
         request.raiseerror("unable to determine real path to Python executable")
 
     return python_exe_path
+
+
+@pytest.fixture(scope="session")
+def python_major_version(request):
+    """Return the (int) major version of Python being used for this session."""
+    # https://docs.python.org/2/library/sys.html#sys.version_info
+    return sys.version_info.major
 
 
 ## Module fixtures

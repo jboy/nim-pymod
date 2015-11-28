@@ -167,13 +167,13 @@ proc verifyBuiltinNimType(nim_type_node: NimNode): TypeFmtTuple
     else:
       # It appears that `float` is `float64`.
       result = (nim_type, "cdouble", "float", "d", nil, nil)
-  of "float32":
+  of "float32", "cfloat":
     # http://nim-lang.org/system.html#cfloat
     result = (nim_type, "cfloat", "float", "f", nil, nil)
-  of "float64":
+  of "float64", "cdouble":
     # http://nim-lang.org/system.html#cdouble
     result = (nim_type, "cdouble", "float", "d", nil, nil)
-  of "int", "int64":  # 64 bits, signed
+  of "int", "int64", "clong":  # 64 bits, signed
     # http://nim-lang.org/system.html#clong
     # NOTE:  The `clong` type is 64 bits, like Nim's `int64` type and the
     # built-in Nim `int` type (on my system, at least), but Python's `int`
@@ -190,7 +190,7 @@ proc verifyBuiltinNimType(nim_type_node: NimNode): TypeFmtTuple
     # isn't DEFINED as being 64 bits, it just happens to be 64 bits on my
     # system.
     result = (nim_type, "clong", "int", "l", nil, nil)
-  of "uint", "uint64":  # 64 bits, unsigned
+  of "uint", "uint64", "culong":  # 64 bits, unsigned
     result = (nim_type, "culong", "int", "k", nil, nil)
   of "cint", "int32":  # 32 bits, signed
     result = (nim_type, "cint", "int", "i", nil, nil)
@@ -200,10 +200,15 @@ proc verifyBuiltinNimType(nim_type_node: NimNode): TypeFmtTuple
     result = (nim_type, "cshort", "int", "h", nil, nil)
   of "cushort", "uint16":  # 16 bits, unsigned
     result = (nim_type, "cushort", "int", "H", nil, nil)
-  of "cchar", "int8":  # 8 bits, signed
+
+  # What Python format string should we use for this?
+  #of "cschar", "int8":  # 8 bits, signed
+  #  result = (nim_type, "cschar", "int", "??????", nil, nil)
+
+  of "byte", "uint8":  # 8 bits, unsigned
+    result = (nim_type, "byte", "int", "B", nil, nil)
+  of "char", "cchar", "cuchar":  # a single string character
     result = (nim_type, "cchar", "str [len == 1]", "c", nil, nil)
-  of "cuchar", "uint8":  # 8 bits, unsigned
-    result = (nim_type, "cuchar", "int", "B", nil, nil)
   of "string":
     # http://nim-lang.org/system.html#cstring
     result = (nim_type, "cstring", "str", "s", nil, nil)
