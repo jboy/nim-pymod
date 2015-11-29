@@ -55,19 +55,20 @@ Using Pymod is a 4-step process, preceded by an optional zeroth step:
   * **Tip:** You might additionally wish to import `pymodpkg/docstrings` (to
     enable Python-like docstrings) and/or `pymodpkg/pyarrayobject` (to enable
     the `PyArrayObject` type that corresponds to Numpy's array type).
-2. In your Nim source code module, annotate each Nim proc to be exported
-   with the `{.exportpy.}` pragma (named by analogy with the standard Nim
-   `{.exportc.}` pragma).
-3. At the end of your Nim source code model, configure the Python module using
-   the `initPyModule()` macro, specifying the desired Python module name as a
-   string (without a filename suffix), followed by the names of the Nim procs
+2. In your Nim module, annotate each Nim proc to be exported with the
+   `{.exportpy.}` pragma (named by analogy with the standard Nim `{.exportc.}`
+   pragma).
+3. At the end of your Nim module, configure the Python module to be generated,
+   using the `initPyModule()` macro.  Specify the desired Python module name as
+   a string (without a filename suffix), followed by the names of the Nim procs
    that should be compiled into the Python module.
   * **Tip:** You can use the `initPyModule()` macro multiple times at the end
     of your Nim module, with different Python module names & different
-    combinations of Nim procs, to create multiple Python modules.
+    combinations of Nim procs, to generate multiple Python modules.
   * **Tip:** If you specify the empty string `""` as the Python module name,
-    the Python module will have the same name as the Nim source code module,
-    but with an underscore `"_"` prepended.
+    the Python module will have the same name as the Nim module, but with an
+    underscore `"_"` prepended.  So for example, a Nim module `native.nim`
+    would be compiled to a Python module `_native.so`.
 4. Invoke the supplied Python script `pmgen.py` with the filename of your
    Nim source code module as a command-line argument, to auto-generate &
    invoke a set of Makefiles that will in turn initiate & run the Pymod process.
