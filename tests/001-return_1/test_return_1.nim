@@ -36,7 +36,7 @@ proc cucharReturn1*():  cuchar {.exportpy.} = '1'
 proc stringReturn1*():  string {.exportpy.} = "one"
 
 
-initPyModule("_pymod_test",
+initPyModule("",
     cfloatReturn1, cdoubleReturn1,
     #cscharReturn1,
     cshortReturn1, cintReturn1, clongReturn1,

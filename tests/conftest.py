@@ -8,14 +8,15 @@ import pytest
 _PMGEN_PY_DIRPATH_DEFAULT = ".."
 _PMGEN_PY_FNAME_DEFAULT = "pmgen.py"
 
-_PMGEN_DIRNAME = "pmgen"
-_PYMOD_TEST_MOD_NAME = "_pymod_test"
+_PMGEN_DIRNAME_DEFAULT = "pmgen"
 _COMPILED_MOD_FNAME_SUFFIX = ".so"
-_PYMOD_TEST_MOD_FNAME = _PYMOD_TEST_MOD_NAME + _COMPILED_MOD_FNAME_SUFFIX
+_NIM_MOD_FNAME_SUFFIX = ".nim"
 _RENAME_PREFIX_FOR_FAILED_TEST = "failed_"
 
 
+##
 ## Configure the command-line parser.
+##
 
 def pytest_addoption(parser):
     """Add custom command-line options to the command-line parser."""
@@ -39,7 +40,9 @@ def pytest_addoption(parser):
             help=pmgen_py_fname_help)
 
 
+##
 ## Utility functions
+##
 
 def _get_option_value(config, option_name, option_default_value):
     cmdline_option_value = config.getoption(option_name)
@@ -68,7 +71,17 @@ def _get_test_dir_that_contains_module(request):
     return test_dir
 
 
+def _get_pymod_test_mod_name(request):
+    return "_%s" % request.module.__name__
+
+
+def _get_pymod_test_mod_fname(request):
+    return "_%s%s" % (request.module.__name__, _COMPILED_MOD_FNAME_SUFFIX)
+
+
+##
 ## Session fixtures
+##
 
 @pytest.fixture(scope="session")
 def pmgen_py_fullpath(request):
@@ -119,7 +132,9 @@ def python_major_version(request):
     return sys.version_info.major
 
 
+##
 ## Module fixtures
+##
 
 @pytest.fixture(scope="module", autouse=True)
 def chdir_into_test_dir(request):
@@ -143,12 +158,12 @@ def chdir_into_test_dir(request):
 
     def chdir_back_to_starting_dir():
         # Test whether there are any files we should delete before we leave.
-        pymod_test_mod_fullpath = test_dir.join(_PYMOD_TEST_MOD_FNAME)
+        pymod_test_mod_fullpath = test_dir.join(_get_pymod_test_mod_fname(request))
         if _localpath_exists(pymod_test_mod_fullpath):
             print("\nDelete file: %s" % pymod_test_mod_fullpath)
             pymod_test_mod_fullpath.remove()
 
-        pmgen_dir_fullpath = test_dir.join(_PMGEN_DIRNAME)
+        pmgen_dir_fullpath = test_dir.join(_PMGEN_DIRNAME_DEFAULT)
         if _localpath_exists(pmgen_dir_fullpath):
             print("Delete directory: %s" % pmgen_dir_fullpath)
             pmgen_dir_fullpath.remove(rec=1, ignore_errors=True)
@@ -158,7 +173,9 @@ def chdir_into_test_dir(request):
     request.addfinalizer(chdir_back_to_starting_dir)
 
 
+##
 ## Function fixtures
+##
 
 # This function is copy-pasted from the example of how to
 # "[make] test result information available in fixtures" at:
@@ -198,17 +215,18 @@ def act_upon_test_result(request):
                 print("\n\nTest failed: %s\nPreserving temporary files for review..." %
                         request.node.nodeid)
 
-                pymod_test_mod_fullpath = test_dir.join(_PYMOD_TEST_MOD_FNAME)
+                pymod_test_mod_fname = _get_pymod_test_mod_fname(request)
+                pymod_test_mod_fullpath = test_dir.join(pymod_test_mod_fname)
                 if _localpath_exists(pymod_test_mod_fullpath):
-                    failed_fname = _RENAME_PREFIX_FOR_FAILED_TEST + _PYMOD_TEST_MOD_FNAME
+                    failed_fname = _RENAME_PREFIX_FOR_FAILED_TEST + pymod_test_mod_fname
                     pymod_test_mod_failed_fullpath = test_dir.join(failed_fname)
                     print("Rename file: %s -> %s" %
                             (pymod_test_mod_fullpath, pymod_test_mod_failed_fullpath))
                     pymod_test_mod_fullpath.rename(pymod_test_mod_failed_fullpath)
 
-                pmgen_dir_fullpath = test_dir.join(_PMGEN_DIRNAME)
+                pmgen_dir_fullpath = test_dir.join(_PMGEN_DIRNAME_DEFAULT)
                 if _localpath_exists(pmgen_dir_fullpath):
-                    failed_fname = _RENAME_PREFIX_FOR_FAILED_TEST + _PMGEN_DIRNAME
+                    failed_fname = _RENAME_PREFIX_FOR_FAILED_TEST + _PMGEN_DIRNAME_DEFAULT
                     pmgen_dir_failed_fullpath = test_dir.join(failed_fname)
                     print("Rename directory: %s -> %s" %
                             (pmgen_dir_fullpath, pmgen_dir_failed_fullpath))
@@ -221,13 +239,13 @@ def act_upon_test_result(request):
 def pmgen_py_compile(python_exe_fullpath, pmgen_py_fullpath, request):
     """Return a closure that can be invoked to compile a Pymod Nim module."""
     def compile_py_mod(py_mod_name):
-        nim_mod_fname = py_mod_name + ".nim"
+        nim_mod_fname = py_mod_name + _NIM_MOD_FNAME_SUFFIX
         subprocess.check_call([python_exe_fullpath, pmgen_py_fullpath, nim_mod_fname])
     return compile_py_mod
 
 
 @pytest.fixture
-def pymod_test_mod():
+def pymod_test_mod(request):
     """Import & return the Pymod test module that has been compiled."""
-    return importlib.import_module(_PYMOD_TEST_MOD_NAME)
+    return importlib.import_module(_get_pymod_test_mod_name(request))
 
