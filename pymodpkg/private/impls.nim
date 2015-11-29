@@ -201,12 +201,12 @@ proc verifyBuiltinNimType(nim_type_node: NimNode): TypeFmtTuple
     result = (nim_type, "cushort", "int", "H", nil, nil)
 
   # What Python format string should we use for this?
-  #of "cschar", "int8":  # 8 bits, signed
+  #of "int8":  # 8 bits, signed
   #  result = (nim_type, "cschar", "int", "??????", nil, nil)
 
   of "byte", "uint8":  # 8 bits, unsigned
     result = (nim_type, "byte", "int", "B", nil, nil)
-  of "char", "cchar", "cuchar":  # a single string character
+  of "char", "cchar":  # a single string character
     result = (nim_type, "cchar", "str [len == 1]", "c", nil, nil)
   of "string":
     # http://nim-lang.org/system.html#cstring

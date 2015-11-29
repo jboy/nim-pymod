@@ -10,9 +10,6 @@ def test_cdoubleReturn1(pymod_test_mod):
     assert pymod_test_mod.cdoubleReturn1() == 1.0
 
 
-#def test_cscharReturn1(pymod_test_mod):
-#    assert pymod_test_mod.cscharReturn1() == 1
-
 def test_cshortReturn1(pymod_test_mod):
     assert pymod_test_mod.cshortReturn1() == 1
 
@@ -75,27 +72,30 @@ def test_uint64Return1(pymod_test_mod):
     assert pymod_test_mod.uint64Return1() == 1
 
 
+#def test_boolReturn1(pymod_test_mod):
+#    assert pymod_test_mod.boolReturn1() == True
+
 def test_byteReturn1(pymod_test_mod):
     assert pymod_test_mod.byteReturn1() == 1
 
 
+#def test_unicodeRuneReturn1(pymod_test_mod, python_major_version):
+#    if python_major_version == 2:
+#        assert pymod_test_mod.unicodeRuneReturn1() == u"a"
+#    else:  # Python 3 or above: bytes vs strings, yay!
+#        assert pymod_test_mod.unicodeRuneReturn1() == "a"
+
 def test_ccharReturn1(pymod_test_mod, python_major_version):
     if python_major_version == 2:
-        assert pymod_test_mod.ccharReturn1() == '1'
+        assert pymod_test_mod.ccharReturn1() == "a"
     else:  # Python 3 or above: bytes vs strings, yay!
-        assert pymod_test_mod.ccharReturn1() == b'1'
+        assert pymod_test_mod.ccharReturn1() == b"a"
 
 def test_charReturn1(pymod_test_mod, python_major_version):
     if python_major_version == 2:
-        assert pymod_test_mod.charReturn1() == '1'
+        assert pymod_test_mod.charReturn1() == "a"
     else:  # Python 3 or above: bytes vs strings, yay!
-        assert pymod_test_mod.charReturn1() == b'1'
-
-def test_cucharReturn1(pymod_test_mod, python_major_version):
-    if python_major_version == 2:
-        assert pymod_test_mod.cucharReturn1() == '1'
-    else:  # Python 3 or above: bytes vs strings, yay!
-        assert pymod_test_mod.cucharReturn1() == b'1'
+        assert pymod_test_mod.charReturn1() == b"a"
 
 def test_stringReturn1(pymod_test_mod):
     assert pymod_test_mod.stringReturn1() == "one"
