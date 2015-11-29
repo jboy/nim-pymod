@@ -36,6 +36,8 @@ proc ccharReturn1*():   cchar {.exportpy.} = 'a'
 proc charReturn1*():    char {.exportpy.} = 'a'
 proc stringReturn1*():  string {.exportpy.} = "one"
 
+proc intReturn1NoParensInDecl*: int {.exportpy.} = 1
+
 
 initPyModule("",
     cfloatReturn1, cdoubleReturn1,
@@ -48,4 +50,5 @@ initPyModule("",
     #boolReturn1,
     byteReturn1,
     #unicodeRuneReturn1,
-    ccharReturn1, charReturn1, stringReturn1)
+    ccharReturn1, charReturn1, stringReturn1,
+    intReturn1NoParensInDecl)

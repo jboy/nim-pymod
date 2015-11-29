@@ -100,3 +100,7 @@ def test_charReturn1(pymod_test_mod, python_major_version):
 def test_stringReturn1(pymod_test_mod):
     assert pymod_test_mod.stringReturn1() == "one"
 
+
+def test_intReturn1NoParensInDecl(pymod_test_mod):
+    assert pymod_test_mod.intReturn1NoParensInDecl() == 1
+
