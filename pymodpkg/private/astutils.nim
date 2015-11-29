@@ -4,8 +4,9 @@
 # This source code is licensed under the terms of the MIT license
 # found in the "LICENSE" file in the root directory of this source tree.
 
-import macros
-import strutils  # `%`
+import macros  # `lineinfo`
+import os  # `splitFile`
+import strutils  # `%`, `IdentChars`, `IdentStartChars`, `find`, `substr`
 
 
 proc createStrLitArray*(elems: varargs[string]): NimNode {. compileTime .} =
@@ -22,6 +23,33 @@ proc expectArrayOfKind*(n: NimNode, k: NimNodeKind)
     let elem = n[i]
     #hint(treeRepr(elem))
     expectKind(elem, k)
+
+
+proc parseModNameFromLineinfo*(li: string):
+    tuple[path_and_filename, mod_name: string; success: bool] {. compileTime .} =
+  # FIXME:  Is there a better way to accomplish this?  ie, a stdlib Nim proc?
+  result = (nil, nil, false)
+
+  # The NimNode.lineinfo string takes the form "path/to/filename(line, col)".
+  #  -- http://nim-lang.org/docs/macros.html#lineinfo,NimNode
+  #
+  # So `li` will look something like "/tmp/tests/foo.nim(3,0)".
+  let i = li.find('(')
+  if i == -1:
+    return
+
+  let path_and_filename: string = li.substr(0, i-1)
+  let (_, mod_name, ext) = splitFile(path_and_filename)
+  if ext != ".nim":
+    return
+
+  result = (path_and_filename, mod_name, true)
+
+
+proc getModuleName*(n: NimNode): string {. compileTime .} =
+  let li: string = n.lineinfo
+  let (path_and_filename, mod_name, success) = parseModNameFromLineinfo(li)
+  return mod_name
 
 
 proc verifyValidCIdent*(s: string, n: NimNode) {. compileTime .} =

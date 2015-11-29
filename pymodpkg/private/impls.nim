@@ -23,9 +23,8 @@ const pymod_c_mod_fname_template = "pmgen$1_capi.c"
 
 
 import hashes
-import macros
+import macros  # `lineinfo`
 #import parsecfg  # Can't seem to use this at compile-time
-import os  # `splitFile`
 import strutils  # `normalize`, `cmpIgnoreStyle`, `%`
 
 import pymodpkg/docstrings
@@ -261,27 +260,6 @@ proc verifyProcDef(proc_def_node: NimNode, error_msg: string): string {. compile
   let proc_name_without_asterisk = proc_name.substr(0, proc_name.high-1)
   verifyValidCIdent(proc_name_without_asterisk, proc_name_node)
   result = proc_name_without_asterisk
-
-
-proc parseModNameFromLineinfo(li: string):
-    tuple[path_and_filename, mod_name: string; success: bool] {. compileTime .} =
-  # FIXME:  Is there a better way to accomplish this?  ie, a stdlib Nim proc?
-  result = (nil, nil, false)
-
-  # The NimNode.lineinfo string takes the form "path/to/filename(line, col)".
-  #  -- http://nim-lang.org/docs/macros.html#lineinfo,NimNode
-  #
-  # So `li` will look something like "/tmp/tests/foo.nim(3,0)".
-  let i = li.find('(')
-  if i == -1:
-    return
-
-  let path_and_filename: string = li.substr(0, i-1)
-  let (_, mod_name, ext) = splitFile(path_and_filename)
-  if ext != ".nim":
-    return
-
-  result = (path_and_filename, mod_name, true)
 
 
 proc verifyProcNameUnique(proc_name: string, proc_def_node: NimNode) {. compileTime .} =
@@ -1382,7 +1360,11 @@ proc initPyModuleImpl*(
   expectArrayOfKind(extra_init_node, nnkStrLit)
   expectArrayOfKind(proc_names_node, nnkSym)
 
-  let mod_name = $mod_name_node
+  var mod_name: string = $mod_name_node
+  if mod_name.len == 0:
+    # Default to "_%(nim_mod_name)s".
+    mod_name = "_" & mod_name_node.getModuleName
+
   #hint("mod name: " & mod_name)
   verifyValidCIdent(mod_name, mod_name_node)
   outputPyModuleC(procPrototypes, mod_name, extra_includes_node, extra_init_node, proc_names_node)
