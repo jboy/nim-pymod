@@ -7,24 +7,25 @@ The **Pymod** software package consists of Nim bindings & Python scripts to
 automate the generation of
 [Python C-API extension module](https://docs.python.org/2/extending/index.html)
 boilerplate for Nim procs.
-After Pymod has been run, there will be an auto-generated, auto-compiled
+After Pymod script has been run, there will be an auto-generated, auto-compiled
 Python module that exposes the Nim procs in Python.
+
+There's even a type (`PyArrayObject`) that provides a Nim interface to
+[Numpy arrays](http://www.scipy-lectures.org/intro/numpy/array_object.html),
+so you can pass Numpy arrays into your Nim procs from Python and access them
+natively.
 
 The auto-generated C-API boilerplate code handles the parsing & type-checking
 of the function arguments passed from Python, including correct handling of Python
 ref-counts if a type error occurs or an exception is raised.  The boilerplate
 code also translates Nim exceptions (including back-traces) to Python exceptions.
-Finally, the boilerplate code provides auto-generated Python docstrings that
-have been extracted from the Nim procs.
+The boilerplate code even includes auto-generated Python docstrings that have been
+extracted from the Nim procs.
 
-There's even a type (`PyArrayObject`) that provides a Nim interface to
-[Numpy arrays](http://www.scipy-lectures.org/intro/numpy/array_object.html),
-so you can pass Numpy arrays into your Nim procs and access them natively.
-
-Pymod is definitely still in the **alpha** phase of software maturity, and it's
-far from feature-complete, but it's been usable for our work for about 9 months now
-(and we've been using it regularly during that time).  There's a lot of hacky code
-in there, but it gets the job done.
+Pymod is definitely still in the **in-development** phase of software maturity,
+and it's far from feature-complete, but it's been usable for our work for about
+9 months now (and we've been using it regularly during that time).  There's a lot
+of hacky code in there, but it gets the job done.
 
 Motivation
 ----------
@@ -34,9 +35,9 @@ don't want to rewrite.  Perhaps you want to use [Numpy](http://www.numpy.org/),
 [Scipy](http://www.scipy.org/) or [Matplotlib](http://www.matplotlib.org).
 Perhaps your program's main loop simply must be in Python.
 
-However, you would prefer to write Nim code and then call your Nim procs
-from the Python code.  (There are many more systems written in Python than
-in Nim, but it would be great to start extending them in Nim!)
+However, you would like to write Nim code and then call your Nim procs from
+your Python code.  (There are many more systems written in Python than in Nim,
+but it would be great to start extending them in Nim!)
 You can write
 [Python C-API extension modules](https://docs.python.org/2/extending/extending.html)
 to wrap your Nim procs, but all the
@@ -45,6 +46,20 @@ is a huge drag, especially if you check types and manage reference counts
 and handle Nim exceptions properly.
 
 That's what Pymod is for.
+
+Nim
+---
+
+If you'd like to learn more about the [Nim programming language](http://nim-lang.org),
+we recommend:
+
+* the official [Nim tutorial, part 1](http://nim-lang.org/docs/tut1.html)
+  (followed by [part 2](http://nim-lang.org/docs/tut2.html))
+* the very approachable [Nim by Example](https://nim-by-example.github.io/),
+  which offers a series of short, simple lessons about the main Nim features
+* the comprehensive [Nim manual](http://nim-lang.org/docs/manual.html)
+* the Python-vs-Nim feature comparison table at
+  [Nim for Python Programmers](https://github.com/nim-lang/Nim/wiki/Nim-for-Python-Programmers)
 
 Usage
 -----
