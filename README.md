@@ -236,14 +236,12 @@ Support for the following Nim types is in development:
 | unicode code point sequence    | `seq[unicode.Rune]` | `unicode` | `str` |
 
 
-Procedure parameters may be basic types (`int`, `int{64,32,16,8}`, `uint`,
-`uint{64,32,16,8}`, `float`, `float{64,32}` or `string`) or `ptr PyArrayObject`.
+Procedure parameters may be any of the above supported Nim types.
 Default parameters are supported to a limited extent, although the parameter
 type must be specified explicitly, and is currently restricted to the `string`,
 integer & floating-point types.
 
-Procedure return values may be basic types (`int`, `int{64,32,16,8}`, `uint`,
-`uint{64,32,16,8}`, `float`, `float{64,32}` or `string`), `ptr PyArrayObject` or
+Procedure return values may be any of the above supported Nim types or
 a Nim tuple of any of these types.  Nested tuples are currently not supported.
 By default, named tuples in Nim are returned as raw tuples to Python:
 
