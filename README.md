@@ -7,7 +7,7 @@ The **Pymod** software package consists of Nim bindings & Python scripts to
 automate the generation of
 [Python C-API extension module](https://docs.python.org/2/extending/index.html)
 boilerplate for Nim procs.
-After Pymod script has been run, there will be an auto-generated, auto-compiled
+After the Pymod script has been run, there will be an auto-generated, auto-compiled
 Python module that exposes the Nim procs in Python.
 
 There's even a type (`PyArrayObject`) that provides a Nim interface to
