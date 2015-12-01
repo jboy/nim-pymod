@@ -659,6 +659,8 @@ proc convertFormatStringToCType(s: string, n: NimNode): string {. compileTime .}
     result = "const char *"
   of "b":
     result = "unsigned char"
+  of "B":
+    result = "unsigned char"
   of "h":
     result = "short int"
   of "H":
