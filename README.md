@@ -214,6 +214,17 @@ much faster!
 Procedure parameter & return types
 ----------------------------------
 
+The following Nim types are currently supported by Pymod:
+
+| Type category    | Nim types | Python2 type | Python3 type |
+| ---------------- | --------- | ------------ | -------------|
+| floating-point   | `float`, `float32`, `float64`, `cfloat`, `cdouble` | `float` | `float` |
+| signed integer   | `int`, `int16`, `int32`, `int64`, `cshort`, `cint`, `clong` | `int` | `int` |
+| unsigned integer | `uint`, `uint8`, `uint16`, `uint32`, `uint64`, `cushort`, `cuint`, `culong`, `byte` | `int` | `int` |
+| character        | `char`, `char` | `str` (`len == 1`) | `bytes` (`len == 1`) |
+| string           | `string` | `str` | `str` |
+
+
 Procedure parameters may be basic types (`int`, `int{64,32,16,8}`, `uint`,
 `uint{64,32,16,8}`, `float`, `float{64,32}` or `string`) or `ptr PyArrayObject`.
 Default parameters are supported to a limited extent, although the parameter
