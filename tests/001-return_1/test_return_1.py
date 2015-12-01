@@ -79,26 +79,50 @@ def test_byteReturn1(pymod_test_mod):
     assert pymod_test_mod.byteReturn1() == 1
 
 
-#def test_unicodeRuneReturn1(pymod_test_mod, python_major_version):
-#    if python_major_version == 2:
-#        assert pymod_test_mod.unicodeRuneReturn1() == u"a"
-#    else:  # Python 3 or above: bytes vs strings, yay!
-#        assert pymod_test_mod.unicodeRuneReturn1() == "a"
-
 def test_ccharReturn1(pymod_test_mod, python_major_version):
     if python_major_version == 2:
         assert pymod_test_mod.ccharReturn1() == "a"
+        assert type(pymod_test_mod.ccharReturn1()) == type("a")
     else:  # Python 3 or above: bytes vs strings, yay!
         assert pymod_test_mod.ccharReturn1() == b"a"
+        assert type(pymod_test_mod.ccharReturn1()) == type(b"a")
 
 def test_charReturn1(pymod_test_mod, python_major_version):
     if python_major_version == 2:
         assert pymod_test_mod.charReturn1() == "a"
+        assert type(pymod_test_mod.charReturn1()) == type("a")
     else:  # Python 3 or above: bytes vs strings, yay!
         assert pymod_test_mod.charReturn1() == b"a"
+        assert type(pymod_test_mod.charReturn1()) == type(b"a")
 
 def test_stringReturn1(pymod_test_mod):
     assert pymod_test_mod.stringReturn1() == "abc"
+    assert type(pymod_test_mod.stringReturn1()) == type("abc")
+
+
+#def test_unicodeRuneReturn1(pymod_test_mod, python_major_version):
+#    if python_major_version == 2:
+#        assert pymod_test_mod.unicodeRuneReturn1() == u"a"
+#        assert type(pymod_test_mod.unicodeRuneReturn1()) == type(u"a")
+#    else:  # Python 3 or above: bytes vs strings, yay!
+#        assert pymod_test_mod.unicodeRuneReturn1() == "a"
+#        assert type(pymod_test_mod.unicodeRuneReturn1()) == type("a")
+
+#def test_seqCharReturn1(pymod_test_mod, python_major_version):
+#    if python_major_version == 2:
+#        assert pymod_test_mod.seqCharReturn1() == "abc"
+#        assert type(pymod_test_mod.seqCharReturn1()) == type("abc")
+#    else:  # Python 3 or above: bytes vs strings, yay!
+#        assert pymod_test_mod.seqCharReturn1() == b"abc"
+#        assert type(pymod_test_mod.seqCharReturn1()) == type(b"abc")
+
+#def test_seqRuneReturn1(pymod_test_mod, python_major_version):
+#    if python_major_version == 2:
+#        assert pymod_test_mod.seqRuneReturn1() == u"abc"
+#        assert type(pymod_test_mod.seqRuneReturn1()) == type(u"abc")
+#    else:  # Python 3 or above: bytes vs strings, yay!
+#        assert pymod_test_mod.seqRuneReturn1() == "abc"
+#        assert type(pymod_test_mod.seqRuneReturn1()) == type("abc")
 
 
 def test_intReturn1NoParensInDecl(pymod_test_mod):

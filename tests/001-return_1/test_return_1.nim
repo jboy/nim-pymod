@@ -31,10 +31,14 @@ proc uint64Return1*():  uint64 {.exportpy.} = 1
 #proc boolReturn1*():    bool {.exportpy.} = True
 proc byteReturn1*():    byte {.exportpy.} = 1
 
-#proc unicodeRuneReturn1*(): Rune {.exportpy.} = Rune(ord('a'))
 proc ccharReturn1*():   cchar {.exportpy.} = 'a'
 proc charReturn1*():    char {.exportpy.} = 'a'
 proc stringReturn1*():  string {.exportpy.} = "abc"
+
+#proc unicodeRuneReturn1*(): Rune {.exportpy.} = Rune(ord('a'))
+#proc seqCharReturn1*():     seq[char] {.exportpy.} = @['a', 'b', 'c']
+#proc seqRuneReturn1*():     seq[Rune] {.exportpy.} =
+#  @[Rune(ord('a')), Rune(ord('b')), Rune(ord('c'))]
 
 proc intReturn1NoParensInDecl*: int {.exportpy.} = 1
 
@@ -49,6 +53,6 @@ initPyModule("",
     uintReturn1, uint8Return1, uint16Return1, uint32Return1, uint64Return1,
     #boolReturn1,
     byteReturn1,
-    #unicodeRuneReturn1,
     ccharReturn1, charReturn1, stringReturn1,
+    #unicodeRuneReturn1, seqCharReturn1, seqRuneReturn1,
     intReturn1NoParensInDecl)
