@@ -101,7 +101,7 @@ def pmgen_py_fullpath(request):
     #  http://py.readthedocs.org/en/latest/path.html#py._path.local.LocalPath
     invocation_dir = request.config.invocation_dir
     pmgen_py_fullpath = invocation_dir.join(pmgen_py_dirpath, pmgen_py_fname, abs=1)
-    print(" - pmgen.py fullpath to use: %s\n" % pmgen_py_fullpath)
+    print(" > pmgen.py fullpath to use: %s\n" % pmgen_py_fullpath)
 
     # Ensure the specified fullpath actually exists.
     if not _localpath_exists(pmgen_py_fullpath):
@@ -150,7 +150,7 @@ def chdir_into_test_dir(request):
     # not a string.
     #  http://py.readthedocs.org/en/latest/path.html#py._path.local.LocalPath
     invocation_dir = request.config.invocation_dir
-    print("Test invocation directory: %s" % invocation_dir)
+    print("Pytest invocation directory: %s" % invocation_dir)
 
     test_dir = _get_test_dir_that_contains_module(request)
     print("Chdir into test directory: %s" % test_dir)
