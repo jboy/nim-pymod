@@ -64,11 +64,11 @@ we recommend:
 Usage
 -----
 
-Using Pymod is a 4-step process:
+Using Pymod is a 4-step process.  In brief:
 
 1. `import pymod` at the top of your Nim module.
 2. Add the `{.exportpy.}` pragma after each Nim proc.
-3. Invoke the `initPyModule()` macro at the bottom of your Nim module.
+3. Invoke the `initPyModule("modname", proc1, proc2, proc3)` macro at the bottom of your Nim module.
 4. Run the `pmgen.py` Python script to compile everything.
 
 In more detail:
@@ -211,17 +211,6 @@ then the Nim compiler will be invoked in **release mode**, and bounds-checking
 of the `PyArrayObject` iterators will be switched off.  Your code will now run
 much faster!
 
-Docstrings
-----------
-
-Pymod will also auto-generate a Python docstring for each function in the
-extension module, specifying the function's parameter types & return type,
-based upon the parameter types & return types of the exported Nim proc.
-You can embed additional documentation in each Nim proc you want to export,
-using the supplied `docstring"""Text goes here."""` string type.  Any docstrings
-in the proc will be extracted automatically and included in the generated Python
-docstring.  There is an example of docstring usage in the code sample above.
-
 Procedure parameter & return types
 ----------------------------------
 
@@ -251,6 +240,17 @@ registry, similar to how Pymod maps its own `PyArrayObject` type to Numpy's
 array type.  This provides Pymod with a mapping from an already-defined Nim
 type to the corresponding Python & C-API types, enabling Pymod to generate
 the Nim-Python conversions & type-checking boilerplate for additional types.
+
+Docstrings
+----------
+
+Pymod will also auto-generate a Python docstring for each function in the
+extension module, specifying the function's parameter types & return type,
+based upon the parameter types & return types of the exported Nim proc.
+You can embed additional documentation in each Nim proc you want to export,
+using the supplied `docstring"""Text goes here."""` string type.  Any docstrings
+in the proc will be extracted automatically and included in the generated Python
+docstring.  There is an example of docstring usage in the code sample above.
 
 PyArrayObject type
 ------------------
