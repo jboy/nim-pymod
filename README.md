@@ -3,8 +3,8 @@
 Auto-generate a [Python](http://www.python.org) module that wraps
 a [Nim programming language](http://nim-lang.org) module.
 
-The **Pymod** software package consists of Nim bindings & Python scripts to
-automate the generation of
+The **Pymod** software consists of Nim bindings & Python scripts to automate
+the generation of
 [Python C-API extension module](https://docs.python.org/2/extending/index.html)
 boilerplate for Nim "procs" (procedures).
 After the Pymod script has been run, there will be an auto-generated, auto-compiled
