@@ -144,3 +144,20 @@ def test_intExpect_but_supply_str(pymod_test_mod, python_major_version):
     else:  # Python 3 or above
         assert str(excinfo.value) == "an integer is required (got type str)"
 
+
+def test_stringExpect_but_supply_float(pymod_test_mod, python_major_version):
+    with pytest.raises(TypeError) as excinfo:
+        pymod_test_mod.stringExpect1(1.0)
+    if python_major_version == 2:
+        assert str(excinfo.value) == "argument 1 must be string, not float"
+    else:  # Python 3 or above
+        assert str(excinfo.value) == "argument 1 must be str, not float"
+
+def test_stringExpect_but_supply_int(pymod_test_mod, python_major_version):
+    with pytest.raises(TypeError) as excinfo:
+        pymod_test_mod.stringExpect1(1)
+    if python_major_version == 2:
+        assert str(excinfo.value) == "argument 1 must be string, not int"
+    else:  # Python 3 or above
+        assert str(excinfo.value) == "argument 1 must be str, not int"
+
