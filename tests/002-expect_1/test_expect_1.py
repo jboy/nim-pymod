@@ -1,3 +1,6 @@
+import pytest
+
+
 def test_0_compile_pymod_test_mod(pmgen_py_compile):
     pmgen_py_compile(__name__)
 
@@ -111,4 +114,21 @@ def test_stringExpect1(pymod_test_mod):
 #        pymod_test_mod.seqRuneExpect1(u"abc")
 #    else:  # Python 3 or above: bytes vs strings, yay!
 #        pymod_test_mod.seqRuneExpect1("abc")
+
+
+def test_intExpect_but_supply_float(pymod_test_mod, python_major_version):
+    with pytest.raises(TypeError) as excinfo:
+        pymod_test_mod.intExpect1(1.0)
+    if python_major_version == 2:
+        assert str(excinfo.value) == "integer argument expected, got float"
+    else:  # Python 3 or above
+        assert str(excinfo.value) == "integer argument expected, got float"
+
+def test_intExpect_but_supply_str(pymod_test_mod, python_major_version):
+    with pytest.raises(TypeError) as excinfo:
+        pymod_test_mod.intExpect1('a')
+    if python_major_version == 2:
+        assert str(excinfo.value) == "an integer is required"
+    else:  # Python 3 or above
+        assert str(excinfo.value) == "an integer is required (got type str)"
 
