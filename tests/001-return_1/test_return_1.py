@@ -98,7 +98,7 @@ def test_charReturn1(pymod_test_mod, python_major_version):
         assert pymod_test_mod.charReturn1() == b"a"
 
 def test_stringReturn1(pymod_test_mod):
-    assert pymod_test_mod.stringReturn1() == "one"
+    assert pymod_test_mod.stringReturn1() == "abc"
 
 
 def test_intReturn1NoParensInDecl(pymod_test_mod):

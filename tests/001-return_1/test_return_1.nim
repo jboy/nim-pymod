@@ -34,7 +34,7 @@ proc byteReturn1*():    byte {.exportpy.} = 1
 #proc unicodeRuneReturn1*(): Rune {.exportpy.} = Rune(ord('a'))
 proc ccharReturn1*():   cchar {.exportpy.} = 'a'
 proc charReturn1*():    char {.exportpy.} = 'a'
-proc stringReturn1*():  string {.exportpy.} = "one"
+proc stringReturn1*():  string {.exportpy.} = "abc"
 
 proc intReturn1NoParensInDecl*: int {.exportpy.} = 1
 
