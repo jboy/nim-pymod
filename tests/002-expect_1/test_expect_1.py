@@ -161,3 +161,12 @@ def test_stringExpect_but_supply_int(pymod_test_mod, python_major_version):
     else:  # Python 3 or above
         assert str(excinfo.value) == "argument 1 must be str, not int"
 
+
+def test_charExpect_but_supply_str(pymod_test_mod, python_major_version):
+    with pytest.raises(TypeError) as excinfo:
+        pymod_test_mod.charExpect1("abc")
+    if python_major_version == 2:
+        assert str(excinfo.value) == "argument 1 must be char, not str"
+    else:  # Python 3 or above
+        assert str(excinfo.value) == "argument 1 must be a byte string of length 1, not str"
+
