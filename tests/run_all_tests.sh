@@ -1,4 +1,20 @@
 #!/bin/sh
+# Run all tests in the Pymod automated test suite.
+#
+# Usage:
+#  sh run_all_tests.sh
+#
+# The test suite depends upon the Pytest framework: https://pytest.org/latest/
+# The test suite will attempt to run using every major version of Python found
+# on your system.
+#
+# To run just a single specific test, for example "001-return_1":
+#  sh run_all_tests.sh 001-return_1
+#
+# To see all output produced by the tests runs (including from the Nim compiler
+# and the Pymod "pmgen.py" script):
+#  sh run_all_tests.sh -s
+
 
 PYTEST_MODULE="pytest"
 for pyver in python python2 python3
