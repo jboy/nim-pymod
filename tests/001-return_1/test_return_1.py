@@ -3,7 +3,6 @@ def test_0_compile_pymod_test_mod(pmgen_py_compile):
 
 
 def test_cfloatReturn1(pymod_test_mod):
-    print(dir(pymod_test_mod))
     assert pymod_test_mod.cfloatReturn1() == 1.0
 
 def test_cdoubleReturn1(pymod_test_mod):
