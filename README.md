@@ -221,7 +221,7 @@ The following Nim types are currently supported by Pymod:
 | floating-point   | `float`, `float32`, `float64`, `cfloat`, `cdouble` | `float` | `float` |
 | signed integer   | `int`, `int16`, `int32`, `int64`, `cshort`, `cint`, `clong` | `int` | `int` |
 | unsigned integer | `uint`, `uint8`, `uint16`, `uint32`, `uint64`, `cushort`, `cuint`, `culong`, `byte` | `int` | `int` |
-| character        | `char`, `cchar` | `str` | `bytes` |
+| non-unicode character | `char`, `cchar` | `str` | `bytes` |
 | string           | `string` | `str` | `str` |
 | Numpy array      | `ptr PyArrayObject` | `numpy.ndarray` | `numpy.ndarray` |
 
@@ -234,6 +234,7 @@ Support for the following Nim types is in development:
 | unicode code point (character) | `unicode.Rune` | `unicode` | `str` |
 | non-unicode character sequence | `seq[char]` | `str` | `bytes` |
 | unicode code point sequence    | `seq[unicode.Rune]` | `unicode` | `str` |
+| sequence of a single type _T_  | `seq[T]` | `list` | `list` |
 
 
 Procedure parameters may be any of the above supported Nim types.
