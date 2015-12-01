@@ -48,7 +48,7 @@ proc parseModNameFromLineinfo*(li: string):
 
 proc getModuleName*(n: NimNode): string {. compileTime .} =
   let li: string = n.lineinfo
-  let (path_and_filename, mod_name, success) = parseModNameFromLineinfo(li)
+  let (_, mod_name, _) = parseModNameFromLineinfo(li)
   return mod_name
 
 
