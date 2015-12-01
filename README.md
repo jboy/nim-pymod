@@ -248,7 +248,7 @@ By default, named tuples in Nim are returned as raw tuples to Python:
     # Nim                   # Python
     tuple[ a, b: int ]  =>  (a_value, b_value)
 
-If `exportpy` is specified as `exportpy returnDict` then the generated
+If `{.exportpy.}` is specified as `{.exportpy returnDict.}` then the generated
 code will instead return a Python dict containing the named properties:
 
     # Nim                   # Python
