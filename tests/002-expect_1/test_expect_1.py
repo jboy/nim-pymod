@@ -116,6 +116,18 @@ def test_stringExpect1(pymod_test_mod):
 #        pymod_test_mod.seqRuneExpect1("abc")
 
 
+def test_floatExpect_but_supply_int(pymod_test_mod, python_major_version):
+    pymod_test_mod.floatExpect1(1)
+
+def test_floatExpect_but_supply_str(pymod_test_mod, python_major_version):
+    with pytest.raises(TypeError) as excinfo:
+        pymod_test_mod.floatExpect1('a')
+    if python_major_version == 2:
+        assert str(excinfo.value) == "a float is required"
+    else:  # Python 3 or above
+        assert str(excinfo.value) == "a float is required"
+
+
 def test_intExpect_but_supply_float(pymod_test_mod, python_major_version):
     with pytest.raises(TypeError) as excinfo:
         pymod_test_mod.intExpect1(1.0)
