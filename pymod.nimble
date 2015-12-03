@@ -6,4 +6,4 @@ description   = "Auto-generate a Python module that wraps a Nim module."
 license       = "MIT"
 
 [Deps]
-Requires: "nimrod >= 0.12.0"
+Requires: "nim > 0.12.0"
