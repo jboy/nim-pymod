@@ -541,7 +541,7 @@ proc exportpyImpl*(
   let return_type_node = proc_params[0]  # This will always exist, even if Empty.
   let return_type_fmt_tuple = getReturnType(pyObjectTypeDefs, return_type_node)
 
-  let return_dict = proc_def_node.hasPragma("returnDict")
+  let do_return_dict = proc_def_node.hasPragma("returnDict")
 
   # NOTE:  We expect that each `param_node` is of kind `nnkIdentDefs`:
   # it defines an identifier as a parameter-name with a type.  However,
@@ -638,7 +638,7 @@ proc exportpyImpl*(
       return_type_fmt_tuple,
       param_name_type_tuple_seq,
       docstring_lines,
-      return_dict
+      do_return_dict
   )
   proc_prototypes << new_pp
   #let wrapper_node = generateNimWrapper(new_pp)
@@ -860,8 +860,8 @@ template outputPyMethodDefDoc(output_lines: var seq[string], s: string) =
   output_lines << "\t\t\"$1\\n\"" % s
 
 
-proc py_type(type_fmt_tuples: seq[TypeFmtTuple]; return_dict: bool = false) : string {. compileTime .} =
-  if return_dict and type_fmt_tuples[0].label != nil:
+proc py_type(type_fmt_tuples: seq[TypeFmtTuple]; do_return_dict: bool = false) : string {. compileTime .} =
+  if do_return_dict and type_fmt_tuples[0].label != nil:
     result = "{ $1: $2" % [type_fmt_tuples[0].label, type_fmt_tuples[0].py_type]
     for i in 1 .. <type_fmt_tuples.len:
       result = result & (", $1: $2" % [type_fmt_tuples[i].label, type_fmt_tuples[i].py_type])
@@ -874,10 +874,10 @@ proc py_type(type_fmt_tuples: seq[TypeFmtTuple]; return_dict: bool = false) : st
   else:
     result = "None"
 
-proc py_fmt_str(type_fmt_tuples: seq[TypeFmtTuple]; return_dict: bool = false) : string {. compileTime .} =
+proc py_fmt_str(type_fmt_tuples: seq[TypeFmtTuple]; do_return_dict: bool = false) : string {. compileTime .} =
   # "O!" is not a valid format string for `Py_BuildValue`.
   # We convert it to O when building the combined format string.
-  if return_dict and type_fmt_tuples[0].label != nil:
+  if do_return_dict and type_fmt_tuples[0].label != nil:
     result = "{"
     for i in 0 .. <type_fmt_tuples.len:
       let py_fmt_str = type_fmt_tuples[i].py_fmt_str
@@ -945,7 +945,7 @@ proc extendWithPyFuncParametersDoc(output_lines: var seq[string],
   outputPyMethodDefDoc(output_lines, "Returns")
   outputPyMethodDefDoc(output_lines, "-------")
 
-  let py_type = pp.return_type_fmt_tuple.py_type(pp.return_dict)
+  let py_type = pp.return_type_fmt_tuple.py_type(pp.do_return_dict)
   let nim_type = pp.return_type_fmt_tuple.nim_type
   let s = "out : $1 <- $2" % [py_type, nim_type]
   outputPyMethodDefDoc(output_lines, s)
@@ -1180,7 +1180,7 @@ proc extendWithOneNimWrapperProcDef(output_lines: var seq[string],
   let return_type = pp.return_type_fmt_tuple.nim_type
   if return_type != "void":
     let func_call = "let return_val = $1($2)" % [proc_name, func_args.join(", ")]
-    var return_type_fmt_str = pp.return_type_fmt_tuple.py_fmt_str(pp.return_dict)
+    var return_type_fmt_str = pp.return_type_fmt_tuple.py_fmt_str(pp.do_return_dict)
 
     var comment : string
     var return_val : string
@@ -1190,11 +1190,11 @@ proc extendWithOneNimWrapperProcDef(output_lines: var seq[string],
           "Note: `Py_BuildValue(\"O\")` increments the ref-count of the object."
         else:
           "Create a new PyObject value from the Nim value."
-      if pp.return_dict:
+      if pp.do_return_dict:
         comment = comment & " Ignoring \"returnDict\" pragma for non-tuple."
 
       return_val = "Py_BuildValue(\"$1\", return_val)" % return_type_fmt_str
-    elif pp.return_dict:
+    elif pp.do_return_dict:
       # Multiple return values in a dict
       comment = "Construct dict from the Nim return values."
       return_val = "PyBuildValue(\"$1\"" % return_type_fmt_str

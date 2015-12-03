@@ -109,7 +109,7 @@ type ProcPrototype* = tuple[
     return_type_fmt_tuple: seq[TypeFmtTuple],
     param_name_type_tuple_seq: seq[ref ParamNameTypeTuple],
     docstring_lines: seq[string],
-    return_dict: bool
+    do_return_dict: bool
 ]
 
 proc new_ProcPrototype*(
@@ -118,7 +118,7 @@ proc new_ProcPrototype*(
     return_type_fmt_tuple: seq[TypeFmtTuple],
     param_name_type_tuple_seq: seq[ref ParamNameTypeTuple],
     docstring_lines: seq[string],
-    return_dict: bool = false):
+    do_return_dict: bool = false):
     ref ProcPrototype {. compileTime .} =
   new(result)
 
@@ -127,7 +127,7 @@ proc new_ProcPrototype*(
   result.return_type_fmt_tuple = return_type_fmt_tuple
   result.param_name_type_tuple_seq = param_name_type_tuple_seq
   result.docstring_lines = docstring_lines
-  result.return_dict = return_dict
+  result.do_return_dict = do_return_dict
 
 proc getKey*(ptfs: ref ProcPrototype): string {. compileTime .} =
   result = ptfs.proc_name
