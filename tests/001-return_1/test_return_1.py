@@ -194,3 +194,16 @@ def test_intReturn1NoParensInDecl(pymod_test_mod):
     assert res == expectedRes
     assert type(res) == type(expectedRes)
 
+
+def test_noReturn(pymod_test_mod):
+    expectedRes = None
+    res = pymod_test_mod.noReturn()
+    assert res == expectedRes
+    assert type(res) == type(expectedRes)
+
+#def test_voidReturn(pymod_test_mod):
+#    expectedRes = None
+#    res = pymod_test_mod.voidReturn()
+#    assert res == expectedRes
+#    assert type(res) == type(expectedRes)
+

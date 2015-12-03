@@ -42,6 +42,9 @@ proc stringReturn1*():  string {.exportpy.} = "abc"
 
 proc intReturn1NoParensInDecl*: int {.exportpy.} = 1
 
+proc noReturn* {.exportpy.} = discard
+#proc voidReturn*: void {.exportpy.} = discard
+
 
 initPyModule("",
     cfloatReturn1, cdoubleReturn1,
@@ -55,4 +58,6 @@ initPyModule("",
     byteReturn1,
     ccharReturn1, charReturn1, stringReturn1,
     #unicodeRuneReturn1, seqCharReturn1, seqRuneReturn1,
-    intReturn1NoParensInDecl)
+    intReturn1NoParensInDecl,
+    noReturn)
+    #voidReturn)
