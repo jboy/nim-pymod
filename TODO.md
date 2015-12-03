@@ -5,7 +5,10 @@
   * Note: After the Python module `.so` file is built, the Makefile moves it to `..`.
   * So `pmgen.py` needs to write the current absolute path, rather than `..`, into the Makefile.
 * Add a command-line option `--pymod_name=MODNAME` to override the modname that is specified in `initPyModule`.
-* Enable `bool` as a Nim type that can be exported as a Python type.
+* Enable `void` as a Nim type that is supported for params & return values.
+* If the user returns a `nil` string, ensure it is converted to an empty string.
+* If the user returns a `nil` ptr PyObject or ptr PyArrayObject, ensure it becomes PyNone.
+* Enable `bool` as a Nim type that is supported for params & return values.
   * Note that the Python C-API doesn't actually offer `bool` as a conversion type.
   * https://docs.python.org/2/c-api/arg.html
   * https://docs.python.org/2/c-api/bool.html
