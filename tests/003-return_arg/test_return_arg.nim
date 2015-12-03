@@ -1,5 +1,7 @@
 import pymod
+import pymodpkg/pyarrayobject
 import unicode
+
 
 proc cfloatReturnArg*(arg: cfloat):   cfloat {.exportpy.} = arg
 proc cdoubleReturnArg*(arg: cdouble): cdouble {.exportpy.} = arg
@@ -39,6 +41,9 @@ proc stringReturnArg*(arg: string):  string {.exportpy.} = arg
 #proc seqCharReturnArg*(arg: seq[char]): seq[char] {.exportpy.} = arg
 #proc seqRuneReturnArg*(arg: seq[Rune]): seq[Rune] {.exportpy.} = arg
 
+proc ptrPyArrayObjectReturnArg*(arg: ptr PyArrayObject): ptr PyArrayObject {.exportpy.} = arg
+proc ptrPyObjectReturnArg*(arg: ptr PyObject): ptr PyObject {.exportpy.} = arg
+
 
 initPyModule("",
     cfloatReturnArg, cdoubleReturnArg,
@@ -52,4 +57,4 @@ initPyModule("",
     byteReturnArg,
     ccharReturnArg, charReturnArg, stringReturnArg,
     #unicodeRuneReturnArg, seqCharReturnArg, seqRuneReturnArg,
-    )
+    ptrPyArrayObjectReturnArg, ptrPyObjectReturnArg)
