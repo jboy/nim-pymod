@@ -6,6 +6,14 @@ def test_0_compile_pymod_test_mod(pmgen_py_compile):
     pmgen_py_compile(__name__)
 
 
+#@xfail(reason="zero field tuple is incorrectly returned as None")
+#def test_returnEmptyTuple(pymod_test_mod):
+#    expectedRes = ()
+#    res = pymod_test_mod.returnEmptyTuple()
+#    assert type(res) == type(expectedRes)
+#    assert res == expectedRes
+
+
 @xfail(reason="one field tuple is incorrectly returned as non-tuple")
 def test_returnOneFieldTupleNamedFields1(pymod_test_mod):
     arg = 1

@@ -1,5 +1,7 @@
 import pymod
 
+proc returnEmptyTuple*(): tuple[] {.exportpy.} = ()
+
 proc returnOneFieldTupleNamedFields1*(x: int): tuple[a: int] {.exportpy.} = (a: x)
 proc returnOneFieldTupleNamedFields2*(): tuple[a: int] {.exportpy.} = (a: 22)
 proc returnOneFieldTupleNamedFields3*: tuple[a: int] {.exportpy.} = (a: 33)
@@ -15,9 +17,8 @@ proc returnTwoFieldTupleUnnamedFields7*(x: int): tuple[a, b: int] {.exportpy.} =
 proc returnTwoFieldTupleUnnamedFields8*(x: int): tuple[a, b: int] {.exportpy.} = (888, x)
 proc returnTwoFieldTupleUnnamedFields9*: tuple[a, b: int] {.exportpy.} = (999, 9999)
 
-#proc returnEmptyTuple*(): tuple[] {.exportpy.} = ()
-
 initPyModule("",
+    #returnEmptyTuple,
     returnOneFieldTupleNamedFields1, returnOneFieldTupleNamedFields2, returnOneFieldTupleNamedFields3,
     returnTwoFieldTupleNamedFields1, returnTwoFieldTupleNamedFields2, returnTwoFieldTupleNamedFields3,
     returnTwoFieldTupleNamedFields4, returnTwoFieldTupleNamedFields5,
