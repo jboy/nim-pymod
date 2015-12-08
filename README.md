@@ -369,7 +369,8 @@ usage scenarios:
 If you attempt to iterate over a Numpy array with non-C-contiguous data,
 an `AssertionError` will be raised (even in release mode).  If you supply
 the incorrect array element data-type when invoking `.iterateForward(T)`
-or `.accessFlat(T)`, an `ObjectConversionError` will be raised.
+or `.accessFlat(T)`, an `ObjectConversionError` will be raised (even in
+release mode).
 
 PyArrayObject & PyArrayIterator usage example
 ---------------------------------------------
@@ -409,37 +410,39 @@ You can test the Pymod-wrapped Nim proc `addVal` using a Python script like this
 import numpy as np
 import _myModule as mm
 
-a = np.arange(10, dtype=np.int32).reshape((2, 5))
-print(a)
-mm.addVal(a, 101)
-print(a)
+int32arr = np.arange(10, dtype=np.int32).reshape((2, 5))
+print(int32arr)
+mm.addVal(int32arr, 101)
+print(int32arr)
 
 print("")
 
-b = np.arange(10, dtype=np.float32).reshape((2, 5))
-print(b)
-mm.addVal(b, 101)  # Uh-oh!  ValueError will be raised here!
-print(b)
+float32arr = np.arange(10, dtype=np.float32).reshape((2, 5))
+print(float32arr)
+mm.addVal(float32arr, 101)  # Uh-oh!  Our `addVal` proc wants an array with dtype == `np.int32`!
+print(float32arr)
 ```
 
 The output from running this script will look something like this:
 
-    [[0 1 2 3 4]
-     [5 6 7 8 9]]
-    PyArrayObject has shape @[2, 5] and dtype numpy.int32
-    [[101 102 103 104 105]
-     [106 107 108 109 110]]
+```Python
+[[0 1 2 3 4]
+ [5 6 7 8 9]]
+PyArrayObject has shape @[2, 5] and dtype numpy.int32
+[[101 102 103 104 105]
+ [106 107 108 109 110]]
 
-    [[ 0.  1.  2.  3.  4.]
-     [ 5.  6.  7.  8.  9.]]
-    PyArrayObject has shape @[2, 5] and dtype numpy.float32
-    Traceback (most recent call last):
-      File "test_addvalmod.py", line 13, in <module>
-        mm.addVal(b, 101)  # Uh-oh!  ValueError will be raised here!
-    ValueError: expected array of dtype numpy.int32, received dtype numpy.float32
-    Nim traceback (most recent call last):
-      File "pmgen_myModule_wrap.nim", line 26, in exportpy_addVal
-      File "addvalmod.nim", line 22, in addVal
+[[ 0.  1.  2.  3.  4.]
+ [ 5.  6.  7.  8.  9.]]
+PyArrayObject has shape @[2, 5] and dtype numpy.float32
+Traceback (most recent call last):
+  File "test_addvalmod.py", line 13, in <module>
+    mm.addVal(float32arr, 101)  # Uh-oh!  Our `addVal` proc wants an array with dtype == `np.int32`!
+ValueError: expected array of dtype numpy.int32, received dtype numpy.float32
+Nim traceback (most recent call last):
+  File "pmgen_myModule_wrap.nim", line 26, in exportpy_addVal
+  File "addvalmod.nim", line 22, in addVal
+```
 
 Observe the `while`-loop that was used in `addVal` to iterate over the array.
 This is the most flexible loop idiom for forward-iterating over an array,
