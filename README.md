@@ -444,6 +444,9 @@ Nim traceback (most recent call last):
   File "addvalmod.nim", line 22, in addVal
 ```
 
+PyArrayIterator idioms
+----------------------
+
 Observe the `while`-loop that was used in `addVal` to iterate over the array.
 This is the most flexible loop idiom for forward-iterating over an array,
 since you are able to control where, and how many times, the forward iterator
