@@ -314,6 +314,9 @@ Here are some of the Numpy functions for array creation & manipulation that Pymo
 * `doFILLWBYTE(destArray, val)`
 * `doResizeDataInplace(oldArray, newShape, doRefCheck)`
 
+PyArrayIterator types
+---------------------
+
 **Note** that, due to its typeless Pythonic origin, `PyArrayObject` is not a
 Nim generic type.  So the element data-type of a `PyArrayObject` instance
 is unknown to Nim.  The Nim code must **specify the correct element data-type**
@@ -336,7 +339,7 @@ are inspired by the
 [C++ iterator category model](http://www.cplusplus.com/reference/iterator/).
 By default, the iterators implement per-dereference bounds-checking.
 This bounds-checking can be disabled, as described above in the section
-_Per-project configuration_.
+[Per-project configuration](#per-project-configuration).
 
 **Note** that the `PyArrayIterator` types can't handle any of the following
 usage scenarios:
