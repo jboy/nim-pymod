@@ -324,13 +324,16 @@ the two supplied `PyArrayIterator` types:
 * `PyArrayForwardIterator[T]`
   * returned by `.iterateForward(T)`
   * can only be incremented & dereferenced
+  * the fastest & safest iteration style
 * `PyArrayRandomAccessIterator[T]`
   * returned by `.accessFlat(T)`
-  * can be incremented, decremented, added, subtracted, dereferenced, indexed by any integer
+  * can be incremented or decremented by any integer; offset (using `+` or `-`) by any integer; indexed by any integer; & dereferenced
+  * basically a C pointer with bounds-checking
 
 Both of the `PyArrayIterator` types offer **1-D iteration & indexing** over
-a "flat" interpretation of the Numpy array data.  These two iterator types
-are inspired by the [C++ iterator category model](http://www.cplusplus.com/reference/iterator/).
+a "flat" interpretation of the Numpy N-D array data.  These two iterator types
+are inspired by the
+[C++ iterator category model](http://www.cplusplus.com/reference/iterator/).
 By default, the iterators implement per-dereference bounds-checking.
 This bounds-checking can be disabled, as described above in the section
 _Per-project configuration_.
@@ -338,9 +341,14 @@ _Per-project configuration_.
 **Note** that the `PyArrayIterator` types can't handle any of the following
 usage scenarios:
 
- * non-C-contiguous array memory
+ * non-C-contiguous array data
  * strides
  * multi-dimensional indexing
+
+If you attempt to iterate over a Numpy array with non-C-contiguous data,
+an `AssertionError` will be raised (even in release mode).  If you supply
+the incorrect array element data-type when invoking `.iterateForward(T)`
+or `.accessFlat(T)`, an `ObjectConversionError` will be raised.
 
 PyArrayObject & PyArrayIterator usage example
 ---------------------------------------------
