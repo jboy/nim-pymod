@@ -30,20 +30,20 @@ of hacky code in there, but it gets the job done.
 Table of contents
 -----------------
 
-| [Motivation](#motivation) |
-| [Nim](#nim) |
-| [Usage](#usage) |
-| [Example](#example) |
-| [System requirements](#system-requirements) |
-| [Per-project configuration](#per-project-configuration) |
-| [Procedure parameter & return types](#procedure-parameter--return-types) |
-| [Docstrings](#docstrings) |
-| [PyArrayObject type](#pyarrayobject-type) |
-| [PyArrayIterator types](#pyarrayiterator-types) |
-| [PyArrayObject & PyArrayIterator usage example](#pyarrayobject--pyarrayiterator-usage-example) |
-| [Tips, warnings & gotchas](#tips-warnings--gotchas) |
-| [What about calling Python from Nim?](#what-about-calling-python-from-nim) |
-| [Implementation details](#implementation-details) |
+1. [Motivation](#motivation)
+2. [Nim](#nim)
+3. [Usage](#usage)
+4. [Example](#example)
+5. [System requirements](#system-requirements)
+6. [Per-project configuration](#per-project-configuration)
+7. [Procedure parameter & return types](#procedure-parameter--return-types)
+8. [Docstrings](#docstrings)
+9. [PyArrayObject type](#pyarrayobject-type)
+10. [PyArrayIterator types](#pyarrayiterator-types)
+11. [PyArrayObject & PyArrayIterator usage example](#pyarrayobject--pyarrayiterator-usage-example)
+12. [Tips, warnings & gotchas](#tips-warnings--gotchas)
+13. [What about calling Python from Nim?](#what-about-calling-python-from-nim)
+14. [Implementation details](#implementation-details)
 
 Motivation
 ----------
