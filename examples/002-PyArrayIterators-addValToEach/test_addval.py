@@ -41,3 +41,21 @@ for name, func in FUNCS_TO_RUN2:
     print("\n=> After %s(a, %d, %d), array is now =" % (name, val, incDelta))
     print(a)
     print("\n---")
+
+
+FUNCS_TO_RUN3 = [
+        ("addValEachDeltaInitOffset", av.addValEachDeltaInitOffset),
+]
+
+for name, func in FUNCS_TO_RUN3:
+    print("\n%s:\nInput array =" % name)
+    a = np.random.randint(0, 30, 10).astype(np.int32).reshape((2, 5))
+    print(a)
+    print("")
+    val = 101
+    initOffset = 1
+    incDelta = 3
+    func(a, val, initOffset, incDelta)
+    print("\n=> After %s(a, %d, %d), array is now =" % (name, val, incDelta))
+    print(a)
+    print("\n---")

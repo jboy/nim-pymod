@@ -448,7 +448,7 @@ Nim traceback (most recent call last):
 PyArrayIterator loop idioms
 ---------------------------
 
-Observe the `while`-loop that was used in `addVal` to iterate over the array.
+Observe the `while` loop that was used in `addVal` to iterate over the array.
 This is the most flexible loop idiom for forward-iterating over an array,
 since you are able to control where, and how many times, the forward iterator
 will be incremented within the body of the loop:
@@ -461,10 +461,10 @@ while iter in bounds:
   inc(iter)  # Increment the iterator manually
 ```
 
-However, this `while`-loop idiom is more verbose than it often needs to be.
+However, this `while` loop idiom is more verbose than it often needs to be.
 Often, you will only need to increment the forward iterator once per iteration,
 at the end of the body of the loop; if this is all you need, there is a shorter
-`for`-loop idiom that you can use:
+`for` loop idiom that you can use:
 
 ```Nimrod
 for iter in arr.iterateForward(int32):
@@ -472,7 +472,7 @@ for iter in arr.iterateForward(int32):
 ```
 
 And if you don't need to modify the array data at all, there is an even shorter
-`for`-loop idiom that yields a succession of (read-only) array values:
+`for` loop idiom that yields a succession of (read-only) array values:
 
 ```Nimrod
 var maxVal: int32 = low(int32)
@@ -481,7 +481,9 @@ for val in arr.values(int32):
     maxVal = val
 ```
 
-Likewise for `PyArrayRandomAccessIterator[T]`:
+Likewise for `PyArrayRandomAccessIterator[T]`, there are 4 loop idioms, which
+offer different levels of control & convenience.  For the most flexibility,
+use a `while` loop:
 
 ```Nimrod
 let bounds = arr.getBounds(int32)  # Iterator bounds
@@ -491,11 +493,41 @@ while iter in bounds:
   inc(iter, incDelta)  # Increment the iterator manually
 ```
 
-and:
+There are 3 different `for` loop forms available for `PyArrayRandomAccessIterator[T]`,
+to make it convenient to iterate over C-contiguous N-dimensional arrays.  If you want to
+visit every iterator position in turn, but retain the ability to index/offset arbitrarily,
+use the 1-argument form of `accessFlat`:
+
+```Nimrod
+for iter in arr.accessFlat(int32):
+  iter[] += val
+```
+
+If you want to increment by a certain specific delta each time, use the
+2-argument form of `accessFlat`:
 
 ```Nimrod
 for iter in arr.accessFlat(int32, incDelta):
   iter[] += val
+```
+
+And finally, if you want the iteration to begin at a certain initial offset,
+then increment by a certain specific delta each time, use the 3-argument form
+of `accessFlat`:
+
+```Nimrod
+for iter in arr.accessFlat(int32, initialOffset, incDelta):
+  iter[] += val
+```
+
+For example, if you want to visit just the "green" channel of an RGB image,
+you might use a loop like this:
+
+```Nimrod
+let greenIdx = 1
+let numChans = img.shape[2]
+for iter in img.accessFlat(uint8, greenIdx, numChans):
+  processGreenComponent(iter[])
 ```
 
 These code examples are all available in full in the

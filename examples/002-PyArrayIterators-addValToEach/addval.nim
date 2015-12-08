@@ -77,7 +77,7 @@ proc addVal3*(arr: ptr PyArrayObject, val: int32) {.exportpy} =
 
 proc addValEachDelta1*(arr: ptr PyArrayObject, val: int32, incDelta: int) {.exportpy} =
   docstring"""Add `val` to each element in the supplied Numpy array
-  that is reached by incrementing the iterator by `delta`.
+  that is reached by incrementing the iterator by `incDelta`.
 
   The array is assumed to have dtype `int32`; otherwise, a ValueError will be
   raised.  The elements in the array will be modified in-place.
@@ -100,7 +100,7 @@ proc addValEachDelta1*(arr: ptr PyArrayObject, val: int32, incDelta: int) {.expo
 
 proc addValEachDelta2*(arr: ptr PyArrayObject, val: int32, incDelta: int) {.exportpy} =
   docstring"""Add `val` to each element in the supplied Numpy array
-  that is reached by incrementing the iterator by `delta`.
+  that is reached by incrementing the iterator by `incDelta`.
 
   The array is assumed to have dtype `int32`; otherwise, a ValueError will be
   raised.  The elements in the array will be modified in-place.
@@ -118,4 +118,25 @@ proc addValEachDelta2*(arr: ptr PyArrayObject, val: int32, incDelta: int) {.expo
     raise newException(ValueError, msg)
 
 
-initPyModule("_addval", addVal1, addVal2, addVal3, addValEachDelta1, addValEachDelta2)
+proc addValEachDeltaInitOffset*(arr: ptr PyArrayObject; val: int32; initOffset, incDelta: int) {.exportpy} =
+  docstring"""Add `val` to each element in the supplied Numpy array that is reached by
+  incrementing the iterator by `incDelta` after an initial offset of `initOffset`.
+
+  The array is assumed to have dtype `int32`; otherwise, a ValueError will be
+  raised.  The elements in the array will be modified in-place.
+
+  This example shows the `for`-loop idiom with a
+  `PyArrayRandomAccessIterator[T]` and an increment delta.
+  """
+  let dt = arr.dtype
+  echo "PyArrayObject has shape $1 and dtype $2" % [$arr.shape, $dt]
+  if dt == np_int32:
+    for iter in arr.accessFlat(int32, initOffset, incDelta):  # Flat-iterate through the array.
+      iter[] += val
+  else:
+    let msg = "expected input array of dtype $1, received dtype $2" % [$np_int32, $dt]
+    raise newException(ValueError, msg)
+
+
+initPyModule("_addval", addVal1, addVal2, addVal3,
+    addValEachDelta1, addValEachDelta2, addValEachDeltaInitOffset)
