@@ -27,6 +27,26 @@ and it's far from feature-complete, but it's been usable for our work for about
 9 months now (and we've been using it regularly during that time).  There's a lot
 of hacky code in there, but it gets the job done.
 
+Table of contents
+-----------------
+
+| Sections |
+| -------- |
+| [Motivation](#motivation) |
+| [Nim](#nim) |
+| [Usage](#usage) |
+| [Example](#example) |
+| [System requirements](#system-requirements) |
+| [Per-project configuration](#per-project-configuration) |
+| [Procedure parameter & return types](#procedure-parameter--return-types) |
+| [Docstrings](#docstrings) |
+| [PyArrayObject type](#pyarrayobject-type) |
+| [PyArrayIterator types](#pyarrayiterator-types) |
+| [PyArrayObject & PyArrayIterator usage example](#pyarrayobject--pyarrayiterator-usage-example) |
+| [Tips, warnings & gotchas](#tips-warnings--gotchas) |
+| [What about calling Python from Nim?](#what-about-calling-python-from-nim) |
+| [Implementation details](#implementation-details) |
+
 Motivation
 ----------
 
