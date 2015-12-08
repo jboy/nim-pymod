@@ -41,9 +41,10 @@ Table of contents
 9. [PyArrayObject type](#pyarrayobject-type)
 10. [PyArrayIterator types](#pyarrayiterator-types)
 11. [PyArrayObject & PyArrayIterator usage example](#pyarrayobject--pyarrayiterator-usage-example)
-12. [Tips, warnings & gotchas](#tips-warnings--gotchas)
-13. [What about calling Python from Nim?](#what-about-calling-python-from-nim)
-14. [Implementation details](#implementation-details)
+12. [PyArrayIterator loop idioms](#pyarrayiterator-loop-idioms)
+13. [Tips, warnings & gotchas](#tips-warnings--gotchas)
+14. [What about calling Python from Nim?](#what-about-calling-python-from-nim)
+15. [Implementation details](#implementation-details)
 
 Motivation
 ----------
@@ -444,8 +445,8 @@ Nim traceback (most recent call last):
   File "addvalmod.nim", line 22, in addVal
 ```
 
-PyArrayIterator idioms
-----------------------
+PyArrayIterator loop idioms
+---------------------------
 
 Observe the `while`-loop that was used in `addVal` to iterate over the array.
 This is the most flexible loop idiom for forward-iterating over an array,
