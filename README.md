@@ -30,8 +30,6 @@ of hacky code in there, but it gets the job done.
 Table of contents
 -----------------
 
-| Sections |
-| -------- |
 | [Motivation](#motivation) |
 | [Nim](#nim) |
 | [Usage](#usage) |
