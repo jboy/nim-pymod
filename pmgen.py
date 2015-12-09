@@ -56,7 +56,7 @@ NIM_COMPILER_FLAGS = []
 NIM_COMPILER_FLAG_OPTIONS = dict(
         nimSetIsRelease=["-d:release"],
 )
-NIM_COMPILER_COMMAND = "%s %s" % (NIM_COMPILER_EXE_PATH, " ".join(NIM_COMPILER_FLAGS))
+NIM_COMPILER_COMMAND = "%s %%s %s" % (NIM_COMPILER_EXE_PATH, " ".join(NIM_COMPILER_FLAGS))
 
 MAKE_EXE_PATH = "make"
 
@@ -174,7 +174,7 @@ def getCompilerCommand():
         nim_compiler_flags.extend(NIM_COMPILER_FLAG_OPTIONS["nimSetIsRelease"])
         #print("nimSetIsRelease: True")
 
-    cmd = "%s %s" % (NIM_COMPILER_EXE_PATH, " ".join(nim_compiler_flags))
+    cmd = "%s %%s %s" % (NIM_COMPILER_EXE_PATH, " ".join(nim_compiler_flags))
     #print("Nim compiler command:", cmd)
     return cmd
 
@@ -306,8 +306,8 @@ def generate_pmgen_files(nim_modfiles, pminc_basename):
     # We need to "dot-dot" one level, because we are in the "pmgen" subdir.
     nim_modfiles = [dotdot(modfname) for modfname in nim_modfiles]
     prereqs = [pminc_fname] + nim_modfiles
-    compile_rule = "%s: %s\n\t%s compile $(PMGEN) %s" % \
-            (rule_target, " ".join(prereqs), NIM_COMPILER_COMMAND, pminc_fname)
+    compile_rule = "%s: %s\n\t%s $(PMGEN) %s" % \
+            (rule_target, " ".join(prereqs), NIM_COMPILER_COMMAND % "compile", pminc_fname)
 
     makefile_fname = MAKEFILE_FNAME_TEMPLATE % pminc_basename
     makefile_clean_rules = MAKEFILE_CLEAN_RULES % dict(
@@ -344,18 +344,18 @@ def compile_generated_nim_wrappers(nim_wrapper_fnames, pymodule_fnames,
     build_rules = [
             "all: %s" % " ".join(pymodule_fnames)
             ] + [
-            "%s: %s\n\t%s compile %s\n\tmv -f %s ../" %
-                    (pymodule_fname, nim_fname, NIM_COMPILER_COMMAND, nim_fname,
+            "%s: %s\n\t%s %s\n\tmv -f %s ../" %
+                    (pymodule_fname, nim_fname, NIM_COMPILER_COMMAND % "compile", nim_fname,
                             pymodule_fname)
             for nim_fname, pymodule_fname in zip(nim_wrapper_fnames, pymodule_fnames)
             ] + [
-            "%s: %s\n\t%s compile $(PMGEN) %s" %
+            "%s: %s\n\t%s $(PMGEN) %s" %
                     # FIXME: This is not necessarily correct.
                     # The `pminc_fname` for THIS invocation is not necessarily
                     # the `pminc_fname` that was used to generate this
                     # "pmgen*_wrap.nim" file in a previous invocation of
                     # "pmgen.py".
-                    (nim_fname, pminc_fname, NIM_COMPILER_COMMAND, pminc_fname)
+                    (nim_fname, pminc_fname, NIM_COMPILER_COMMAND % "compile", pminc_fname)
                     for nim_fname in nim_wrapper_fnames
             ] + [
             "%s: %s\n\tcd .. ; %s %s %s" %
