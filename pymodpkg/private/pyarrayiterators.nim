@@ -78,23 +78,13 @@ when doIterRangeChecks:
     ## This range-checking will be disabled in release builds.
     (fi.pos < fi.low or fi.pos > fi.high)
 
-
-  proc assertValid[T](fi: PyArrayForwardIterator[T]) =
+  proc assertValid[T](fi: PyArrayForwardIterator[T]) {.inline.} =
     # Note: Use a proc rather than a template, to get a fuller stack trace.
     if fi.isNotValid:
       let msg = "PyArrayForwardIterator[$1] dereferenced at pos $2, out of bounds [$3, $4], with sizeof($1) == $5" %
           [getCompileTimeType(T), fi.pos.toHex, fi.low.toHex, fi.high.toHex, $sizeof(T)]
       raise newException(RangeError, msg)
 
-else:
-  # Don't check ranges.  Fail fast, fail forward.
-  template assertValid[T](fi: PyArrayForwardIterator[T]) =
-    # Note: Use a template rather than a proc, to ensure it will disappear.
-    discard
-
-
-when doIterRangeChecks:
-  # Check ranges.  Catch mistakes.
 
   proc `[]`*[T](fi: PyArrayForwardIterator[T]): var T =
     assertValid(fi)
@@ -188,7 +178,6 @@ when doIterRangeChecks:
     ## This range-checking will be disabled in release builds.
     (pos < rai.low or pos > rai.high)
 
-
   proc assertValid[T](rai: PyArrayRandomAccessIterator[T]) =
     # Note: Use a proc rather than a template, to get a fuller stack trace.
     if rai.isNotValid(rai.pos):
@@ -198,6 +187,14 @@ when doIterRangeChecks:
       let msg = "$1 dereferenced at pos $2, out of bounds [$3, $4]" %
           [iterdescr, rai.pos.toHex, rai.low.toHex, rai.high.toHex]
       raise newException(RangeError, msg)
+
+  proc `[]`*[T](rai: PyArrayRandomAccessIterator[T]): var T =
+    assertValid(rai)
+    return rai.pos[]
+
+  proc `[]=`*[T](rai: PyArrayRandomAccessIterator[T], val: T) =
+    assertValid(rai)
+    rai.pos[] = val
 
 
   proc assertValid[T](
@@ -211,29 +208,15 @@ when doIterRangeChecks:
           [iterdescr, offset_pos.toHex, rai.low.toHex, rai.high.toHex]
       raise newException(RangeError, msg)
 
-else:
-  # Don't check ranges.  Random access w/o range checks: What could go wrong?
-  template assertValid[T](rai: PyArrayRandomAccessIterator[T]) =
-    # Note: Use a template rather than a proc, to ensure it will disappear.
-    discard
+  proc `[]`*[T](rai: PyArrayRandomAccessIterator[T], idx: int): var T =
+    let offset_pos = offset_ptr(rai.pos, idx)
+    assertValid(rai, offset_pos)
+    return offset_pos[]
 
-  template assertValid[T](
-      rai: PyArrayRandomAccessIterator[T], offset_pos: ptr T) =
-    # Note: Use a template rather than a proc, to ensure it will disappear.
-    discard
-
-
-when doIterRangeChecks:
-  # Check ranges.  Catch mistakes.
-
-  proc `[]`*[T](rai: PyArrayRandomAccessIterator[T]): var T =
-    assertValid(rai)
-    return rai.pos[]
-
-
-  proc `[]=`*[T](rai: PyArrayRandomAccessIterator[T], val: T) =
-    assertValid(rai)
-    rai.pos[] = val
+  proc `[]=`*[T](rai: PyArrayRandomAccessIterator[T], idx: int, val: T) =
+    let offset_pos = offset_ptr(rai.pos, idx)
+    assertValid(rai, offset_pos)
+    offset_pos[] = val
 
 else:
   template `[]`*[T](rai: PyArrayRandomAccessIterator[T]): var T =
@@ -242,17 +225,13 @@ else:
   template `[]=`*[T](rai: PyArrayRandomAccessIterator[T], val: T): stmt =
     (rai.pos[] = val)
 
+  proc `[]`*[T](rai: PyArrayRandomAccessIterator[T], idx: int): var T =
+    let offset_pos = offset_ptr(rai.pos, idx)
+    return offset_pos[]
 
-proc `[]`*[T](rai: PyArrayRandomAccessIterator[T], idx: int): var T =
-  let offset_pos = offset_ptr(rai.pos, idx)
-  assertValid(rai, offset_pos)
-  return offset_pos[]
-
-
-proc `[]=`*[T](rai: PyArrayRandomAccessIterator[T], idx: int, val: T) =
-  let offset_pos = offset_ptr(rai.pos, idx)
-  assertValid(rai, offset_pos)
-  offset_pos[] = val
+  proc `[]=`*[T](rai: PyArrayRandomAccessIterator[T], idx: int, val: T) =
+    let offset_pos = offset_ptr(rai.pos, idx)
+    offset_pos[] = val
 
 
 proc inc*[T](rai: var PyArrayRandomAccessIterator[T], delta: int) {. inline .} =
