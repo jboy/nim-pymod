@@ -1,4 +1,5 @@
-* Placate all the new Nim compiler warnings that have appeared recently.
+* Add a command-line option to `pmgen.py` to enable Nim release mode.
+* Add a function to the compiled Python module that returns bool of whether the module was compiled in release mode.
 * Allow the user to specify their own choice of build directory name rather than `pmgen`.
   * Ultimately, this should be something that can be specified in "pymod-extensions.cfg".
   * For now, start with a command-line option `--pmgen_dir=DIRPATH`.
@@ -19,13 +20,6 @@
   * http://nim-lang.org/docs/manual.html#types-not-nil-annotation
   * This will enable compile-time checking to ensure you haven't forgotten to assign a result.
   * Otherwise, the C-API conversion-back-to-Python code receives a NULL pointer, and fails.
-* Do the tests in the "tests" directory properly.  Probably using Python's `unittest` or `nose2`?
-  * http://www.drdobbs.com/testing/unit-testing-with-python/240165163
-  * http://pythontesting.net/framework/unittest/unittest-introduction/
-  * https://docs.python.org/release/2.7/library/unittest.html
-  * https://docs.python.org/2/library/unittest.html
-  * https://nose2.readthedocs.org/en/latest/index.html
-  * http://docs.python-guide.org/en/latest/writing/tests/
 * Implement the procs planned for implementation in "pymodpkg/pyarrayobject.nim".
 * Enable Python types to be passed from Python into Nim, so we can pass `numpy.int32` as an argument for example.
 * Implement reading of double-hash comments into docstrings using `nim jsondoc myfile.nim`?
