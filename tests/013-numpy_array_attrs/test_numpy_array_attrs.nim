@@ -4,6 +4,8 @@ import pymodpkg/miscutils
 import pymodpkg/pyarrayobject
 
 
+proc returnPyArrayObjectPtrAsInt*(arr: ptr PyArrayObject): int {.exportpy.} = cast[int](arr)
+
 proc returnDtypeAsString*(arr: ptr PyArrayObject): string {.exportpy.} = $arr.dtype
 
 proc returnDataPointerAsInt*(arr: ptr PyArrayObject): int {.exportpy.} = cast[int](arr.data)
@@ -67,7 +69,7 @@ proc returnFloat64DataPtrAsInt*(arr: ptr PyArrayObject): int {.exportpy.} =
 
 
 initPyModule("",
-    returnDtypeAsString, returnDataPointerAsInt,
+    returnPyArrayObjectPtrAsInt, returnDtypeAsString, returnDataPointerAsInt,
     returnBoolDataPtrAsInt, returnInt8DataPtrAsInt, returnInt16DataPtrAsInt,
     returnInt32DataPtrAsInt, returnInt64DataPtrAsInt,
     returnFloat32DataPtrAsInt, returnFloat64DataPtrAsInt)
