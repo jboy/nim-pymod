@@ -48,6 +48,7 @@ def random_2d_array_of_integers(random_2d_array_shape):
 
 @pytest.mark.parametrize("input_type", [
         numpy.bool,
+        numpy.bool_,
         numpy.int8,
         numpy.int16,
         numpy.int32,
@@ -71,6 +72,7 @@ def test_returnPyArrayObjectPtrAsInt(pymod_test_mod, random_1d_array_size, input
         # Pymod returns "<type 'numpy.bool'>" for consistency with all other Numpy type strings,
         # which are all of the form "<type 'numpy.xxxx'>" (eg, "<type 'numpy.int8'>").
         (numpy.bool,    "numpy.bool"),
+        (numpy.bool_,   "numpy.bool"),
         (numpy.int8,    "numpy.int8"),
         (numpy.int16,   "numpy.int16"),
         (numpy.int32,   "numpy.int32"),
@@ -99,6 +101,7 @@ def _get_array_data_address(arr):
 
 @pytest.mark.parametrize("input_type", [
         numpy.bool,
+        numpy.bool_,
         numpy.int8,
         numpy.int16,
         numpy.int32,
@@ -212,6 +215,7 @@ def test_returnFloat64DataPtrIndex0(pymod_test_mod, random_1d_array_of_integers)
 
 @pytest.mark.parametrize("input_type", [
         numpy.bool,
+        numpy.bool_,
         numpy.int8,
         numpy.int16,
         numpy.int32,
@@ -237,6 +241,7 @@ def test_returnNdAttr_and_returnNdimAttr_1d(pymod_test_mod, input_type, random_1
 
 @pytest.mark.parametrize("input_type", [
         numpy.bool,
+        numpy.bool_,
         numpy.int8,
         numpy.int16,
         numpy.int32,
