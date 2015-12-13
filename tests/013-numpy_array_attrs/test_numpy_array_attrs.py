@@ -14,9 +14,21 @@ def seeded_random_number_generator():
 
 
 @pytest.fixture
-def random_1d_array_size(request, seeded_random_number_generator):
-    """Return a random integer to be the size of an array."""
-    return numpy.random.randint(1, 50)
+def random_1d_array_size(seeded_random_number_generator):
+    """Return a random integer in the range [1, 20] to be the size of a 1-D array."""
+    return numpy.random.randint(20) + 1  # So the size is always >= 1.
+
+
+@pytest.fixture
+def random_1d_array_of_bool(random_1d_array_size):
+    """Return a randomly-sized array of random bool values."""
+    return numpy.random.random_integers(0, 1, random_1d_array_size).astype(numpy.bool)
+
+
+@pytest.fixture
+def random_1d_array_of_integers(random_1d_array_size):
+    """Return a randomly-sized array of random integers in the range [-100, 100]."""
+    return numpy.random.random_integers(-100, 100, random_1d_array_size)
 
 
 @pytest.mark.parametrize("input_type", [
@@ -120,15 +132,65 @@ def test_returnInt64DataPtrAsInt(pymod_test_mod, random_1d_array_size):
     data_addr = _get_array_data_address(arg)
     assert res == data_addr
 
-def test_returnFloat32DataPtrAsFloat(pymod_test_mod, random_1d_array_size):
+def test_returnFloat32DataPtrAsInt(pymod_test_mod, random_1d_array_size):
     arg = numpy.zeros(random_1d_array_size, dtype=numpy.float32)
     res = pymod_test_mod.returnFloat32DataPtrAsInt(arg)
     data_addr = _get_array_data_address(arg)
     assert res == data_addr
 
-def test_returnFloat64DataPtrAsFloat(pymod_test_mod, random_1d_array_size):
+def test_returnFloat64DataPtrAsInt(pymod_test_mod, random_1d_array_size):
     arg = numpy.zeros(random_1d_array_size, dtype=numpy.float64)
     res = pymod_test_mod.returnFloat64DataPtrAsInt(arg)
     data_addr = _get_array_data_address(arg)
     assert res == data_addr
+
+
+#def test_returnBoolDataPtrIndex0(pymod_test_mod, random_1d_array_of_bool):
+#    arg = random_1d_array_of_bool.copy()
+#    expectedRes = bool(arg[0])
+#    res = pymod_test_mod.returnBoolDataPtrIndex0(arg)
+#    assert res == expectedRes
+#    assert type(res) == type(expectedRes)
+
+#def test_returnInt8DataPtrIndex0(pymod_test_mod, random_1d_array_of_integers):
+#    arg = random_1d_array_of_integers.astype(numpy.int8)
+#    expectedRes = int(arg[0])
+#    res = pymod_test_mod.returnInt8DataPtrIndex0(arg)
+#    assert res == expectedRes
+#    assert type(res) == type(expectedRes)
+
+def test_returnInt16DataPtrIndex0(pymod_test_mod, random_1d_array_of_integers):
+    arg = random_1d_array_of_integers.astype(numpy.int16)
+    expectedRes = int(arg[0])
+    res = pymod_test_mod.returnInt16DataPtrIndex0(arg)
+    assert res == expectedRes
+    assert type(res) == type(expectedRes)
+
+def test_returnInt32DataPtrIndex0(pymod_test_mod, random_1d_array_of_integers):
+    arg = random_1d_array_of_integers.astype(numpy.int32)
+    expectedRes = int(arg[0])
+    res = pymod_test_mod.returnInt32DataPtrIndex0(arg)
+    assert res == expectedRes
+    assert type(res) == type(expectedRes)
+
+def test_returnInt64DataPtrIndex0(pymod_test_mod, random_1d_array_of_integers):
+    arg = random_1d_array_of_integers.astype(numpy.int64)
+    expectedRes = int(arg[0])
+    res = pymod_test_mod.returnInt64DataPtrIndex0(arg)
+    assert res == expectedRes
+    assert type(res) == type(expectedRes)
+
+def test_returnFloat32DataPtrIndex0(pymod_test_mod, random_1d_array_of_integers):
+    arg = random_1d_array_of_integers.astype(numpy.float32)
+    expectedRes = float(arg[0])
+    res = pymod_test_mod.returnFloat32DataPtrIndex0(arg)
+    assert res == expectedRes
+    assert type(res) == type(expectedRes)
+
+def test_returnFloat64DataPtrIndex0(pymod_test_mod, random_1d_array_of_integers):
+    arg = random_1d_array_of_integers.astype(numpy.float64)
+    expectedRes = float(arg[0])
+    res = pymod_test_mod.returnFloat64DataPtrIndex0(arg)
+    assert res == expectedRes
+    assert type(res) == type(expectedRes)
 
