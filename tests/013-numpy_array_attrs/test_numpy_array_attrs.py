@@ -319,6 +319,32 @@ def test_returnDimensionsAsTuple1D(pymod_test_mod, input_type, random_1d_array_s
         numpy.float32,
         numpy.float64,
 ])
+def test_returnStridesAsTuple1D(pymod_test_mod, input_type, random_1d_array_size):
+    arg = _get_random_1d_array_of_type(random_1d_array_size, input_type)
+    expectedStrides = arg.strides
+
+    resStrides = pymod_test_mod.returnStridesAsTuple1D(arg)
+    # FIXME:  Currently, Pymod incorrectly unwraps single-element-tuple return-types.
+    # Thus, `resStrides` should be a tuple-of-single-int, but instead it's an int.
+    # We will fix this soon...
+    resStrides = (resStrides,)
+    assert resStrides == expectedStrides
+
+
+@pytest.mark.parametrize("input_type", [
+        numpy.bool,
+        numpy.bool_,
+        numpy.int8,
+        numpy.int16,
+        numpy.int32,
+        numpy.int64,
+        numpy.uint8,
+        numpy.uint16,
+        numpy.uint32,
+        numpy.uint64,
+        numpy.float32,
+        numpy.float64,
+])
 def test_returnNdAttr_2d(pymod_test_mod, input_type, random_2d_array_shape):
     arg = _get_random_2d_array_of_type(random_2d_array_shape, input_type)
     expectedDimensions = arg.shape
@@ -357,6 +383,28 @@ def test_returnDimensionsAsTuple2D(pymod_test_mod, input_type, random_2d_array_s
 
     resShape = pymod_test_mod.returnShapeAsTuple2D(arg)
     assert resShape == expectedShape
+
+
+@pytest.mark.parametrize("input_type", [
+        numpy.bool,
+        numpy.bool_,
+        numpy.int8,
+        numpy.int16,
+        numpy.int32,
+        numpy.int64,
+        numpy.uint8,
+        numpy.uint16,
+        numpy.uint32,
+        numpy.uint64,
+        numpy.float32,
+        numpy.float64,
+])
+def test_returnStridesAsTuple2D(pymod_test_mod, input_type, random_2d_array_shape):
+    arg = _get_random_2d_array_of_type(random_2d_array_shape, input_type)
+    expectedStrides = arg.strides
+
+    resStrides = pymod_test_mod.returnStridesAsTuple2D(arg)
+    assert resStrides == expectedStrides
 
 
 @pytest.mark.parametrize("input_type", [
@@ -425,6 +473,28 @@ def test_returnDimensionsAsTuple3D(pymod_test_mod, input_type, random_3d_array_s
         numpy.float32,
         numpy.float64,
 ])
+def test_returnStridesAsTuple3D(pymod_test_mod, input_type, random_3d_array_shape):
+    arg = _get_random_Nd_array_of_type(random_3d_array_shape, input_type)
+    expectedStrides = arg.strides
+
+    resStrides = pymod_test_mod.returnStridesAsTuple3D(arg)
+    assert resStrides == expectedStrides
+
+
+@pytest.mark.parametrize("input_type", [
+        numpy.bool,
+        numpy.bool_,
+        numpy.int8,
+        numpy.int16,
+        numpy.int32,
+        numpy.int64,
+        numpy.uint8,
+        numpy.uint16,
+        numpy.uint32,
+        numpy.uint64,
+        numpy.float32,
+        numpy.float64,
+])
 def test_returnNdAttr_4d(pymod_test_mod, input_type, random_4d_array_shape):
     arg = _get_random_Nd_array_of_type(random_4d_array_shape, input_type)
 
@@ -461,4 +531,26 @@ def test_returnDimensionsAsTuple4D(pymod_test_mod, input_type, random_4d_array_s
 
     resShape = pymod_test_mod.returnShapeAsTuple4D(arg)
     assert resShape == expectedShape
+
+
+@pytest.mark.parametrize("input_type", [
+        numpy.bool,
+        numpy.bool_,
+        numpy.int8,
+        numpy.int16,
+        numpy.int32,
+        numpy.int64,
+        numpy.uint8,
+        numpy.uint16,
+        numpy.uint32,
+        numpy.uint64,
+        numpy.float32,
+        numpy.float64,
+])
+def test_returnStridesAsTuple4D(pymod_test_mod, input_type, random_4d_array_shape):
+    arg = _get_random_Nd_array_of_type(random_4d_array_shape, input_type)
+    expectedStrides = arg.strides
+
+    resStrides = pymod_test_mod.returnStridesAsTuple4D(arg)
+    assert resStrides == expectedStrides
 

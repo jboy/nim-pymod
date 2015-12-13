@@ -154,6 +154,18 @@ proc returnShapeAsTuple1D*(arr: ptr PyArrayObject): tuple[a: int] {.exportpy.} =
   else:
     result = (a: arr.shape[0])
 
+# FIXME:  Technically, this really should return `npy_intp` rather than `int`.
+# Yes, the two types are identical (a signed integer that is the same size as
+# a pointer), but still... technically...
+#proc returnStridesAsTuple1D*(arr: ptr PyArrayObject): tuple[a: npy_intp] {.exportpy.} =
+proc returnStridesAsTuple1D*(arr: ptr PyArrayObject): tuple[a: int] {.exportpy.} =
+  let expected_nd = 1
+  if arr.nd != expected_nd:
+    let msg = "expected input array of ndim=$1, received ndim=$2" % [$expected_nd, $arr.nd]
+    raise newException(ValueError, msg)
+  else:
+    result = (a: arr.strides[0])
+
 
 # FIXME:  Technically, this really should return `npy_intp` rather than `int`.
 # Yes, the two types are identical (a signed integer that is the same size as
@@ -178,6 +190,18 @@ proc returnShapeAsTuple2D*(arr: ptr PyArrayObject): tuple[a, b: int] {.exportpy.
     raise newException(ValueError, msg)
   else:
     result = (arr.shape[0], arr.shape[1])
+
+# FIXME:  Technically, this really should return `npy_intp` rather than `int`.
+# Yes, the two types are identical (a signed integer that is the same size as
+# a pointer), but still... technically...
+#proc returnStridesAsTuple2D*(arr: ptr PyArrayObject): tuple[a, b: npy_intp] {.exportpy.} =
+proc returnStridesAsTuple2D*(arr: ptr PyArrayObject): tuple[a, b: int] {.exportpy.} =
+  let expected_nd = 2
+  if arr.nd != expected_nd:
+    let msg = "expected input array of ndim=$1, received ndim=$2" % [$expected_nd, $arr.nd]
+    raise newException(ValueError, msg)
+  else:
+    result = (arr.strides[0], arr.strides[1])
 
 
 # FIXME:  Technically, this really should return `npy_intp` rather than `int`.
@@ -204,6 +228,18 @@ proc returnShapeAsTuple3D*(arr: ptr PyArrayObject): tuple[a, b, c: int] {.export
   else:
     result = (arr.shape[0], arr.shape[1], arr.shape[2])
 
+# FIXME:  Technically, this really should return `npy_intp` rather than `int`.
+# Yes, the two types are identical (a signed integer that is the same size as
+# a pointer), but still... technically...
+#proc returnStridesAsTuple3D*(arr: ptr PyArrayObject): tuple[a, b, c: npy_intp] {.exportpy.} =
+proc returnStridesAsTuple3D*(arr: ptr PyArrayObject): tuple[a, b, c: int] {.exportpy.} =
+  let expected_nd = 3
+  if arr.nd != expected_nd:
+    let msg = "expected input array of ndim=$1, received ndim=$2" % [$expected_nd, $arr.nd]
+    raise newException(ValueError, msg)
+  else:
+    result = (arr.strides[0], arr.strides[1], arr.strides[2])
+
 
 # FIXME:  Technically, this really should return `npy_intp` rather than `int`.
 # Yes, the two types are identical (a signed integer that is the same size as
@@ -229,6 +265,18 @@ proc returnShapeAsTuple4D*(arr: ptr PyArrayObject): tuple[a, b, c, d: int] {.exp
   else:
     result = (arr.shape[0], arr.shape[1], arr.shape[2], arr.shape[3])
 
+# FIXME:  Technically, this really should return `npy_intp` rather than `int`.
+# Yes, the two types are identical (a signed integer that is the same size as
+# a pointer), but still... technically...
+#proc returnStridesAsTuple4D*(arr: ptr PyArrayObject): tuple[a, b, c, d: npy_intp] {.exportpy.} =
+proc returnStridesAsTuple4D*(arr: ptr PyArrayObject): tuple[a, b, c, d: int] {.exportpy.} =
+  let expected_nd = 4
+  if arr.nd != expected_nd:
+    let msg = "expected input array of ndim=$1, received ndim=$2" % [$expected_nd, $arr.nd]
+    raise newException(ValueError, msg)
+  else:
+    result = (arr.strides[0], arr.strides[1], arr.strides[2], arr.strides[3])
+
 
 initPyModule("",
     returnPyArrayObjectPtrAsInt, returnDtypeAsString, returnDataPointerAsInt,
@@ -238,8 +286,8 @@ initPyModule("",
     returnInt16DataPtrIndex0, returnInt32DataPtrIndex0, returnInt64DataPtrIndex0,
     returnFloat32DataPtrIndex0, returnFloat64DataPtrIndex0,
     returnNdAttr, returnNdimAttr,
-    returnDimensionsAsTuple1D, returnShapeAsTuple1D,
-    returnDimensionsAsTuple2D, returnShapeAsTuple2D,
-    returnDimensionsAsTuple3D, returnShapeAsTuple3D,
-    returnDimensionsAsTuple4D, returnShapeAsTuple4D)
+    returnDimensionsAsTuple1D, returnShapeAsTuple1D, returnStridesAsTuple1D,
+    returnDimensionsAsTuple2D, returnShapeAsTuple2D, returnStridesAsTuple2D,
+    returnDimensionsAsTuple3D, returnShapeAsTuple3D, returnStridesAsTuple3D,
+    returnDimensionsAsTuple4D, returnShapeAsTuple4D, returnStridesAsTuple4D)
 
