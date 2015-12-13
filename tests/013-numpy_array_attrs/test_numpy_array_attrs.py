@@ -38,12 +38,23 @@ def random_1d_array_of_integers(random_1d_array_size):
     """Return a randomly-sized 1-D array of random integers in the range [-100, 100]."""
     return numpy.random.random_integers(-100, 100, random_1d_array_size)
 
+def _get_random_1d_array_of_type(test_1d_array_size, test_type):
+    """Return a randomly-sized 1-D array of random integers in the range [-100, 100]."""
+    return numpy.random.random_integers(-100, 100, test_1d_array_size
+            ).astype(test_type)
+
 
 @pytest.fixture
 def random_2d_array_of_integers(random_2d_array_shape):
     """Return a randomly-shaped 2-D array of random integers in the range [-100, 100]."""
     array_size = numpy.prod(random_2d_array_shape)
     return numpy.random.random_integers(-100, 100, array_size).reshape(random_2d_array_shape)
+
+def _get_random_2d_array_of_type(test_2d_array_shape, test_type):
+    """Return a randomly-shaped 2-D array of random integers in the range [-100, 100]."""
+    array_size = numpy.prod(test_2d_array_shape)
+    return numpy.random.random_integers(-100, 100, array_size).reshape(test_2d_array_shape
+            ).astype(test_type)
 
 
 @pytest.mark.parametrize("input_type", [
@@ -227,8 +238,8 @@ def test_returnFloat64DataPtrIndex0(pymod_test_mod, random_1d_array_of_integers)
         numpy.float32,
         numpy.float64,
 ])
-def test_returnNdAttr_and_returnNdimAttr_1d(pymod_test_mod, input_type, random_1d_array_of_integers):
-    arg = random_1d_array_of_integers.astype(input_type)
+def test_returnNdAttr_and_returnNdimAttr_1d(pymod_test_mod, input_type, random_1d_array_size):
+    arg = _get_random_1d_array_of_type(random_1d_array_size, input_type)
 
     resNd = pymod_test_mod.returnNdAttr(arg)
     assert resNd == len(arg.shape)
@@ -253,8 +264,8 @@ def test_returnNdAttr_and_returnNdimAttr_1d(pymod_test_mod, input_type, random_1
         numpy.float32,
         numpy.float64,
 ])
-def test_returnNdAttr_and_returnNdimAttr_2d(pymod_test_mod, input_type, random_2d_array_of_integers):
-    arg = random_2d_array_of_integers.astype(input_type)
+def test_returnNdAttr_and_returnNdimAttr_2d(pymod_test_mod, input_type, random_2d_array_shape):
+    arg = _get_random_2d_array_of_type(random_2d_array_shape, input_type)
 
     resNd = pymod_test_mod.returnNdAttr(arg)
     assert resNd == len(arg.shape)
