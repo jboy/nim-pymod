@@ -1,3 +1,4 @@
+* Allow exporting of the Nim types `npy_intp`, `Py_ssize_t`, `csize`.
 * Add a command-line option to `pmgen.py` to enable Nim release mode.
 * Add a function to the compiled Python module that returns bool of whether the module was compiled in release mode.
 * Allow the user to specify their own choice of build directory name rather than `pmgen`.
