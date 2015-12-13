@@ -125,10 +125,16 @@ proc returnFloat64DataPtrIndex0*(arr: ptr PyArrayObject): float64 {.exportpy.} =
     result = arr.data(float64)[]
 
 
+proc returnNdAttr*(arr: ptr PyArrayObject): cint {.exportpy.} = arr.nd
+
+proc returnNdimAttr*(arr: ptr PyArrayObject): cint {.exportpy.} = arr.ndim
+
+
 initPyModule("",
     returnPyArrayObjectPtrAsInt, returnDtypeAsString, returnDataPointerAsInt,
     returnBoolDataPtrAsInt, returnInt8DataPtrAsInt, returnInt16DataPtrAsInt,
     returnInt32DataPtrAsInt, returnInt64DataPtrAsInt,
     returnFloat32DataPtrAsInt, returnFloat64DataPtrAsInt,
     returnInt16DataPtrIndex0, returnInt32DataPtrIndex0, returnInt64DataPtrIndex0,
-    returnFloat32DataPtrIndex0, returnFloat64DataPtrIndex0)
+    returnFloat32DataPtrIndex0, returnFloat64DataPtrIndex0,
+    returnNdAttr, returnNdimAttr)
