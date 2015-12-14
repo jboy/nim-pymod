@@ -1,4 +1,3 @@
-import numpy
 import pytest
 
 
@@ -242,12 +241,6 @@ def test_stringReturnArg(pymod_test_mod, python_major_version):
 #        pymod_test_mod.seqRuneReturnArg(arg)
 #    assert str(excinfo.value) == "argument 1 must be string, not None"
 
-
-def test_ptrPyArrayObjectReturnArg(pymod_test_mod):
-    arg = None
-    with pytest.raises(TypeError) as excinfo:
-        pymod_test_mod.ptrPyArrayObjectReturnArg(arg)
-    assert str(excinfo.value) == "argument 1 must be numpy.ndarray, not None"
 
 def test_ptrPyObjectReturnListArg(pymod_test_mod):
     arg = None

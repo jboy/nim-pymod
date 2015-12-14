@@ -1,6 +1,3 @@
-import numpy
-
-
 def test_0_compile_pymod_test_mod(pmgen_py_compile):
     pmgen_py_compile(__name__)
 

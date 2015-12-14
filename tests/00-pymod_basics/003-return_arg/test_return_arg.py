@@ -1,6 +1,3 @@
-import numpy
-
-
 def test_0_compile_pymod_test_mod(pmgen_py_compile):
     pmgen_py_compile(__name__)
 
@@ -190,13 +187,6 @@ def test_stringReturnArg(pymod_test_mod):
 #    assert res == arg
 #    assert type(res) == type(arg)
 
-
-def test_ptrPyArrayObjectReturnArg(pymod_test_mod):
-    arg = numpy.arange(17)
-    res = pymod_test_mod.ptrPyArrayObjectReturnArg(arg)
-    assert numpy.all(res == arg)
-    assert type(res) == type(arg)
-    assert res.dtype == arg.dtype
 
 def test_ptrPyObjectReturnListArg(pymod_test_mod):
     arg = list(range(17))
