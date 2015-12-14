@@ -1,4 +1,3 @@
-import importlib
 import numpy
 import pytest
 import time
@@ -7,8 +6,12 @@ import time
 @pytest.fixture(scope="module")
 def seeded_random_number_generator():
     """Ensure that the random number generator has been seeded."""
-    numpy.random.seed(int(time.time()))
+    seed = int(time.time())
+    numpy.random.seed(seed)
+    return seed
 
+
+# 1-D arrays
 
 @pytest.fixture
 def random_1d_array_size(seeded_random_number_generator):
@@ -26,6 +29,8 @@ def random_1d_array_of_integers(random_1d_array_size):
     return numpy.random.random_integers(-100, 100, random_1d_array_size)
 
 
+# 2-D arrays
+
 @pytest.fixture
 def random_2d_array_shape(seeded_random_number_generator):
     """Return a tuple of 2 random integers in the range [1, 10] to be the shape of a 2-D array."""
@@ -40,6 +45,8 @@ def random_2d_array_of_integers(random_2d_array_shape):
     return numpy.random.random_integers(-100, 100, array_size).reshape(random_2d_array_shape)
 
 
+# 3-D arrays
+
 @pytest.fixture
 def random_3d_array_shape(seeded_random_number_generator):
     """Return a tuple of 3 random integers in the range [1, 10] to be the shape of a 3-D array."""
@@ -47,6 +54,9 @@ def random_3d_array_shape(seeded_random_number_generator):
     dim2 = numpy.random.randint(10) + 1  # So the size is always >= 1.
     dim3 = numpy.random.randint(10) + 1  # So the size is always >= 1.
     return (dim1, dim2, dim3)
+
+
+# 4-D arrays
 
 @pytest.fixture
 def random_4d_array_shape(seeded_random_number_generator):
@@ -57,7 +67,3 @@ def random_4d_array_shape(seeded_random_number_generator):
     dim4 = numpy.random.randint(10) + 1  # So the size is always >= 1.
     return (dim1, dim2, dim3, dim4)
 
-
-#@pytest.fixture
-#def array_utils():
-#    return importlib.import_module("array_utils_lib")
