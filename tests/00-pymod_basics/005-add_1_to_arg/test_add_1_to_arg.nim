@@ -19,6 +19,7 @@ proc float32Add1ToArg*(arg: float32): float32 {.exportpy.} = arg + 1.0  # No `su
 proc float64Add1ToArg*(arg: float64): float64 {.exportpy.} = arg + 1.0  # No `succ`
 
 proc intAdd1ToArg*(arg: int):         int {.exportpy.} = succ(arg)
+# TODO
 #proc int8Add1ToArg*(arg: int8):       int8 {.exportpy.} = succ(arg)
 proc int16Add1ToArg*(arg: int16):     int16 {.exportpy.} = succ(arg)
 proc int32Add1ToArg*(arg: int32):     int32 {.exportpy.} = succ(arg)
@@ -30,6 +31,7 @@ proc uint16Add1ToArg*(arg: uint16):   uint16 {.exportpy.} = succ(arg)
 proc uint32Add1ToArg*(arg: uint32):   uint32 {.exportpy.} = succ(arg)
 proc uint64Add1ToArg*(arg: uint64):   uint64 {.exportpy.} = arg + 1  # No `succ`
 
+# TODO
 #proc boolAdd1ToArg*(arg: bool):       bool {.exportpy.} = succ(arg)
 proc byteAdd1ToArg*(arg: byte):       byte {.exportpy.} = succ(arg)
 
@@ -37,6 +39,7 @@ proc ccharAdd1ToArg*(arg: cchar):    cchar {.exportpy.} = succ(arg)
 proc charAdd1ToArg*(arg: char):      char {.exportpy.} = succ(arg)
 proc stringAdd1ToArg*(arg: string):  string {.exportpy.} = arg & "def"
 
+# TODO
 #proc unicodeRuneAdd1ToArg*(arg: Rune):  Rune {.exportpy.} = succ(arg)
 #proc seqCharAdd1ToArg*(arg: seq[char]): seq[char] {.exportpy.} = succ(arg)
 #proc seqRuneAdd1ToArg*(arg: seq[Rune]): seq[Rune] {.exportpy.} = succ(arg)

@@ -45,6 +45,7 @@ def test_float64Expect1(pymod_test_mod):
 def test_intExpect1(pymod_test_mod):
     pymod_test_mod.intExpect1(1)
 
+# TODO
 #def test_int8Expect1(pymod_test_mod):
 #    pymod_test_mod.int8Expect1(1)
 
@@ -74,6 +75,7 @@ def test_uint64Expect1(pymod_test_mod):
     pymod_test_mod.uint64Expect1(1)
 
 
+# TODO
 #def test_boolExpect1(pymod_test_mod):
 #    pymod_test_mod.boolExpect1(True
 
@@ -97,18 +99,21 @@ def test_stringExpect1(pymod_test_mod):
     pymod_test_mod.stringExpect1("abc")
 
 
+# TODO
 #def test_unicodeRuneExpect1(pymod_test_mod, python_major_version):
 #    if python_major_version == 2:
 #        pymod_test_mod.unicodeRuneExpect1(u"a")
 #    else:  # Python 3 or above: bytes vs strings, yay!
 #        pymod_test_mod.unicodeRuneExpect1("a")
 
+# TODO
 #def test_seqCharExpect1(pymod_test_mod, python_major_version):
 #    if python_major_version == 2:
 #        pymod_test_mod.seqCharExpect1("abc")
 #    else:  # Python 3 or above: bytes vs strings, yay!
 #        pymod_test_mod.seqCharExpect1(b"abc")
 
+# TODO
 #def test_seqRuneExpect1(pymod_test_mod, python_major_version):
 #    if python_major_version == 2:
 #        pymod_test_mod.seqRuneExpect1(u"abc")

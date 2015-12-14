@@ -17,6 +17,7 @@ proc float32Return1*(): float32 {.exportpy.} = 1.0
 proc float64Return1*(): float64 {.exportpy.} = 1.0
 
 proc intReturn1*():     int {.exportpy.} = 1
+# TODO
 #proc int8Return1*():    int8 {.exportpy.} = 1
 proc int16Return1*():   int16 {.exportpy.} = 1
 proc int32Return1*():   int32 {.exportpy.} = 1
@@ -28,6 +29,7 @@ proc uint16Return1*():  uint16 {.exportpy.} = 1
 proc uint32Return1*():  uint32 {.exportpy.} = 1
 proc uint64Return1*():  uint64 {.exportpy.} = 1
 
+# TODO
 #proc boolReturn1*():    bool {.exportpy.} = True
 proc byteReturn1*():    byte {.exportpy.} = 1
 
@@ -35,6 +37,7 @@ proc ccharReturn1*():   cchar {.exportpy.} = 'a'
 proc charReturn1*():    char {.exportpy.} = 'a'
 proc stringReturn1*():  string {.exportpy.} = "abc"
 
+# TODO
 #proc unicodeRuneReturn1*(): Rune {.exportpy.} = Rune(ord('a'))
 #proc seqCharReturn1*():     seq[char] {.exportpy.} = @['a', 'b', 'c']
 #proc seqRuneReturn1*():     seq[Rune] {.exportpy.} =
@@ -43,6 +46,7 @@ proc stringReturn1*():  string {.exportpy.} = "abc"
 proc intReturn1NoParensInDecl*: int {.exportpy.} = 1
 
 proc noReturn* {.exportpy.} = discard
+# TODO
 #proc voidReturn*: void {.exportpy.} = discard
 
 

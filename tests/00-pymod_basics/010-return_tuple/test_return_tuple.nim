@@ -1,6 +1,7 @@
 import pymod
 
-proc returnEmptyTuple*(): tuple[] {.exportpy.} = ()
+# TODO
+#proc returnEmptyTuple*(): tuple[] {.exportpy.} = ()
 
 proc returnOneFieldTupleNamedFields1*(x: int): tuple[a: int] {.exportpy.} = (a: x)
 proc returnOneFieldTupleNamedFields2*(): tuple[a: int] {.exportpy.} = (a: 22)

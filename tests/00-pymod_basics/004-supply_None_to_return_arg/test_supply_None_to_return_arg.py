@@ -99,6 +99,7 @@ def test_intReturnArg(pymod_test_mod, python_major_version):
     else:  # Python 3 or above
         assert str(excinfo.value) == "an integer is required (got type NoneType)"
 
+# TODO
 #def test_int8ReturnArg(pymod_test_mod, python_major_version):
 #    arg = None
 #    with pytest.raises(TypeError) as excinfo:
@@ -176,6 +177,7 @@ def test_uint64ReturnArg(pymod_test_mod, python_major_version):
     assert str(excinfo.value) == "argument 1 must be integer<k>, not None"
 
 
+# TODO
 #def test_boolReturnArg(pymod_test_mod):
 #    arg = None
 #    with pytest.raises(TypeError) as excinfo:
@@ -222,12 +224,14 @@ def test_stringReturnArg(pymod_test_mod, python_major_version):
         assert str(excinfo.value) == "argument 1 must be str, not None"
 
 
+# TODO
 #def test_unicodeRuneReturnArg(pymod_test_mod):
 #    arg = None
 #    with pytest.raises(TypeError) as excinfo:
 #        pymod_test_mod.unicodeRuneReturnArg(arg)
 #    assert str(excinfo.value) == "argument 1 must be char, not None"
 
+# TODO
 #def test_seqCharReturnArg(pymod_test_mod):
 #    # Python 3 or above: bytes vs strings, yay!
 #    arg = None
@@ -235,6 +239,7 @@ def test_stringReturnArg(pymod_test_mod, python_major_version):
 #        pymod_test_mod.seqCharReturnArg(arg)
 #    assert str(excinfo.value) == "argument 1 must be string, not None"
 
+# TODO
 #def test_seqRuneReturnArg(pymod_test_mod):
 #    arg = None
 #    with pytest.raises(TypeError) as excinfo:

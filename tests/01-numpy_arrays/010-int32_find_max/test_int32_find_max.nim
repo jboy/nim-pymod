@@ -96,6 +96,7 @@ proc int32FindMaxWhileLoopRandaccIterDeltaN_1*(arr: ptr PyArrayObject; n: int): 
     raise newException(ValueError, msg)
 
 
+# TODO
 #proc int32FindMaxWhileLoopRandaccIterDeltaN_2*(arr: ptr PyArrayObject; n: int): int32 {.exportpy} =
 #  result = low(int32)
 #  let dt = arr.dtype
@@ -126,6 +127,7 @@ proc int32FindMaxWhileLoopRandaccIterExcludeFirstM_1*(arr: ptr PyArrayObject; m:
     raise newException(ValueError, msg)
 
 
+# TODO
 #proc int32FindMaxWhileLoopRandaccIterExcludeFirstM_2*(arr: ptr PyArrayObject; m: int): int32 {.exportpy} =
 #  result = low(int32)
 #  let dt = arr.dtype
@@ -156,6 +158,7 @@ proc int32FindMaxWhileLoopRandaccIterExcludeLastM_1*(arr: ptr PyArrayObject; m: 
     raise newException(ValueError, msg)
 
 
+# TODO
 #proc int32FindMaxWhileLoopRandaccIterExcludeLastM_2*(arr: ptr PyArrayObject; m: int): int32 {.exportpy} =
 #  result = low(int32)
 #  let dt = arr.dtype

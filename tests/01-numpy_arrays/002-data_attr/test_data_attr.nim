@@ -64,6 +64,7 @@ proc returnFloat64DataPtrAsInt*(arr: ptr PyArrayObject): int {.exportpy.} =
     result = cast[int](arr.data(float64))
 
 
+# TODO
 #proc returnBoolDataPtrIndex0*(arr: ptr PyArrayObject): bool {.exportpy.} =
 #  let dt = arr.dtype
 #  if dt != np_bool:
@@ -72,6 +73,7 @@ proc returnFloat64DataPtrAsInt*(arr: ptr PyArrayObject): int {.exportpy.} =
 #  else:
 #    result = arr.data(bool)[]
 
+# TODO
 #proc returnInt8DataPtrIndex0*(arr: ptr PyArrayObject): int8 {.exportpy.} =
 #  let dt = arr.dtype
 #  if dt != np_int8:
@@ -122,9 +124,10 @@ proc returnFloat64DataPtrIndex0*(arr: ptr PyArrayObject): float64 {.exportpy.} =
 
 
 initPyModule("", returnDataPointerAsInt,
-    returnBoolDataPtrAsInt, returnInt8DataPtrAsInt, returnInt16DataPtrAsInt,
-    returnInt32DataPtrAsInt, returnInt64DataPtrAsInt,
+    returnBoolDataPtrAsInt, returnInt8DataPtrAsInt,
+    returnInt16DataPtrAsInt, returnInt32DataPtrAsInt, returnInt64DataPtrAsInt,
     returnFloat32DataPtrAsInt, returnFloat64DataPtrAsInt,
+    #returnBoolDataPtrIndex0, returnInt8DataPtrIndex0,
     returnInt16DataPtrIndex0, returnInt32DataPtrIndex0, returnInt64DataPtrIndex0,
     returnFloat32DataPtrIndex0, returnFloat64DataPtrIndex0)
 

@@ -67,6 +67,7 @@ def test_returnFloat64DataPtrAsInt(pymod_test_mod, random_1d_array_size):
     assert res == data_addr
 
 
+# TODO
 #def test_returnBoolDataPtrIndex0(pymod_test_mod, random_1d_array_of_bool):
 #    arg = random_1d_array_of_bool.copy()
 #    expectedRes = bool(arg[0])
@@ -74,6 +75,7 @@ def test_returnFloat64DataPtrAsInt(pymod_test_mod, random_1d_array_size):
 #    assert res == expectedRes
 #    assert type(res) == type(expectedRes)
 
+# TODO
 #def test_returnInt8DataPtrIndex0(pymod_test_mod, random_1d_array_of_integers):
 #    arg = random_1d_array_of_integers.astype(numpy.int8)
 #    expectedRes = int(arg[0])

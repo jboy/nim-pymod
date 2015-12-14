@@ -78,6 +78,7 @@ def test_intReturnArg(pymod_test_mod):
     assert res == arg
     assert type(res) == type(arg)
 
+# TODO
 #def test_int8ReturnArg(pymod_test_mod):
 #    arg = 1
 #    res = pymod_test_mod.int8ReturnArg(arg)
@@ -134,6 +135,7 @@ def test_uint64ReturnArg(pymod_test_mod):
     assert type(res) == type(arg)
 
 
+# TODO
 #def test_boolReturnArg(pymod_test_mod):
 #    arg = True
 #    res = pymod_test_mod.boolReturnArg(arg)
@@ -168,12 +170,14 @@ def test_stringReturnArg(pymod_test_mod):
     assert type(res) == type(arg)
 
 
+# TODO
 #def test_unicodeRuneReturnArg(pymod_test_mod, python_major_version):
 #    arg = "a" if python_major_version >= 3 else u"a"
 #    res = pymod_test_mod.unicodeRuneReturnArg(arg)
 #    assert res == arg
 #    assert type(res) == type(arg)
 
+# TODO
 #def test_seqCharReturnArg(pymod_test_mod, python_major_version):
 #    # Python 3 or above: bytes vs strings, yay!
 #    arg = b"abc" if python_major_version >= 3 else "abc"
@@ -181,6 +185,7 @@ def test_stringReturnArg(pymod_test_mod):
 #    assert res == arg
 #    assert type(res) == type(arg)
 
+# TODO
 #def test_seqRuneReturnArg(pymod_test_mod, python_major_version):
 #    arg = "abc" if python_major_version >= 3 else u"abc"
 #    res = pymod_test_mod.seqRuneReturnArg(arg)

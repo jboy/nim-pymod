@@ -19,6 +19,7 @@ proc float32Expect1*(arg: float32) {.exportpy.} = assertEqual(arg, 1.0)
 proc float64Expect1*(arg: float64) {.exportpy.} = assertEqual(arg, 1.0)
 
 proc intExpect1*(arg: int) {.exportpy.} = assertEqual(arg, 1)
+# TODO
 #proc int8Expect1*(arg: int8) {.exportpy.} = assertEqual(arg, 1)
 proc int16Expect1*(arg: int16) {.exportpy.} = assertEqual(arg, 1)
 proc int32Expect1*(arg: int32) {.exportpy.} = assertEqual(arg, 1)
@@ -30,6 +31,7 @@ proc uint16Expect1*(arg: uint16) {.exportpy.} = assertEqual(arg, 1)
 proc uint32Expect1*(arg: uint32) {.exportpy.} = assertEqual(arg, 1)
 proc uint64Expect1*(arg: uint64) {.exportpy.} = assertEqual(arg, 1)
 
+# TODO
 #proc boolExpect1*(arg: bool) {.exportpy.} = assertEqual(arg, True)
 proc byteExpect1*(arg: byte) {.exportpy.} = assertEqual(arg, 1)
 
@@ -37,6 +39,7 @@ proc ccharExpect1*(arg: cchar) {.exportpy.} = assertEqual(arg, 'a')
 proc charExpect1*(arg: char) {.exportpy.} = assertEqual(arg, 'a')
 proc stringExpect1*(arg: string) {.exportpy.} = assertEqual(arg, "abc")
 
+# TODO
 #proc unicodeRuneExpect1*(arg: Rune) {.exportpy.} = assertEqual(arg, Rune(ord('a')))
 #proc seqCharExpect1*(arg: seq[char]) {.exportpy.} = assertEqual(arg, @['a', 'b', 'c'])
 #proc seqRuneExpect1*(arg: seq[Rune]) {.exportpy.} =

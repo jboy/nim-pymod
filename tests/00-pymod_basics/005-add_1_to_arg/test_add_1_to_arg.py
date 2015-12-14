@@ -78,6 +78,7 @@ def test_intAdd1ToArg(pymod_test_mod):
     assert res == (arg + 1)
     assert type(res) == type(arg)
 
+# TODO
 #def test_int8Add1ToArg(pymod_test_mod):
 #    arg = 1
 #    res = pymod_test_mod.int8Add1ToArg(arg)
@@ -134,6 +135,7 @@ def test_uint64Add1ToArg(pymod_test_mod):
     assert type(res) == type(arg)
 
 
+# TODO
 #def test_boolAdd1ToArg(pymod_test_mod):
 #    arg = True
 #    res = pymod_test_mod.boolAdd1ToArg(arg)
@@ -174,6 +176,7 @@ def test_stringAdd1ToArg(pymod_test_mod):
     assert type(res) == type(arg)
 
 
+# TODO
 #def test_unicodeRuneAdd1ToArg(pymod_test_mod, python_major_version):
 #    arg = "a" if python_major_version >= 3 else u"a"
 #    expectedRes = "b" if python_major_version >= 3 else u"b"
@@ -182,6 +185,7 @@ def test_stringAdd1ToArg(pymod_test_mod):
 #    assert type(res) == type(expectedRes)
 #    assert type(res) == type(arg)
 
+# TODO
 #def test_seqCharAdd1ToArg(pymod_test_mod, python_major_version):
 #    # Python 3 or above: bytes vs strings, yay!
 #    arg = b"abc" if python_major_version >= 3 else "abc"
@@ -191,6 +195,7 @@ def test_stringAdd1ToArg(pymod_test_mod):
 #    assert type(res) == type(expectedRes)
 #    assert type(res) == type(arg)
 
+# TODO
 #def test_seqRuneAdd1ToArg(pymod_test_mod, python_major_version):
 #    arg = "abc" if python_major_version >= 3 else u"abc"
 #    expectedRes = (arg + "def") if python_major_version >= 3 else (arg + u"def")

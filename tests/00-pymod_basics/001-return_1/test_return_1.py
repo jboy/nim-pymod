@@ -78,6 +78,7 @@ def test_intReturn1(pymod_test_mod):
     assert res == expectedRes
     assert type(res) == type(expectedRes)
 
+# TODO
 #def test_int8Return1(pymod_test_mod):
 #    expectedRes = 1
 #    res = pymod_test_mod.int8Return1()
@@ -134,6 +135,7 @@ def test_uint64Return1(pymod_test_mod):
     assert type(res) == type(expectedRes)
 
 
+# TODO
 #def test_boolReturn1(pymod_test_mod):
 #    expectedRes = True
 #    res = pymod_test_mod.boolReturn1()
@@ -168,12 +170,14 @@ def test_stringReturn1(pymod_test_mod):
     assert type(res) == type(expectedRes)
 
 
+# TODO
 #def test_unicodeRuneReturn1(pymod_test_mod, python_major_version):
 #    expectedRes = "a" if python_major_version >= 3 else u"a"
 #    res = pymod_test_mod.unicodeRuneReturn1()
 #    assert res == expectedRes
 #    assert type(res) == type(expectedRes)
 
+# TODO
 #def test_seqCharReturn1(pymod_test_mod, python_major_version):
 #    # Python 3 or above: bytes vs strings, yay!
 #    expectedRes = b"abc" if python_major_version >= 3 else "abc"
@@ -181,6 +185,7 @@ def test_stringReturn1(pymod_test_mod):
 #    assert res == expectedRes
 #    assert type(res) == type(expectedRes)
 
+# TODO
 #def test_seqRuneReturn1(pymod_test_mod, python_major_version):
 #    expectedRes = "abc" if python_major_version >= 3 else u"abc"
 #    res = pymod_test_mod.seqRuneReturn1()
@@ -201,6 +206,7 @@ def test_noReturn(pymod_test_mod):
     assert res == expectedRes
     assert type(res) == type(expectedRes)
 
+# TODO
 #def test_voidReturn(pymod_test_mod):
 #    expectedRes = None
 #    res = pymod_test_mod.voidReturn()
