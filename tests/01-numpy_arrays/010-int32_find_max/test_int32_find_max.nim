@@ -81,6 +81,205 @@ proc int32FindMaxWhileLoopRandaccIterIndex0*(arr: ptr PyArrayObject): int32 {.ex
     raise newException(ValueError, msg)
 
 
+proc int32FindMaxWhileLoopRandaccIterDerefPlusZeroOffset*(arr: ptr PyArrayObject): int32 {.exportpy} =
+  result = low(int32)
+  let dt = arr.dtype
+  if dt == np_int32:
+    let bounds = arr.getBounds(int32)
+    var iter = arr.accessFlat(int32)
+    while iter in bounds:
+      if (iter + 0)[] > result:
+        result = (iter + 0)[]
+      inc(iter)  # Increment the iterator manually.
+  else:
+    let msg = "expected input array of dtype $1, received dtype $2" % [$np_int32, $dt]
+    raise newException(ValueError, msg)
+
+proc int32FindMaxWhileLoopRandaccIterDerefMinusZeroOffset*(arr: ptr PyArrayObject): int32 {.exportpy} =
+  result = low(int32)
+  let dt = arr.dtype
+  if dt == np_int32:
+    let bounds = arr.getBounds(int32)
+    var iter = arr.accessFlat(int32)
+    while iter in bounds:
+      if (iter - 0)[] > result:
+        result = (iter - 0)[]
+      inc(iter)  # Increment the iterator manually.
+  else:
+    let msg = "expected input array of dtype $1, received dtype $2" % [$np_int32, $dt]
+    raise newException(ValueError, msg)
+
+
+proc int32FindMaxWhileLoopRandaccIterIndexVsPlusOffset_1*(arr: ptr PyArrayObject): int32 {.exportpy} =
+  result = low(int32)
+  let dt = arr.dtype
+  if dt == np_int32:
+    let bounds = arr.getBounds(int32)
+    var iter = arr.accessFlat(int32)
+    while iter in bounds:
+      if (iter + 2)[-2] > result:
+        result = (iter + 2)[-2]
+      inc(iter)  # Increment the iterator manually.
+  else:
+    let msg = "expected input array of dtype $1, received dtype $2" % [$np_int32, $dt]
+    raise newException(ValueError, msg)
+
+proc int32FindMaxWhileLoopRandaccIterIndexVsPlusOffset_2*(arr: ptr PyArrayObject): int32 {.exportpy} =
+  result = low(int32)
+  let dt = arr.dtype
+  if dt == np_int32:
+    let bounds = arr.getBounds(int32)
+    var iter = arr.accessFlat(int32)
+    while iter in bounds:
+      if (iter + 1)[-1] > result:
+        result = (iter + 1)[-1]
+      inc(iter)  # Increment the iterator manually.
+  else:
+    let msg = "expected input array of dtype $1, received dtype $2" % [$np_int32, $dt]
+    raise newException(ValueError, msg)
+
+proc int32FindMaxWhileLoopRandaccIterIndexVsPlusOffset_3*(arr: ptr PyArrayObject): int32 {.exportpy} =
+  result = low(int32)
+  let dt = arr.dtype
+  if dt == np_int32:
+    let bounds = arr.getBounds(int32)
+    var iter = arr.accessFlat(int32)
+    while iter in bounds:
+      if (iter + 0)[0] > result:
+        result = (iter + 0)[0]
+      inc(iter)  # Increment the iterator manually.
+  else:
+    let msg = "expected input array of dtype $1, received dtype $2" % [$np_int32, $dt]
+    raise newException(ValueError, msg)
+
+proc int32FindMaxWhileLoopRandaccIterIndexVsPlusOffset_4*(arr: ptr PyArrayObject): int32 {.exportpy} =
+  result = low(int32)
+  let dt = arr.dtype
+  if dt == np_int32:
+    let bounds = arr.getBounds(int32)
+    var iter = arr.accessFlat(int32)
+    while iter in bounds:
+      if (iter + (-1))[1] > result:
+        result = (iter + (-1))[1]
+      inc(iter)  # Increment the iterator manually.
+  else:
+    let msg = "expected input array of dtype $1, received dtype $2" % [$np_int32, $dt]
+    raise newException(ValueError, msg)
+
+proc int32FindMaxWhileLoopRandaccIterIndexVsPlusOffset_5*(arr: ptr PyArrayObject): int32 {.exportpy} =
+  result = low(int32)
+  let dt = arr.dtype
+  if dt == np_int32:
+    let bounds = arr.getBounds(int32)
+    var iter = arr.accessFlat(int32)
+    while iter in bounds:
+      if (iter + (-2))[2] > result:
+        result = (iter + (-2))[2]
+      inc(iter)  # Increment the iterator manually.
+  else:
+    let msg = "expected input array of dtype $1, received dtype $2" % [$np_int32, $dt]
+    raise newException(ValueError, msg)
+
+proc int32FindMaxWhileLoopRandaccIterIndexVsMinusOffset_1*(arr: ptr PyArrayObject): int32 {.exportpy} =
+  result = low(int32)
+  let dt = arr.dtype
+  if dt == np_int32:
+    let bounds = arr.getBounds(int32)
+    var iter = arr.accessFlat(int32)
+    while iter in bounds:
+      if (iter - 2)[2] > result:
+        result = (iter - 2)[2]
+      inc(iter)  # Increment the iterator manually.
+  else:
+    let msg = "expected input array of dtype $1, received dtype $2" % [$np_int32, $dt]
+    raise newException(ValueError, msg)
+
+proc int32FindMaxWhileLoopRandaccIterIndexVsMinusOffset_2*(arr: ptr PyArrayObject): int32 {.exportpy} =
+  result = low(int32)
+  let dt = arr.dtype
+  if dt == np_int32:
+    let bounds = arr.getBounds(int32)
+    var iter = arr.accessFlat(int32)
+    while iter in bounds:
+      if (iter - 1)[1] > result:
+        result = (iter - 1)[1]
+      inc(iter)  # Increment the iterator manually.
+  else:
+    let msg = "expected input array of dtype $1, received dtype $2" % [$np_int32, $dt]
+    raise newException(ValueError, msg)
+
+proc int32FindMaxWhileLoopRandaccIterIndexVsMinusOffset_3*(arr: ptr PyArrayObject): int32 {.exportpy} =
+  result = low(int32)
+  let dt = arr.dtype
+  if dt == np_int32:
+    let bounds = arr.getBounds(int32)
+    var iter = arr.accessFlat(int32)
+    while iter in bounds:
+      if (iter - 0)[0] > result:
+        result = (iter - 0)[0]
+      inc(iter)  # Increment the iterator manually.
+  else:
+    let msg = "expected input array of dtype $1, received dtype $2" % [$np_int32, $dt]
+    raise newException(ValueError, msg)
+
+proc int32FindMaxWhileLoopRandaccIterIndexVsMinusOffset_4*(arr: ptr PyArrayObject): int32 {.exportpy} =
+  result = low(int32)
+  let dt = arr.dtype
+  if dt == np_int32:
+    let bounds = arr.getBounds(int32)
+    var iter = arr.accessFlat(int32)
+    while iter in bounds:
+      if (iter - (-1))[-1] > result:
+        result = (iter - (-1))[-1]
+      inc(iter)  # Increment the iterator manually.
+  else:
+    let msg = "expected input array of dtype $1, received dtype $2" % [$np_int32, $dt]
+    raise newException(ValueError, msg)
+
+proc int32FindMaxWhileLoopRandaccIterIndexVsMinusOffset_5*(arr: ptr PyArrayObject): int32 {.exportpy} =
+  result = low(int32)
+  let dt = arr.dtype
+  if dt == np_int32:
+    let bounds = arr.getBounds(int32)
+    var iter = arr.accessFlat(int32)
+    while iter in bounds:
+      if (iter - (-2))[-2] > result:
+        result = (iter - (-2))[-2]
+      inc(iter)  # Increment the iterator manually.
+  else:
+    let msg = "expected input array of dtype $1, received dtype $2" % [$np_int32, $dt]
+    raise newException(ValueError, msg)
+
+
+proc int32FindMaxWhileLoopRandaccIterIndexVsPlusOffsetK*(arr: ptr PyArrayObject; K: int): int32 {.exportpy} =
+  result = low(int32)
+  let dt = arr.dtype
+  if dt == np_int32:
+    let bounds = arr.getBounds(int32)
+    var iter = arr.accessFlat(int32)
+    while iter in bounds:
+      if (iter + K)[-K] > result:
+        result = (iter + K)[-K]
+      inc(iter)  # Increment the iterator manually.
+  else:
+    let msg = "expected input array of dtype $1, received dtype $2" % [$np_int32, $dt]
+    raise newException(ValueError, msg)
+
+proc int32FindMaxWhileLoopRandaccIterIndexVsMinusOffsetK*(arr: ptr PyArrayObject; K: int): int32 {.exportpy} =
+  result = low(int32)
+  let dt = arr.dtype
+  if dt == np_int32:
+    let bounds = arr.getBounds(int32)
+    var iter = arr.accessFlat(int32)
+    while iter in bounds:
+      if (iter - K)[K] > result:
+        result = (iter - K)[K]
+      inc(iter)  # Increment the iterator manually.
+  else:
+    let msg = "expected input array of dtype $1, received dtype $2" % [$np_int32, $dt]
+    raise newException(ValueError, msg)
+
+
 proc int32FindMaxWhileLoopRandaccIterDeltaN_1*(arr: ptr PyArrayObject; n: int): int32 {.exportpy} =
   result = low(int32)
   let dt = arr.dtype
@@ -245,6 +444,20 @@ initPyModule("",
     int32FindMaxForLoopForwardIter,
     # while loop, Rand Acc Iter
     int32FindMaxWhileLoopRandaccIterDeref, int32FindMaxWhileLoopRandaccIterIndex0,
+    int32FindMaxWhileLoopRandaccIterDerefPlusZeroOffset,
+    int32FindMaxWhileLoopRandaccIterDerefMinusZeroOffset,
+    int32FindMaxWhileLoopRandaccIterIndexVsPlusOffset_1,
+    int32FindMaxWhileLoopRandaccIterIndexVsPlusOffset_2,
+    int32FindMaxWhileLoopRandaccIterIndexVsPlusOffset_3,
+    int32FindMaxWhileLoopRandaccIterIndexVsPlusOffset_4,
+    int32FindMaxWhileLoopRandaccIterIndexVsPlusOffset_5,
+    int32FindMaxWhileLoopRandaccIterIndexVsMinusOffset_1,
+    int32FindMaxWhileLoopRandaccIterIndexVsMinusOffset_2,
+    int32FindMaxWhileLoopRandaccIterIndexVsMinusOffset_3,
+    int32FindMaxWhileLoopRandaccIterIndexVsMinusOffset_4,
+    int32FindMaxWhileLoopRandaccIterIndexVsMinusOffset_5,
+    int32FindMaxWhileLoopRandaccIterIndexVsPlusOffsetK,
+    int32FindMaxWhileLoopRandaccIterIndexVsMinusOffsetK,
     int32FindMaxWhileLoopRandaccIterDeltaN_1, #int32FindMaxWhileLoopRandaccIterDeltaN_2,
     int32FindMaxWhileLoopRandaccIterExcludeFirstM_1, #int32FindMaxWhileLoopRandaccIterExcludeFirstM_2,
     int32FindMaxWhileLoopRandaccIterExcludeLastM_1, #int32FindMaxWhileLoopRandaccIterExcludeLastM_2,

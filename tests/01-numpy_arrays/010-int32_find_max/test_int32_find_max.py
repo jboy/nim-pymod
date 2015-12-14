@@ -71,3 +71,23 @@ def test_int32FindMaxWhileLoopRandaccIterIndex0(pymod_test_mod, seeded_random_nu
     print ("res = %s" % str(res))
     assert res == expectedRes
 
+@pytest.mark.parametrize("ndim", ndims_to_test)
+def test_int32FindMaxWhileLoopRandaccIterDerefPlusZeroOffset(pymod_test_mod, seeded_random_number_generator, ndim):
+    arg = array_utils.get_random_Nd_array_of_ndim_and_type(ndim, numpy.int32)
+    print ("\nrandom number seed = %d\nndim = %d, shape = %s\narg =\n%s" % \
+            (seeded_random_number_generator, ndim, arg.shape, arg))
+    expectedRes = arg.max()
+    res = pymod_test_mod.int32FindMaxWhileLoopRandaccIterDerefPlusZeroOffset(arg)
+    print ("res = %s" % str(res))
+    assert res == expectedRes
+
+@pytest.mark.parametrize("ndim", ndims_to_test)
+def test_int32FindMaxWhileLoopRandaccIterDerefMinusZeroOffset(pymod_test_mod, seeded_random_number_generator, ndim):
+    arg = array_utils.get_random_Nd_array_of_ndim_and_type(ndim, numpy.int32)
+    print ("\nrandom number seed = %d\nndim = %d, shape = %s\narg =\n%s" % \
+            (seeded_random_number_generator, ndim, arg.shape, arg))
+    expectedRes = arg.max()
+    res = pymod_test_mod.int32FindMaxWhileLoopRandaccIterDerefMinusZeroOffset(arg)
+    print ("res = %s" % str(res))
+    assert res == expectedRes
+
