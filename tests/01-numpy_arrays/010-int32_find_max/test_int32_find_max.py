@@ -99,7 +99,7 @@ def test_int32FindMaxWhileLoopRandaccIterDerefKParamAlternatives(pymod_test_mod,
 
 
 @pytest.mark.parametrize("ndim", ndims_to_test)
-@pytest.mark.parametrize("n", [1, 2, 3, 4, 5])
+@pytest.mark.parametrize("n", [1, 2, 3, 4, 5, 10, 100, 1000])
 def test_int32FindMaxWhileLoopRandaccIterDeltaN_1(pymod_test_mod, seeded_random_number_generator,
         ndim, n):
     arg = array_utils.get_random_Nd_array_of_ndim_and_type(ndim, numpy.int32)
@@ -110,6 +110,50 @@ def test_int32FindMaxWhileLoopRandaccIterDeltaN_1(pymod_test_mod, seeded_random_
     print ("arg.flat[::n] =\n%s" % argDeltaN)
     expectedRes = argDeltaN.max()
     res = pymod_test_mod.int32FindMaxWhileLoopRandaccIterDeltaN_1(arg, n)
+    print ("res = %s" % str(res))
+    assert res == expectedRes
+
+
+@pytest.mark.parametrize("ndim", ndims_to_test)
+@pytest.mark.parametrize("m", [1, 2, 3, 4, 5, 10, 100, 1000])
+def test_int32FindMaxWhileLoopRandaccIterExcludeFirstM_1(pymod_test_mod, seeded_random_number_generator,
+        ndim, m):
+    dtype = numpy.int32
+    arg = array_utils.get_random_Nd_array_of_ndim_and_type(ndim, dtype)
+    print ("\nm = %d" % m)
+    print ("random number seed = %d\nndim = %d, shape = %s\narg =\n%s" % \
+            (seeded_random_number_generator, ndim, arg.shape, arg))
+    argAfterM = arg.flat[m:]
+    print ("arg.flat[m:] =\n%s" % argAfterM)
+    if argAfterM.size > 0:
+        expectedRes = argAfterM.max()
+        print ("expectedRes = %s" % str(expectedRes))
+    else:
+        expectedRes = numpy.iinfo(dtype).min
+        print ("expectedRes = %s  (int32.min)" % str(expectedRes))
+    res = pymod_test_mod.int32FindMaxWhileLoopRandaccIterExcludeFirstM_1(arg, m)
+    print ("res = %s" % str(res))
+    assert res == expectedRes
+
+
+@pytest.mark.parametrize("ndim", ndims_to_test)
+@pytest.mark.parametrize("m", [1, 2, 3, 4, 5, 10, 100, 1000])
+def test_int32FindMaxWhileLoopRandaccIterExcludeLastM_1(pymod_test_mod, seeded_random_number_generator,
+        ndim, m):
+    dtype = numpy.int32
+    arg = array_utils.get_random_Nd_array_of_ndim_and_type(ndim, dtype)
+    print ("\nm = %d" % m)
+    print ("random number seed = %d\nndim = %d, shape = %s\narg =\n%s" % \
+            (seeded_random_number_generator, ndim, arg.shape, arg))
+    argBeforeLastM = arg.flat[:-m]
+    print ("arg.flat[:-m] =\n%s" % argBeforeLastM)
+    if argBeforeLastM.size > 0:
+        expectedRes = argBeforeLastM.max()
+        print ("expectedRes = %s" % str(expectedRes))
+    else:
+        expectedRes = numpy.iinfo(dtype).min
+        print ("expectedRes = %s  (int32.min)" % str(expectedRes))
+    res = pymod_test_mod.int32FindMaxWhileLoopRandaccIterExcludeLastM_1(arg, m)
     print ("res = %s" % str(res))
     assert res == expectedRes
 
