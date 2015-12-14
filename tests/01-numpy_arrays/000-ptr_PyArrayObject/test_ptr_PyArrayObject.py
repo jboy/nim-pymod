@@ -24,7 +24,6 @@ def test_ptrPyArrayObjectReturnArg1(pymod_test_mod, seeded_random_number_generat
     assert type(res) == type(arg)
     assert res.dtype == arg.dtype
 
-
 @pytest.mark.parametrize("input_type", array_utils.all_supported_numpy_types)
 def test_ptrPyArrayObjectReturnArg2(pymod_test_mod, random_1d_array_size, input_type):
     arg = array_utils.get_random_1d_array_of_size_and_type(random_1d_array_size, input_type)
