@@ -9,6 +9,7 @@ def test_0_compile_pymod_test_mod(pmgen_py_compile):
 
 ndims_to_test = [1, 2, 3, 4]
 
+
 # for loop, values
 
 @pytest.mark.parametrize("ndim", ndims_to_test)
@@ -44,6 +45,29 @@ def test_int32FindMaxForLoopForwardIter(pymod_test_mod, seeded_random_number_gen
             (seeded_random_number_generator, ndim, arg.shape, arg))
     expectedRes = arg.max()
     res = pymod_test_mod.int32FindMaxForLoopForwardIter(arg)
+    print ("res = %s" % str(res))
+    assert res == expectedRes
+
+
+# while loop, Rand Acc Iter
+
+@pytest.mark.parametrize("ndim", ndims_to_test)
+def test_int32FindMaxWhileLoopRandaccIterDeref(pymod_test_mod, seeded_random_number_generator, ndim):
+    arg = array_utils.get_random_Nd_array_of_ndim_and_type(ndim, numpy.int32)
+    print ("\nrandom number seed = %d\nndim = %d, shape = %s\narg =\n%s" % \
+            (seeded_random_number_generator, ndim, arg.shape, arg))
+    expectedRes = arg.max()
+    res = pymod_test_mod.int32FindMaxWhileLoopRandaccIterDeref(arg)
+    print ("res = %s" % str(res))
+    assert res == expectedRes
+
+@pytest.mark.parametrize("ndim", ndims_to_test)
+def test_int32FindMaxWhileLoopRandaccIterIndex0(pymod_test_mod, seeded_random_number_generator, ndim):
+    arg = array_utils.get_random_Nd_array_of_ndim_and_type(ndim, numpy.int32)
+    print ("\nrandom number seed = %d\nndim = %d, shape = %s\narg =\n%s" % \
+            (seeded_random_number_generator, ndim, arg.shape, arg))
+    expectedRes = arg.max()
+    res = pymod_test_mod.int32FindMaxWhileLoopRandaccIterIndex0(arg)
     print ("res = %s" % str(res))
     assert res == expectedRes
 
