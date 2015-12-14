@@ -34,19 +34,57 @@ all_supported_numpy_types_as_strings = [
         (numpy.float64, "numpy.float64"),
 ]
 
+
+# 0-dimensional arrays: eg, zd = numpy.array(17)
+# zd.ndim == 0
+# zd.shape == ()
+# zd.size == 1
+# zd[0] -> IndexError: too many indices for array
+all_0d_array_shapes = [()]
+
+# 0-size arrays: eg, zs = numpy.array([])
+# zs.ndim == 1
+# zs.shape == (0,)
+# zs.size == 0
+# zs[0] -> IndexError: index 0 is out of bounds for axis 0 with size 0
+small_zero_size_array_shapes = [(0,), (0, 1), (1, 0),
+        (0, 0, 1), (0, 1, 0), (1, 0, 0), (0, 1, 1), (1, 0, 1), (1, 1, 0),
+        (0, 1, 2), (0, 2, 1), (1, 0, 2), (1, 2, 0), (2, 0, 1), (2, 1, 0),
+        (0, 0, 2), (0, 2, 0), (2, 0, 0), (0, 2, 2), (2, 0, 2), (2, 2, 0)]
+
+small_1d_array_shapes = [(1,), (2,), (3,), (4,)]
+
+small_2d_array_shapes = [(1, 1), (1, 2), (2, 1), (2, 2), (1, 3), (3, 1), (1, 4), (4, 1)]
+
+small_3d_array_shapes = [(1, 1, 1),
+        (1, 1, 2), (1, 2, 1), (2, 1, 1), (1, 2, 2), (2, 2, 1), (2, 1, 2),
+        (1, 1, 3), (1, 3, 1), (3, 1, 1), (1, 1, 4), (1, 4, 1), (4, 1, 1)]
+
+small_4d_array_shapes = [(1, 1, 1, 1),
+  (1, 1, 1, 2), (1, 1, 2, 1), (1, 2, 1, 1), (2, 1, 1, 1),
+  (1, 1, 1, 3), (1, 1, 3, 1), (1, 3, 1, 1), (3, 1, 1, 1),
+  (1, 1, 1, 4), (1, 1, 4, 1), (1, 4, 1, 1), (4, 1, 1, 1),
+  (1, 1, 2, 2), (1, 2, 1, 2), (1, 2, 2, 1), (2, 1, 2, 1), (2, 2, 1, 1), (2, 1, 1, 2)]
+
+
+indexable_small_array_shapes = (small_1d_array_shapes +
+        small_2d_array_shapes + small_3d_array_shapes + small_4d_array_shapes)
+
+nonzero_size_small_array_shapes = (all_0d_array_shapes +
+        indexable_small_array_shapes)
+
+nonzero_ndim_small_array_shapes = (small_zero_size_array_shapes +
+        indexable_small_array_shapes)
+
+all_small_array_shapes = (all_0d_array_shapes + small_1d_array_shapes +
+        indexable_small_array_shapes)
+
+
 # 1-D arrays
 
 def get_random_1d_array_of_size_and_type(test_1d_array_size, test_type):
     """Return a randomly-sized 1-D array of random integers in the range [-100, 100]."""
     return numpy.random.random_integers(-100, 100, test_1d_array_size
-            ).astype(test_type)
-
-# 2-D arrays
-
-def get_random_2d_array_of_shape_and_type(test_2d_array_shape, test_type):
-    """Return a randomly-shaped 2-D array of random integers in the range [-100, 100]."""
-    array_size = numpy.prod(test_2d_array_shape)
-    return numpy.random.random_integers(-100, 100, array_size).reshape(test_2d_array_shape
             ).astype(test_type)
 
 # N-D arrays
