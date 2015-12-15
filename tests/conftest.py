@@ -15,6 +15,23 @@ _RENAME_PREFIX_FOR_FAILED_TEST = "failed_"
 
 
 ##
+## Add extra information to the test report header.
+##
+
+def pytest_report_header(config):
+    # https://pytest.org/latest/example/simple.html#adding-info-to-test-report-header
+
+    nim_version_output = subprocess.check_output(["nim", "--version"], stderr=subprocess.STDOUT)
+    if sys.version_info.major >= 3:
+        # Python 3: `lines` has type `bytes`.
+        lines = nim_version_output.split(b"\n")
+    else:
+        # Python 2: `lines` has type `str`.
+        lines = nim_version_output.split("\n")
+    return lines[0]
+
+
+##
 ## Configure the command-line parser.
 ##
 
