@@ -416,12 +416,12 @@ iterator values*(arr: ptr PyArrayObject, NimT: typedesc[NumpyCompatibleNimType])
     inc(iter)
 
 
-proc accessFlatImpl(arr: ptr PyArrayObject, NimT: typedesc[NumpyCompatibleNimType],
-    ii: InstantiationInfoTuple, procname: string{lit}):
+proc accessFlatImpl(arr: ptr PyArrayObject; NimT: typedesc[NumpyCompatibleNimType];
+    ii: InstantiationInfoTuple; procname: string{lit}; incDelta: int):
     PyArrayRandomAccessIterator[NimT] =
   assertArrayType(arr, NimT, ii, procname)
   assertArrayCContigForIterator(arr, ii, procname)
-  result = initPyArrayRandomAccessIterator[NimT](arr)
+  result = initPyArrayRandomAccessIterator[NimT](arr, incDelta)
 
 
 template accessFlat*(arr: ptr PyArrayObject, NimT: typedesc[NumpyCompatibleNimType]):
@@ -463,7 +463,14 @@ template accessFlat*(arr: ptr PyArrayObject, NimT: typedesc[NumpyCompatibleNimTy
 
   # http://nim-lang.org/system.html#instantiationInfo,
   let ii = instantiationInfo()
-  accessFlatImpl(arr, NimT, ii, "accessFlat")
+  accessFlatImpl(arr, NimT, ii, "accessFlat", 1)
+
+
+template accessFlat*(arr: ptr PyArrayObject; NimT: typedesc[NumpyCompatibleNimType]; incDelta: int):
+    PyArrayRandomAccessIterator[NimT] =
+  # http://nim-lang.org/system.html#instantiationInfo,
+  let ii = instantiationInfo()
+  accessFlatImpl(arr, NimT, ii, "accessFlat", incDelta)
 
 
 iterator accessFlat*(arr: ptr PyArrayObject; NimT: typedesc[NumpyCompatibleNimType]):
@@ -478,19 +485,19 @@ iterator accessFlat*(arr: ptr PyArrayObject; NimT: typedesc[NumpyCompatibleNimTy
 iterator accessFlat*(arr: ptr PyArrayObject; NimT: typedesc[NumpyCompatibleNimType];
     incDelta: int): PyArrayRandomAccessIterator[NimT] {.inline.} =
   let bounds = arr.getBounds(NimT)
-  var iter = arr.accessFlat(NimT)
+  var iter = arr.accessFlat(NimT, incDelta)
   while iter in bounds:
     yield iter
-    inc(iter, incDelta)
+    inc(iter)
 
 
 iterator accessFlat*(arr: ptr PyArrayObject; NimT: typedesc[NumpyCompatibleNimType];
     initOffset, incDelta: int): PyArrayRandomAccessIterator[NimT] {.inline.} =
   let bounds = arr.getBounds(NimT)
-  var iter = arr.accessFlat(NimT) + initOffset
+  var iter = arr.accessFlat(NimT, incDelta) + initOffset
   while iter in bounds:
     yield iter
-    inc(iter, incDelta)
+    inc(iter)
 
 
 proc getBoundsImpl(arr: ptr PyArrayObject, NimT: typedesc[NumpyCompatibleNimType],

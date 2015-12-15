@@ -231,20 +231,23 @@ type PyArrayRandomAccessIterator*[T] = object
   ##
   pos: ptr T
   arr: ptr PyArrayObject
+  flatstride: int  # in bytes, as strides usually are.
   when doWithinRangeChecks:
     # Check ranges.  Catch mistakes.
     low: ptr T
     high: ptr T
 
 
-proc initPyArrayRandomAccessIterator*[T](arr: ptr PyArrayObject):
+proc initPyArrayRandomAccessIterator*[T](arr: ptr PyArrayObject; incDelta: int):
     PyArrayRandomAccessIterator[T] {. inline .} =
   let (low, high) = getLowHighBounds[T](arr)
+  let flatstride = incDelta * sizeof(T)
   when doWithinRangeChecks:
     # Check ranges.  Catch mistakes.
-    result = PyArrayRandomAccessIterator[T](pos: low, arr: arr, low: low, high: high)
+    result = PyArrayRandomAccessIterator[T](pos: low, arr: arr, flatstride: flatstride,
+        low: low, high: high)
   else:
-    result = PyArrayRandomAccessIterator[T](pos: low, arr: arr)
+    result = PyArrayRandomAccessIterator[T](pos: low, arr: arr, flatstride: flatstride)
 
 
 when doWithinRangeChecks:
@@ -260,8 +263,8 @@ when doWithinRangeChecks:
     # Note: Use a proc rather than a template, to get a fuller stack trace.
     if isNotWithinRange(rai, rai.pos):
       let itertype = rai.getGenericTypeName
-      let iterdescr = "$1[$2](sizeof($1)=$3" %
-          [itertype, getCompileTimeType(T), $sizeof(T)]
+      let iterdescr = "$1[$2](sizeof($1)=$3; flatstride=$4)" %
+          [itertype, getCompileTimeType(T), $sizeof(T), $rai.flatstride]
       let msg = "$1 dereferenced at pos $2, out of bounds [$3, $4]" %
           [iterdescr, rai.pos.toHex, rai.low.toHex, rai.high.toHex]
       raise newException(RangeError, msg)
@@ -280,19 +283,19 @@ when doWithinRangeChecks:
     # Note: Use a proc rather than a template, to get a fuller stack trace.
     if isNotWithinRange(rai, offset_pos):
       let itertype = rai.getGenericTypeName
-      let iterdescr = "$1[$2](sizeof($1)=$3" %
-          [itertype, getCompileTimeType(T), $sizeof(T)]
+      let iterdescr = "$1[$2](sizeof($1)=$3; flatstride=$4)" %
+          [itertype, getCompileTimeType(T), $sizeof(T), $rai.flatstride]
       let msg = "$1 dereferenced at pos $2, out of bounds [$3, $4]" %
           [iterdescr, offset_pos.toHex, rai.low.toHex, rai.high.toHex]
       raise newException(RangeError, msg)
 
   proc `[]`*[T](rai: PyArrayRandomAccessIterator[T], idx: int): var T =
-    let offset_pos = offset_ptr(rai.pos, idx)
+    let offset_pos = offset_ptr_in_bytes(rai.pos, idx * rai.flatstride)
     assertWithinRange(rai, offset_pos)
     return offset_pos[]
 
   proc `[]=`*[T](rai: PyArrayRandomAccessIterator[T], idx: int, val: T) =
-    let offset_pos = offset_ptr(rai.pos, idx)
+    let offset_pos = offset_ptr_in_bytes(rai.pos, idx * rai.flatstride)
     assertWithinRange(rai, offset_pos)
     offset_pos[] = val
 
@@ -304,28 +307,28 @@ else:
     (rai.pos[] = val)
 
   proc `[]`*[T](rai: PyArrayRandomAccessIterator[T], idx: int): var T =
-    let offset_pos = offset_ptr(rai.pos, idx)
+    let offset_pos = offset_ptr_in_bytes(rai.pos, idx * rai.flatstride)
     return offset_pos[]
 
   proc `[]=`*[T](rai: PyArrayRandomAccessIterator[T], idx: int, val: T) =
-    let offset_pos = offset_ptr(rai.pos, idx)
+    let offset_pos = offset_ptr_in_bytes(rai.pos, idx * rai.flatstride)
     offset_pos[] = val
 
 
 proc inc*[T](rai: var PyArrayRandomAccessIterator[T], delta: int) {. inline .} =
-  rai.pos = offset_ptr(rai.pos, delta)
+  rai.pos = offset_ptr_in_bytes(rai.pos, delta * rai.flatstride)
 
 
 when doWithinRangeChecks:
   proc inc*[T](rai: var PyArrayRandomAccessIterator[T]) {. inline .} =
-    rai.pos = offset_ptr(rai.pos)
+    rai.pos = offset_ptr_in_bytes(rai.pos, rai.flatstride)
 else:
   proc inc*[T](rai: var PyArrayRandomAccessIterator[T]) {. inline .} =
-    rai.pos = cast[ptr T](offset_void_ptr_in_bytes(rai.pos, sizeof(T)))
+    rai.pos = cast[ptr T](offset_void_ptr_in_bytes(rai.pos, rai.flatstride))
 
 
 proc dec*[T](rai: var PyArrayRandomAccessIterator[T], delta: int) {. inline .} =
-  rai.pos = offset_ptr(rai.pos, -delta)
+  rai.pos = offset_ptr_in_bytes(rai.pos, -delta * rai.flatstride)
 
 
 when doWithinRangeChecks:
@@ -333,13 +336,14 @@ when doWithinRangeChecks:
     rai.pos = offset_ptr(rai.pos, -1)
 else:
   proc dec*[T](rai: var PyArrayRandomAccessIterator[T]) {. inline .} =
-    rai.pos = cast[ptr T](offset_void_ptr_in_bytes(rai.pos, -sizeof(T)))
+    rai.pos = cast[ptr T](offset_void_ptr_in_bytes(rai.pos, -(rai.flatstride)))
 
 
 proc `+`*[T](rai: PyArrayRandomAccessIterator[T], delta: int):
     PyArrayRandomAccessIterator[T] {. inline .} =
   result.pos = offset_ptr(rai.pos, delta)
   result.arr = rai.arr
+  result.flatstride = rai.flatstride
   when doWithinRangeChecks:
     # Check ranges.  Catch mistakes.
     result.low = rai.low
@@ -350,6 +354,7 @@ proc `-`*[T](rai: PyArrayRandomAccessIterator[T], delta: int):
     PyArrayRandomAccessIterator[T] {. inline .} =
   result.pos = offset_ptr(rai.pos, -delta)
   result.arr = rai.arr
+  result.flatstride = rai.flatstride
   when doWithinRangeChecks:
     # Check ranges.  Catch mistakes.
     result.low = rai.low
