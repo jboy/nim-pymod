@@ -9,11 +9,12 @@ from array_utils import get_random_Nd_array_shape
 from array_utils import get_random_Nd_array_of_shape_and_type
 
 
-@pytest.fixture(scope="module")
-def seeded_random_number_generator():
+@pytest.fixture(scope="module", autouse=True)
+def seeded_random_number_generator(request):
     """Ensure that the random number generator has been seeded."""
     seed = int(time.time())
     numpy.random.seed(seed)
+    print ("Random number generator seeded in module %s: %d" % (request.module.__name__, seed))
     return seed
 
 

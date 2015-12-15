@@ -16,8 +16,7 @@ def test_returnPyArrayObjectPtrAsInt(pymod_test_mod, random_1d_array_size, input
 
 @pytest.mark.parametrize("array_shape", array_utils.all_small_array_shapes)
 @pytest.mark.parametrize("input_type", array_utils.all_supported_numpy_types)
-def test_ptrPyArrayObjectReturnArg1(pymod_test_mod, seeded_random_number_generator,
-        array_shape, input_type):
+def test_ptrPyArrayObjectReturnArg1(pymod_test_mod, array_shape, input_type):
     arg = array_utils.get_random_Nd_array_of_shape_and_type(array_shape, input_type)
     res = pymod_test_mod.ptrPyArrayObjectReturnArg(arg)
     assert numpy.all(res == arg)

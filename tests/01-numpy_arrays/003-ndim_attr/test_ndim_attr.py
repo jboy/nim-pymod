@@ -9,8 +9,7 @@ def test_0_compile_pymod_test_mod(pmgen_py_compile):
 
 @pytest.mark.parametrize("array_shape", array_utils.all_small_array_shapes)
 @pytest.mark.parametrize("input_type", array_utils.all_supported_numpy_types)
-def test_returnNdAttr(pymod_test_mod, seeded_random_number_generator,
-        array_shape, input_type):
+def test_returnNdAttr(pymod_test_mod, array_shape, input_type):
     arg = array_utils.get_random_Nd_array_of_shape_and_type(array_shape, input_type)
 
     resNd = pymod_test_mod.returnNdAttr(arg)

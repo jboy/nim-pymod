@@ -18,8 +18,7 @@ def _get_array_data_address(arr):
 
 @pytest.mark.parametrize("array_shape", array_utils.all_small_array_shapes)
 @pytest.mark.parametrize("input_type", array_utils.all_supported_numpy_types)
-def test_returnDataPointerAsInt1(pymod_test_mod, seeded_random_number_generator,
-        array_shape, input_type):
+def test_returnDataPointerAsInt1(pymod_test_mod, array_shape, input_type):
     arg = array_utils.get_random_Nd_array_of_shape_and_type(array_shape, input_type)
     res = pymod_test_mod.returnDataPointerAsInt(arg)
     data_addr = _get_array_data_address(arg)
