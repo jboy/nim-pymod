@@ -47,10 +47,17 @@ all_0d_array_shapes = [()]
 # zs.shape == (0,)
 # zs.size == 0
 # zs[0] -> IndexError: index 0 is out of bounds for axis 0 with size 0
-small_zero_size_array_shapes = [(0,), (0, 1), (1, 0),
+zero_size_1d_array_shapes = [(0,)]
+
+zero_size_2d_array_shapes = [(0, 1), (1, 0), (0, 2), (2, 0), (0, 3), (3, 0)]
+
+zero_size_3d_array_shapes = [
         (0, 0, 1), (0, 1, 0), (1, 0, 0), (0, 1, 1), (1, 0, 1), (1, 1, 0),
         (0, 1, 2), (0, 2, 1), (1, 0, 2), (1, 2, 0), (2, 0, 1), (2, 1, 0),
         (0, 0, 2), (0, 2, 0), (2, 0, 0), (0, 2, 2), (2, 0, 2), (2, 2, 0)]
+
+small_zero_size_array_shapes = (zero_size_1d_array_shapes +
+        zero_size_2d_array_shapes + zero_size_3d_array_shapes)
 
 small_1d_array_shapes = [(1,), (2,), (3,), (4,)]
 
