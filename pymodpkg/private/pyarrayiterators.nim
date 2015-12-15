@@ -84,6 +84,11 @@ proc initPyArrayForwardIterator*[T](arr: ptr PyArrayObject):
     result = PyArrayForwardIterator[T](pos: low, arr: arr)
 
 
+proc initPyArrayIteratorBounds*[T](iter: PyArrayForwardIterator[T]):
+    PyArrayIteratorBounds[T] {. inline .} =
+  initPyArrayIteratorBounds[T](iter.arr)
+
+
 when doWithinRangeChecks:
   # Check ranges.  Catch mistakes.
 
@@ -238,16 +243,22 @@ type PyArrayRandomAccessIterator*[T] = object
     high: ptr T
 
 
-proc initPyArrayRandomAccessIterator*[T](arr: ptr PyArrayObject; incDelta: int):
+proc initPyArrayRandomAccessIterator*[T](arr: ptr PyArrayObject; initOffset, incDelta: int):
     PyArrayRandomAccessIterator[T] {. inline .} =
   let (low, high) = getLowHighBounds[T](arr)
+  let initPos = offset_ptr(low, initOffset)
   let flatstride = incDelta * sizeof(T)
   when doWithinRangeChecks:
     # Check ranges.  Catch mistakes.
-    result = PyArrayRandomAccessIterator[T](pos: low, arr: arr, flatstride: flatstride,
+    result = PyArrayRandomAccessIterator[T](pos: initPos, arr: arr, flatstride: flatstride,
         low: low, high: high)
   else:
-    result = PyArrayRandomAccessIterator[T](pos: low, arr: arr, flatstride: flatstride)
+    result = PyArrayRandomAccessIterator[T](pos: initPos, arr: arr, flatstride: flatstride)
+
+
+proc initPyArrayIteratorBounds*[T](iter: PyArrayRandomAccessIterator[T]):
+    PyArrayIteratorBounds[T] {. inline .} =
+  initPyArrayIteratorBounds[T](iter.arr)
 
 
 when doWithinRangeChecks:

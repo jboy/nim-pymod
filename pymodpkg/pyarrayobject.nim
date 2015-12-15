@@ -398,10 +398,10 @@ template iterateForward*(arr: ptr PyArrayObject, NimT: typedesc[NumpyCompatibleN
   iterateForwardImpl(arr, NimT, ii, "iterateForward")
 
 
-iterator iterateForward*(arr: ptr PyArrayObject, NimT: typedesc[NumpyCompatibleNimType]):
-    PyArrayForwardIterator[NimT] {.inline.} =
-  let bounds = arr.getBounds(NimT)
-  var iter = arr.iterateForward(NimT)
+iterator items*[T](iter: PyArrayForwardIterator[T]):
+    PyArrayForwardIterator[T] {.inline.} =
+  let bounds = iter.getBounds()
+  var iter = iter
   while iter in bounds:
     yield iter
     inc(iter)
@@ -417,11 +417,11 @@ iterator values*(arr: ptr PyArrayObject, NimT: typedesc[NumpyCompatibleNimType])
 
 
 proc accessFlatImpl(arr: ptr PyArrayObject; NimT: typedesc[NumpyCompatibleNimType];
-    ii: InstantiationInfoTuple; procname: string{lit}; incDelta: int):
+    ii: InstantiationInfoTuple; procname: string{lit}; initOffset, incDelta: int):
     PyArrayRandomAccessIterator[NimT] =
   assertArrayType(arr, NimT, ii, procname)
   assertArrayCContigForIterator(arr, ii, procname)
-  result = initPyArrayRandomAccessIterator[NimT](arr, incDelta)
+  result = initPyArrayRandomAccessIterator[NimT](arr, initOffset, incDelta)
 
 
 template accessFlat*(arr: ptr PyArrayObject, NimT: typedesc[NumpyCompatibleNimType]):
@@ -463,38 +463,28 @@ template accessFlat*(arr: ptr PyArrayObject, NimT: typedesc[NumpyCompatibleNimTy
 
   # http://nim-lang.org/system.html#instantiationInfo,
   let ii = instantiationInfo()
-  accessFlatImpl(arr, NimT, ii, "accessFlat", 1)
+  accessFlatImpl(arr, NimT, ii, "accessFlat", 0, 1)
 
 
-template accessFlat*(arr: ptr PyArrayObject; NimT: typedesc[NumpyCompatibleNimType]; incDelta: int):
+template accessFlat*(arr: ptr PyArrayObject; NimT: typedesc[NumpyCompatibleNimType];
+    incDelta: int): PyArrayRandomAccessIterator[NimT] =
+  # http://nim-lang.org/system.html#instantiationInfo,
+  let ii = instantiationInfo()
+  accessFlatImpl(arr, NimT, ii, "accessFlat", 0, incDelta)
+
+
+template accessFlat*(arr: ptr PyArrayObject; NimT: typedesc[NumpyCompatibleNimType];
+    initOffset, incDelta: int):
     PyArrayRandomAccessIterator[NimT] =
   # http://nim-lang.org/system.html#instantiationInfo,
   let ii = instantiationInfo()
-  accessFlatImpl(arr, NimT, ii, "accessFlat", incDelta)
+  accessFlatImpl(arr, NimT, ii, "accessFlat", initOffset, incDelta)
 
 
-iterator accessFlat*(arr: ptr PyArrayObject; NimT: typedesc[NumpyCompatibleNimType]):
-    PyArrayRandomAccessIterator[NimT] {.inline.} =
-  let bounds = arr.getBounds(NimT)
-  var iter = arr.accessFlat(NimT)
-  while iter in bounds:
-    yield iter
-    inc(iter)
-
-
-iterator accessFlat*(arr: ptr PyArrayObject; NimT: typedesc[NumpyCompatibleNimType];
-    incDelta: int): PyArrayRandomAccessIterator[NimT] {.inline.} =
-  let bounds = arr.getBounds(NimT)
-  var iter = arr.accessFlat(NimT, incDelta)
-  while iter in bounds:
-    yield iter
-    inc(iter)
-
-
-iterator accessFlat*(arr: ptr PyArrayObject; NimT: typedesc[NumpyCompatibleNimType];
-    initOffset, incDelta: int): PyArrayRandomAccessIterator[NimT] {.inline.} =
-  let bounds = arr.getBounds(NimT)
-  var iter = arr.accessFlat(NimT, incDelta) + initOffset
+iterator items*[T](iter: PyArrayRandomAccessIterator[T]):
+    PyArrayRandomAccessIterator[T] {.inline.} =
+  let bounds = iter.getBounds()
+  var iter = iter
   while iter in bounds:
     yield iter
     inc(iter)
@@ -514,6 +504,18 @@ template getBounds*(arr: ptr PyArrayObject, NimT: typedesc[NumpyCompatibleNimTyp
   # http://nim-lang.org/system.html#instantiationInfo,
   let ii = instantiationInfo()
   getBoundsImpl(arr, NimT, ii, "getBounds")
+
+
+proc getBounds*[T](iter: PyArrayForwardIterator[T]):
+    PyArrayIteratorBounds[T] {.inline.} =
+  ## Return a PyArrayIteratorBounds over type `T`.
+  result = initPyArrayIteratorBounds(iter)
+
+
+proc getBounds*[T](iter: PyArrayRandomAccessIterator[T]):
+    PyArrayIteratorBounds[T] {.inline.} =
+  ## Return a PyArrayIteratorBounds over type `T`.
+  result = initPyArrayIteratorBounds(iter)
 
 
 ## Data type descriptors:
