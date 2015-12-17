@@ -31,16 +31,16 @@ proc getLowHighBounds[NT](a: ptr PyArrayObject):
   result = (low, high)
 
 
-type PyArrayIteratorBounds*[T] = object
+type PyArrayIterBounds*[T] = object
   arr: ptr PyArrayObject
   low: ptr T
   high: ptr T
 
 
-proc initPyArrayIteratorBounds*[T](arr: ptr PyArrayObject):
-    PyArrayIteratorBounds[T] {. inline .} =
+proc initPyArrayIterBounds*[T](arr: ptr PyArrayObject):
+    PyArrayIterBounds[T] {. inline .} =
   let (low, high) = getLowHighBounds[T](arr)
-  result = PyArrayIteratorBounds[T](arr: arr, low: low, high: high)
+  result = PyArrayIterBounds[T](arr: arr, low: low, high: high)
 
 
 type PyArrayForwardIter*[T] = object
@@ -58,7 +58,7 @@ type PyArrayForwardIter*[T] = object
   ## However, these internal range checks will be disabled in release builds.
   ##
   ## Hence, if necessary, the user can/should perform iterator range-checking
-  ## using the supplied PyArrayIteratorBounds:
+  ## using the supplied PyArrayIterBounds:
   ##
   ##   let bounds = arr.getBounds(int32)
   ##   var iter = arr.iterateFlat(int32)
@@ -84,9 +84,9 @@ proc initPyArrayForwardIter*[T](arr: ptr PyArrayObject):
     result = PyArrayForwardIter[T](pos: low, arr: arr)
 
 
-proc initPyArrayIteratorBounds*[T](iter: PyArrayForwardIter[T]):
-    PyArrayIteratorBounds[T] {. inline .} =
-  initPyArrayIteratorBounds[T](iter.arr)
+proc initPyArrayIterBounds*[T](iter: PyArrayForwardIter[T]):
+    PyArrayIterBounds[T] {. inline .} =
+  initPyArrayIterBounds[T](iter.arr)
 
 
 when doWithinRangeChecks:
@@ -130,19 +130,19 @@ else:
 when doSamePyArrayChecks:
   # Check that our iterators are pointing at the same array.
 
-  template isNotSamePyArray[T](bounds: PyArrayIteratorBounds[T];
+  template isNotSamePyArray[T](bounds: PyArrayIterBounds[T];
       fi: PyArrayForwardIter[T]): bool =
     (bounds.arr != fi.arr)
 
-  proc assertSamePyArray[T](bounds: PyArrayIteratorBounds[T];
+  proc assertSamePyArray[T](bounds: PyArrayIterBounds[T];
       fi: PyArrayForwardIter[T]) =
     # Note: Use a proc rather than a template, to get a fuller stack trace.
     if isNotSamePyArray(bounds, fi):
-      let msg = "A PyArrayForwardIter[$1] was compared to a PyArrayIteratorBounds[$1], but they point to different PyArrayObjects" %
+      let msg = "A PyArrayForwardIter[$1] was compared to a PyArrayIterBounds[$1], but they point to different PyArrayObjects" %
           getCompileTimeType(T)
       raise newException(ValueError, msg)
 
-  proc contains*[T](bounds: PyArrayIteratorBounds[T],
+  proc contains*[T](bounds: PyArrayIterBounds[T],
       fi: PyArrayForwardIter[T]): bool {.inline.} =
     ## Test whether the PyArrayForwardIter is within its bounds.
     ##
@@ -184,7 +184,7 @@ when doSamePyArrayChecks:
 
 else:
 
-  template contains*[T](bounds: PyArrayIteratorBounds[T],
+  template contains*[T](bounds: PyArrayIterBounds[T],
       fi: PyArrayForwardIter[T]): bool =
     ## Test whether the PyArrayForwardIter is within its bounds.
     ##
@@ -226,7 +226,7 @@ type PyArrayRandAccIter*[T] = object
   ## However, these internal range checks will be disabled in release builds.
   ##
   ## Hence, if necessary, the user can/should perform iterator range-checking
-  ## using the supplied PyArrayIteratorBounds:
+  ## using the supplied PyArrayIterBounds:
   ##
   ##   let bounds = arr.getBounds(int32)
   ##   var iter = arr.accessFlat(int32)
@@ -256,9 +256,9 @@ proc initPyArrayRandAccIter*[T](arr: ptr PyArrayObject; initOffset, incDelta: in
     result = PyArrayRandAccIter[T](pos: initPos, arr: arr, flatstride: flatstride)
 
 
-proc initPyArrayIteratorBounds*[T](iter: PyArrayRandAccIter[T]):
-    PyArrayIteratorBounds[T] {. inline .} =
-  initPyArrayIteratorBounds[T](iter.arr)
+proc initPyArrayIterBounds*[T](iter: PyArrayRandAccIter[T]):
+    PyArrayIterBounds[T] {. inline .} =
+  initPyArrayIterBounds[T](iter.arr)
 
 
 when doWithinRangeChecks:
@@ -375,19 +375,19 @@ proc `-`*[T](rai: PyArrayRandAccIter[T], delta: int):
 when doSamePyArrayChecks:
   # Check that our iterators are pointing at the same array.
 
-  template isNotSamePyArray[T](bounds: PyArrayIteratorBounds[T];
+  template isNotSamePyArray[T](bounds: PyArrayIterBounds[T];
       rai: PyArrayRandAccIter[T]): bool =
     (bounds.arr != rai.arr)
 
-  proc assertSamePyArray[T](bounds: PyArrayIteratorBounds[T];
+  proc assertSamePyArray[T](bounds: PyArrayIterBounds[T];
       rai: PyArrayRandAccIter[T]) =
     # Note: Use a proc rather than a template, to get a fuller stack trace.
     if isNotSamePyArray(bounds, rai):
-      let msg = "A PyArrayRandAccIter[$1] was compared to a PyArrayIteratorBounds[$1], but they point to different PyArrayObjects" %
+      let msg = "A PyArrayRandAccIter[$1] was compared to a PyArrayIterBounds[$1], but they point to different PyArrayObjects" %
           getCompileTimeType(T)
       raise newException(ValueError, msg)
 
-  proc contains*[T](bounds: PyArrayIteratorBounds[T];
+  proc contains*[T](bounds: PyArrayIterBounds[T];
       rai: PyArrayRandAccIter[T]): bool {.inline.} =
     ## Test whether the PyArrayRandAccIter is within its bounds.
     ##
@@ -429,7 +429,7 @@ when doSamePyArrayChecks:
 
 else:
 
-  template contains*[T](bounds: PyArrayIteratorBounds[T],
+  template contains*[T](bounds: PyArrayIterBounds[T],
       rai: PyArrayRandAccIter[T]): bool =
     ## Test whether the PyArrayRandAccIter is within its bounds.
     ##

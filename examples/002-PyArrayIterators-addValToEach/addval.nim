@@ -6,7 +6,7 @@
 
 ## Several short examples of how to iterate through a PyArrayObject and
 ## add a user-specified `int32` value to each element in the Numpy array.
-## Each example uses a different PyArrayIterator looping idiom.
+## Each example uses a different PyArrayIter looping idiom.
 ##
 ## Compile this Nim module using the following command:
 ##   python ../../pmgen.py addval.nim

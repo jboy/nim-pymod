@@ -39,9 +39,9 @@ Table of contents
 7. [Procedure parameter & return types](#procedure-parameter--return-types)
 8. [Docstrings](#docstrings)
 9. [PyArrayObject type](#pyarrayobject-type)
-10. [PyArrayIterator types](#pyarrayiterator-types)
-11. [PyArrayObject & PyArrayIterator usage example](#pyarrayobject--pyarrayiterator-usage-example)
-12. [PyArrayIterator loop idioms](#pyarrayiterator-loop-idioms)
+10. [PyArrayIter types](#pyarrayiter-types)
+11. [PyArrayObject & PyArrayIter usage example](#pyarrayobject--pyarrayiter-usage-example)
+12. [PyArrayIter loop idioms](#pyarrayiter-loop-idioms)
 13. [Tips, warnings & gotchas](#tips-warnings--gotchas)
 14. [What about calling Python from Nim?](#what-about-calling-python-from-nim)
 15. [Implementation details](#implementation-details)
@@ -333,7 +333,7 @@ Here are some of the Numpy functions for array creation & manipulation that Pymo
 * `doFILLWBYTE(destArray, val)`
 * `doResizeDataInplace(oldArray, newShape, doRefCheck)`
 
-PyArrayIterator types
+PyArrayIter types
 ---------------------
 
 **Note** that, due to its typeless Pythonic origin, `PyArrayObject` is not a
@@ -341,7 +341,7 @@ Nim generic type.  So the element data-type of a `PyArrayObject` instance
 is unknown to Nim.  The Nim code must **specify the correct element data-type**
 for the `PyArrayObject` elements.  The preferred method of accessing the
 (appropriately-typed) elements of a `PyArrayObject` instance is to use one of
-the two supplied `PyArrayIterator` types:
+the two supplied `PyArrayIter` types:
 
 * `PyArrayForwardIter[T]`
   * returned by `.iterateFlat(T)`
@@ -352,7 +352,7 @@ the two supplied `PyArrayIterator` types:
   * can be incremented or decremented by any integer; offset (using `+` or `-`) by any integer; indexed by any integer; & dereferenced
   * basically a C pointer with bounds-checking
 
-Both of the `PyArrayIterator` types offer **1-D iteration & indexing** over
+Both of the `PyArrayIter` types offer **1-D iteration & indexing** over
 a "flat" interpretation of the Numpy N-D array data.  These two iterator types
 are inspired by the
 [C++ iterator category model](http://www.cplusplus.com/reference/iterator/).
@@ -360,7 +360,7 @@ By default, the iterators implement per-dereference bounds-checking.
 This bounds-checking can be disabled, as described above in the section
 [Per-project configuration](#per-project-configuration).
 
-**Note** that the `PyArrayIterator` types can't handle any of the following
+**Note** that the `PyArrayIter` types can't handle any of the following
 usage scenarios:
 
  * non-C-contiguous array data
@@ -373,7 +373,7 @@ the incorrect array element data-type when invoking `.iterateFlat(T)`
 or `.accessFlat(T)`, an `ObjectConversionError` will be raised (even in
 release mode).
 
-PyArrayObject & PyArrayIterator usage example
+PyArrayObject & PyArrayIter usage example
 ---------------------------------------------
 
 Here is a simple example of how to use `PyArrayObject` & `PyArrayForwardIter[T]`:
@@ -445,7 +445,7 @@ Nim traceback (most recent call last):
   File "addvalmod.nim", line 22, in addVal
 ```
 
-PyArrayIterator loop idioms
+PyArrayIter loop idioms
 ---------------------------
 
 Observe the `while` loop that was used in `addVal` to iterate over the array.

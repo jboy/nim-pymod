@@ -298,21 +298,21 @@ export pyarrayobjecttype.strides
 export pyarrayobjecttype.descr
 export pyarrayobjecttype.dtype
 
-import pymodpkg/private/pyarrayiterators
-export pyarrayiterators.PyArrayForwardIter
-export pyarrayiterators.`[]`
-export pyarrayiterators.`[]=`
-export pyarrayiterators.inc
-export pyarrayiterators.PyArrayRandAccIter
-export pyarrayiterators.PyArrayIteratorBounds
-export pyarrayiterators.contains
-export pyarrayiterators.dec
-export pyarrayiterators.`+`
-export pyarrayiterators.`-`
-export pyarrayiterators.`==`
-export pyarrayiterators.`!=`
-export pyarrayiterators.`<=`
-export pyarrayiterators.`<`
+import pymodpkg/private/pyarrayiters
+export pyarrayiters.PyArrayForwardIter
+export pyarrayiters.`[]`
+export pyarrayiters.`[]=`
+export pyarrayiters.inc
+export pyarrayiters.PyArrayRandAccIter
+export pyarrayiters.PyArrayIterBounds
+export pyarrayiters.contains
+export pyarrayiters.dec
+export pyarrayiters.`+`
+export pyarrayiters.`-`
+export pyarrayiters.`==`
+export pyarrayiters.`!=`
+export pyarrayiters.`<=`
+export pyarrayiters.`<`
 
 
 ## A convenient and plausible maximum number of dimensions to support.
@@ -492,14 +492,14 @@ iterator items*[T](iter: PyArrayRandAccIter[T]):
 
 proc getBoundsImpl(arr: ptr PyArrayObject, NimT: typedesc[NumpyCompatibleNimType],
     ii: InstantiationInfoTuple, procname: string{lit}):
-    PyArrayIteratorBounds[NimT] =
+    PyArrayIterBounds[NimT] =
   assertArrayType(arr, NimT, ii, procname)
-  result = initPyArrayIteratorBounds[NimT](arr)
+  result = initPyArrayIterBounds[NimT](arr)
 
 
 template getBounds*(arr: ptr PyArrayObject, NimT: typedesc[NumpyCompatibleNimType]):
-    PyArrayIteratorBounds[NimT] =
-  ## Return a PyArrayIteratorBounds over type `NimT`.
+    PyArrayIterBounds[NimT] =
+  ## Return a PyArrayIterBounds over type `NimT`.
 
   # http://nim-lang.org/system.html#instantiationInfo,
   let ii = instantiationInfo()
@@ -507,15 +507,15 @@ template getBounds*(arr: ptr PyArrayObject, NimT: typedesc[NumpyCompatibleNimTyp
 
 
 proc getBounds*[T](iter: PyArrayForwardIter[T]):
-    PyArrayIteratorBounds[T] {.inline.} =
-  ## Return a PyArrayIteratorBounds over type `T`.
-  result = initPyArrayIteratorBounds(iter)
+    PyArrayIterBounds[T] {.inline.} =
+  ## Return a PyArrayIterBounds over type `T`.
+  result = initPyArrayIterBounds(iter)
 
 
 proc getBounds*[T](iter: PyArrayRandAccIter[T]):
-    PyArrayIteratorBounds[T] {.inline.} =
-  ## Return a PyArrayIteratorBounds over type `T`.
-  result = initPyArrayIteratorBounds(iter)
+    PyArrayIterBounds[T] {.inline.} =
+  ## Return a PyArrayIterBounds over type `T`.
+  result = initPyArrayIterBounds(iter)
 
 
 ## Data type descriptors:

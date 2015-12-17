@@ -181,8 +181,8 @@ proc myNumpyAdd*(arr: ptr PyArrayObject, x: int): ptr PyArrayObject {. exportpy 
     #   Nim traceback (most recent call last):
     #     File "pmgentestpymod3_wrap.nim", line 116, in exportpy_myNumpyAdd
     #     File "testPymod.nim", line 171, in myNumpyAdd
-    #     File "pyarrayiterators.nim", line 112, in []
-    #     File "pyarrayiterators.nim", line 102, in assertValid
+    #     File "pyarrayiters.nim", line 112, in []
+    #     File "pyarrayiters.nim", line 102, in assertValid
     #
   else:
     echo("\narr.dtype is ", $dt)

@@ -63,7 +63,7 @@ proc parseStackTraceLine(line: string):
   # A stack trace line should look something like one of these:
   #   testpymod3_pymod_wrap.nim(102) exportpy_myNumpyAdd
   #   testPymod.nim(163)       myNumpyAdd
-  #   pyarrayiterators.nim(51) []
+  #   pyarrayiters.nim(51) []
   let lparen_idx = line.find('(')
   if lparen_idx == -1:  # not found
     return
@@ -107,7 +107,7 @@ proc prettyPrintStackTrace*(input: string): string =
   # Parse the remaining lines of the stack trace; they should look like this:
   #   testpymod3_pymod_wrap.nim(102) exportpy_myNumpyAdd
   #   testPymod.nim(163)       myNumpyAdd
-  #   pyarrayiterators.nim(51) []
+  #   pyarrayiters.nim(51) []
   for i in 1.. <num_lines:
     let line = lines[i]
     let (filename, linenum, funcname, success) = parseStackTraceLine(line)

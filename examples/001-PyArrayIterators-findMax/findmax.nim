@@ -6,7 +6,7 @@
 
 ## Several short examples of how to read through the values in a PyArrayObject
 ## to find the maximum value in a Numpy array.  Each example uses a different
-## PyArrayIterator looping idiom.
+## PyArrayIter looping idiom.
 ##
 ## Compile this Nim module using the following command:
 ##   python ../../pmgen.py findmax.nim
