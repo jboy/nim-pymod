@@ -210,7 +210,7 @@ else:
     (cast[int](lhs.pos) < cast[int](rhs.pos))
 
 
-type PyArrayRandomAccessIterator*[T] = object
+type PyArrayRandAccIter*[T] = object
   ## An iterator that can jump forward or backward by any arbitrary amount;
   ## effectively a pointer with range checking.
   ##
@@ -243,20 +243,20 @@ type PyArrayRandomAccessIterator*[T] = object
     high: ptr T
 
 
-proc initPyArrayRandomAccessIterator*[T](arr: ptr PyArrayObject; initOffset, incDelta: int):
-    PyArrayRandomAccessIterator[T] {. inline .} =
+proc initPyArrayRandAccIter*[T](arr: ptr PyArrayObject; initOffset, incDelta: int):
+    PyArrayRandAccIter[T] {. inline .} =
   let (low, high) = getLowHighBounds[T](arr)
   let initPos = offset_ptr(low, initOffset)
   let flatstride = incDelta * sizeof(T)
   when doWithinRangeChecks:
     # Check ranges.  Catch mistakes.
-    result = PyArrayRandomAccessIterator[T](pos: initPos, arr: arr, flatstride: flatstride,
+    result = PyArrayRandAccIter[T](pos: initPos, arr: arr, flatstride: flatstride,
         low: low, high: high)
   else:
-    result = PyArrayRandomAccessIterator[T](pos: initPos, arr: arr, flatstride: flatstride)
+    result = PyArrayRandAccIter[T](pos: initPos, arr: arr, flatstride: flatstride)
 
 
-proc initPyArrayIteratorBounds*[T](iter: PyArrayRandomAccessIterator[T]):
+proc initPyArrayIteratorBounds*[T](iter: PyArrayRandAccIter[T]):
     PyArrayIteratorBounds[T] {. inline .} =
   initPyArrayIteratorBounds[T](iter.arr)
 
@@ -265,12 +265,12 @@ when doWithinRangeChecks:
   # Check ranges.  Catch mistakes.
 
   template isNotWithinRange[T](
-      rai: PyArrayRandomAccessIterator[T], pos: ptr T): bool =
-    ## Test whether the PyArrayRandomAccessIterator is outside of its valid bounds.
+      rai: PyArrayRandAccIter[T], pos: ptr T): bool =
+    ## Test whether the PyArrayRandAccIter is outside of its valid bounds.
     ## This range-checking will be disabled in release builds.
     (pos < rai.low or pos > rai.high)
 
-  proc assertWithinRange[T](rai: PyArrayRandomAccessIterator[T]) =
+  proc assertWithinRange[T](rai: PyArrayRandAccIter[T]) =
     # Note: Use a proc rather than a template, to get a fuller stack trace.
     if isNotWithinRange(rai, rai.pos):
       let itertype = rai.getGenericTypeName
@@ -280,17 +280,17 @@ when doWithinRangeChecks:
           [iterdescr, rai.pos.toHex, rai.low.toHex, rai.high.toHex]
       raise newException(RangeError, msg)
 
-  proc `[]`*[T](rai: PyArrayRandomAccessIterator[T]): var T =
+  proc `[]`*[T](rai: PyArrayRandAccIter[T]): var T =
     assertWithinRange(rai)
     return rai.pos[]
 
-  proc `[]=`*[T](rai: PyArrayRandomAccessIterator[T], val: T) =
+  proc `[]=`*[T](rai: PyArrayRandAccIter[T], val: T) =
     assertWithinRange(rai)
     rai.pos[] = val
 
 
   proc assertWithinRange[T](
-      rai: PyArrayRandomAccessIterator[T], offset_pos: ptr T) =
+      rai: PyArrayRandAccIter[T], offset_pos: ptr T) =
     # Note: Use a proc rather than a template, to get a fuller stack trace.
     if isNotWithinRange(rai, offset_pos):
       let itertype = rai.getGenericTypeName
@@ -300,58 +300,58 @@ when doWithinRangeChecks:
           [iterdescr, offset_pos.toHex, rai.low.toHex, rai.high.toHex]
       raise newException(RangeError, msg)
 
-  proc `[]`*[T](rai: PyArrayRandomAccessIterator[T], idx: int): var T =
+  proc `[]`*[T](rai: PyArrayRandAccIter[T], idx: int): var T =
     let offset_pos = offset_ptr_in_bytes(rai.pos, idx * rai.flatstride)
     assertWithinRange(rai, offset_pos)
     return offset_pos[]
 
-  proc `[]=`*[T](rai: PyArrayRandomAccessIterator[T], idx: int, val: T) =
+  proc `[]=`*[T](rai: PyArrayRandAccIter[T], idx: int, val: T) =
     let offset_pos = offset_ptr_in_bytes(rai.pos, idx * rai.flatstride)
     assertWithinRange(rai, offset_pos)
     offset_pos[] = val
 
 else:
-  template `[]`*[T](rai: PyArrayRandomAccessIterator[T]): var T =
+  template `[]`*[T](rai: PyArrayRandAccIter[T]): var T =
     (rai.pos[])
 
-  template `[]=`*[T](rai: PyArrayRandomAccessIterator[T], val: T): stmt =
+  template `[]=`*[T](rai: PyArrayRandAccIter[T], val: T): stmt =
     (rai.pos[] = val)
 
-  proc `[]`*[T](rai: PyArrayRandomAccessIterator[T], idx: int): var T =
+  proc `[]`*[T](rai: PyArrayRandAccIter[T], idx: int): var T =
     let offset_pos = offset_ptr_in_bytes(rai.pos, idx * rai.flatstride)
     return offset_pos[]
 
-  proc `[]=`*[T](rai: PyArrayRandomAccessIterator[T], idx: int, val: T) =
+  proc `[]=`*[T](rai: PyArrayRandAccIter[T], idx: int, val: T) =
     let offset_pos = offset_ptr_in_bytes(rai.pos, idx * rai.flatstride)
     offset_pos[] = val
 
 
-proc inc*[T](rai: var PyArrayRandomAccessIterator[T], delta: int) {. inline .} =
+proc inc*[T](rai: var PyArrayRandAccIter[T], delta: int) {. inline .} =
   rai.pos = offset_ptr_in_bytes(rai.pos, delta * rai.flatstride)
 
 
 when doWithinRangeChecks:
-  proc inc*[T](rai: var PyArrayRandomAccessIterator[T]) {. inline .} =
+  proc inc*[T](rai: var PyArrayRandAccIter[T]) {. inline .} =
     rai.pos = offset_ptr_in_bytes(rai.pos, rai.flatstride)
 else:
-  proc inc*[T](rai: var PyArrayRandomAccessIterator[T]) {. inline .} =
+  proc inc*[T](rai: var PyArrayRandAccIter[T]) {. inline .} =
     rai.pos = cast[ptr T](offset_void_ptr_in_bytes(rai.pos, rai.flatstride))
 
 
-proc dec*[T](rai: var PyArrayRandomAccessIterator[T], delta: int) {. inline .} =
+proc dec*[T](rai: var PyArrayRandAccIter[T], delta: int) {. inline .} =
   rai.pos = offset_ptr_in_bytes(rai.pos, -delta * rai.flatstride)
 
 
 when doWithinRangeChecks:
-  proc dec*[T](rai: var PyArrayRandomAccessIterator[T]) {. inline .} =
+  proc dec*[T](rai: var PyArrayRandAccIter[T]) {. inline .} =
     rai.pos = offset_ptr(rai.pos, -1)
 else:
-  proc dec*[T](rai: var PyArrayRandomAccessIterator[T]) {. inline .} =
+  proc dec*[T](rai: var PyArrayRandAccIter[T]) {. inline .} =
     rai.pos = cast[ptr T](offset_void_ptr_in_bytes(rai.pos, -(rai.flatstride)))
 
 
-proc `+`*[T](rai: PyArrayRandomAccessIterator[T], delta: int):
-    PyArrayRandomAccessIterator[T] {. inline .} =
+proc `+`*[T](rai: PyArrayRandAccIter[T], delta: int):
+    PyArrayRandAccIter[T] {. inline .} =
   result.pos = offset_ptr(rai.pos, delta)
   result.arr = rai.arr
   result.flatstride = rai.flatstride
@@ -361,8 +361,8 @@ proc `+`*[T](rai: PyArrayRandomAccessIterator[T], delta: int):
     result.high = rai.high
 
 
-proc `-`*[T](rai: PyArrayRandomAccessIterator[T], delta: int):
-    PyArrayRandomAccessIterator[T] {. inline .} =
+proc `-`*[T](rai: PyArrayRandAccIter[T], delta: int):
+    PyArrayRandAccIter[T] {. inline .} =
   result.pos = offset_ptr(rai.pos, -delta)
   result.arr = rai.arr
   result.flatstride = rai.flatstride
@@ -376,20 +376,20 @@ when doSamePyArrayChecks:
   # Check that our iterators are pointing at the same array.
 
   template isNotSamePyArray[T](bounds: PyArrayIteratorBounds[T];
-      rai: PyArrayRandomAccessIterator[T]): bool =
+      rai: PyArrayRandAccIter[T]): bool =
     (bounds.arr != rai.arr)
 
   proc assertSamePyArray[T](bounds: PyArrayIteratorBounds[T];
-      rai: PyArrayRandomAccessIterator[T]) =
+      rai: PyArrayRandAccIter[T]) =
     # Note: Use a proc rather than a template, to get a fuller stack trace.
     if isNotSamePyArray(bounds, rai):
-      let msg = "A PyArrayRandomAccessIterator[$1] was compared to a PyArrayIteratorBounds[$1], but they point to different PyArrayObjects" %
+      let msg = "A PyArrayRandAccIter[$1] was compared to a PyArrayIteratorBounds[$1], but they point to different PyArrayObjects" %
           getCompileTimeType(T)
       raise newException(ValueError, msg)
 
   proc contains*[T](bounds: PyArrayIteratorBounds[T];
-      rai: PyArrayRandomAccessIterator[T]): bool {.inline.} =
-    ## Test whether the PyArrayRandomAccessIterator is within its bounds.
+      rai: PyArrayRandAccIter[T]): bool {.inline.} =
+    ## Test whether the PyArrayRandAccIter is within its bounds.
     ##
     ## This is intended to be used by user code (in contrast to `isNotWithinRange`,
     ## which is not intended to be used by user code; it is for range-checking
@@ -397,32 +397,32 @@ when doSamePyArrayChecks:
     assertSamePyArray(bounds, rai)
     (bounds.low <= rai.pos and rai.pos <= bounds.high)
 
-  template isNotSamePyArray[T](lhs, rhs: PyArrayRandomAccessIterator[T]): bool =
+  template isNotSamePyArray[T](lhs, rhs: PyArrayRandAccIter[T]): bool =
     (lhs.arr != rhs.arr)
 
-  proc assertSamePyArray[T](lhs, rhs: PyArrayRandomAccessIterator[T]) =
+  proc assertSamePyArray[T](lhs, rhs: PyArrayRandAccIter[T]) =
     # Note: Use a proc rather than a template, to get a fuller stack trace.
     if isNotSamePyArray(lhs, rhs):
-      let msg = "Two PyArrayRandomAccessIterator[$1] were compared, but they point to different PyArrayObjects" %
+      let msg = "Two PyArrayRandAccIter[$1] were compared, but they point to different PyArrayObjects" %
           getCompileTimeType(T)
       raise newException(ValueError, msg)
 
-  proc `==`*[T](lhs, rhs: PyArrayRandomAccessIterator[T]): bool {.inline.} =
+  proc `==`*[T](lhs, rhs: PyArrayRandAccIter[T]): bool {.inline.} =
     ## Note:  If possible, use the (iter in bounds) idiom instead.
     assertSamePyArray(lhs, rhs)
     (lhs.pos == rhs.pos)
 
-  proc `!=`*[T](lhs, rhs: PyArrayRandomAccessIterator[T]): bool {.inline.} =
+  proc `!=`*[T](lhs, rhs: PyArrayRandAccIter[T]): bool {.inline.} =
     ## Note:  If possible, use the (iter in bounds) idiom instead.
     assertSamePyArray(lhs, rhs)
     (lhs.pos != rhs.pos)
 
-  proc `<=`*[T](lhs, rhs: PyArrayRandomAccessIterator[T]): bool {.inline.} =
+  proc `<=`*[T](lhs, rhs: PyArrayRandAccIter[T]): bool {.inline.} =
     ## Note:  If possible, use the (iter in bounds) idiom instead.
     assertSamePyArray(lhs, rhs)
     (cast[int](lhs.pos) <= cast[int](rhs.pos))
 
-  proc `<`*[T](lhs, rhs: PyArrayRandomAccessIterator[T]): bool {.inline.} =
+  proc `<`*[T](lhs, rhs: PyArrayRandAccIter[T]): bool {.inline.} =
     ## Note:  If possible, use the (iter in bounds) idiom instead.
     assertSamePyArray(lhs, rhs)
     (cast[int](lhs.pos) < cast[int](rhs.pos))
@@ -430,27 +430,27 @@ when doSamePyArrayChecks:
 else:
 
   template contains*[T](bounds: PyArrayIteratorBounds[T],
-      rai: PyArrayRandomAccessIterator[T]): bool =
-    ## Test whether the PyArrayRandomAccessIterator is within its bounds.
+      rai: PyArrayRandAccIter[T]): bool =
+    ## Test whether the PyArrayRandAccIter is within its bounds.
     ##
     ## This is intended to be used by user code (in contrast to `isNotWithinRange`,
     ## which is not intended to be used by user code; it is for range-checking
     ## that will be disabled in release builds).
     (bounds.low <= rai.pos and rai.pos <= bounds.high)
 
-  template `==`*[T](lhs, rhs: PyArrayRandomAccessIterator[T]): bool =
+  template `==`*[T](lhs, rhs: PyArrayRandAccIter[T]): bool =
     ## Note:  If possible, use the (iter in bounds) idiom instead.
     (lhs.pos == rhs.pos)
 
-  template `!=`*[T](lhs, rhs: PyArrayRandomAccessIterator[T]): bool =
+  template `!=`*[T](lhs, rhs: PyArrayRandAccIter[T]): bool =
     ## Note:  If possible, use the (iter in bounds) idiom instead.
     (lhs.pos != rhs.pos)
 
-  template `<=`*[T](lhs, rhs: PyArrayRandomAccessIterator[T]): bool =
+  template `<=`*[T](lhs, rhs: PyArrayRandAccIter[T]): bool =
     ## Note:  If possible, use the (iter in bounds) idiom instead.
     (cast[int](lhs.pos) <= cast[int](rhs.pos))
 
-  template `<`*[T](lhs, rhs: PyArrayRandomAccessIterator[T]): bool =
+  template `<`*[T](lhs, rhs: PyArrayRandAccIter[T]): bool =
     ## Note:  If possible, use the (iter in bounds) idiom instead.
     (cast[int](lhs.pos) < cast[int](rhs.pos))
 

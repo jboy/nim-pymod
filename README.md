@@ -347,7 +347,7 @@ the two supplied `PyArrayIterator` types:
   * returned by `.iterateFlat(T)`
   * can only be incremented & dereferenced
   * the fastest & safest iteration style
-* `PyArrayRandomAccessIterator[T]`
+* `PyArrayRandAccIter[T]`
   * returned by `.accessFlat(T)`
   * can be incremented or decremented by any integer; offset (using `+` or `-`) by any integer; indexed by any integer; & dereferenced
   * basically a C pointer with bounds-checking
@@ -481,7 +481,7 @@ for val in arr.values(int32):
     maxVal = val
 ```
 
-Likewise for `PyArrayRandomAccessIterator[T]`, there are 4 loop idioms, which
+Likewise for `PyArrayRandAccIter[T]`, there are 4 loop idioms, which
 offer different levels of control & convenience.  For the most flexibility,
 use a `while` loop:
 
@@ -493,7 +493,7 @@ while iter in bounds:
   inc(iter, incDelta)  # Increment the iterator manually
 ```
 
-There are 3 different `for` loop forms available for `PyArrayRandomAccessIterator[T]`,
+There are 3 different `for` loop forms available for `PyArrayRandAccIter[T]`,
 to make it convenient to iterate over C-contiguous N-dimensional arrays.  If you want to
 visit every iterator position in turn, but retain the ability to index/offset arbitrarily,
 use the 1-argument form of `accessFlat`:

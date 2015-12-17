@@ -87,7 +87,7 @@ proc findMax4*(arr: ptr PyArrayObject): int32 {.exportpy} =
   raised.  No values in the array will be changed.
 
   This example shows the `for`-loop idiom with a
-  `PyArrayRandomAccessIterator[T]`.
+  `PyArrayRandAccIter[T]`.
   """
   result = low(int32)
   let dt = arr.dtype
@@ -108,7 +108,7 @@ proc findMax5*(arr: ptr PyArrayObject): int32 {.exportpy} =
   raised.  No values in the array will be changed.
 
   This example shows the `while`-loop idiom with a
-  `PyArrayRandomAccessIterator[T]`.
+  `PyArrayRandAccIter[T]`.
   """
   result = low(int32)
   let dt = arr.dtype

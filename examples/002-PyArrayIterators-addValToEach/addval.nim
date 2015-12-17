@@ -63,7 +63,7 @@ proc addVal3*(arr: ptr PyArrayObject, val: int32) {.exportpy} =
   raised.  The elements in the array will be modified in-place.
 
   This example shows the `for`-loop idiom with a
-  `PyArrayRandomAccessIterator[T]`.
+  `PyArrayRandAccIter[T]`.
   """
   let dt = arr.dtype
   echo "PyArrayObject has shape $1 and dtype $2" % [$arr.shape, $dt]
@@ -83,7 +83,7 @@ proc addValEachDelta1*(arr: ptr PyArrayObject, val: int32, incDelta: int) {.expo
   raised.  The elements in the array will be modified in-place.
 
   This example shows the `while`-loop idiom with a
-  `PyArrayRandomAccessIterator[T]` and an increment delta.
+  `PyArrayRandAccIter[T]` and an increment delta.
   """
   let dt = arr.dtype
   echo "PyArrayObject has shape $1 and dtype $2" % [$arr.shape, $dt]
@@ -106,7 +106,7 @@ proc addValEachDelta2*(arr: ptr PyArrayObject, val: int32, incDelta: int) {.expo
   raised.  The elements in the array will be modified in-place.
 
   This example shows the `for`-loop idiom with a
-  `PyArrayRandomAccessIterator[T]` and an increment delta.
+  `PyArrayRandAccIter[T]` and an increment delta.
   """
   let dt = arr.dtype
   echo "PyArrayObject has shape $1 and dtype $2" % [$arr.shape, $dt]
@@ -126,7 +126,7 @@ proc addValEachDeltaInitOffset*(arr: ptr PyArrayObject; val: int32; initOffset, 
   raised.  The elements in the array will be modified in-place.
 
   This example shows the `for`-loop idiom with a
-  `PyArrayRandomAccessIterator[T]` and an increment delta.
+  `PyArrayRandAccIter[T]` and an increment delta.
   """
   let dt = arr.dtype
   echo "PyArrayObject has shape $1 and dtype $2" % [$arr.shape, $dt]

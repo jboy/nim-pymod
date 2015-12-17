@@ -303,7 +303,7 @@ export pyarrayiterators.PyArrayForwardIter
 export pyarrayiterators.`[]`
 export pyarrayiterators.`[]=`
 export pyarrayiterators.inc
-export pyarrayiterators.PyArrayRandomAccessIterator
+export pyarrayiterators.PyArrayRandAccIter
 export pyarrayiterators.PyArrayIteratorBounds
 export pyarrayiterators.contains
 export pyarrayiterators.dec
@@ -376,7 +376,7 @@ template iterateFlat*(arr: ptr PyArrayObject, NimT: typedesc[NumpyCompatibleNimT
   ##
   ## Due to the limited manner in which the PyArrayForwardIter's position
   ## can be changed, a PyArrayForwardIter is slightly more predictable than
-  ## a PyArrayRandomAccessIterator.  So prefer to use PyArrayForwardIter
+  ## a PyArrayRandAccIter.  So prefer to use PyArrayForwardIter
   ## if you can.
   ##
   ## NOTE:  This proc requires that the PyArrayObject data is C-contiguous;
@@ -418,18 +418,18 @@ iterator values*(arr: ptr PyArrayObject, NimT: typedesc[NumpyCompatibleNimType])
 
 proc accessFlatImpl(arr: ptr PyArrayObject; NimT: typedesc[NumpyCompatibleNimType];
     ii: InstantiationInfoTuple; procname: string{lit}; initOffset, incDelta: int):
-    PyArrayRandomAccessIterator[NimT] =
+    PyArrayRandAccIter[NimT] =
   assertArrayType(arr, NimT, ii, procname)
   assertArrayCContigForIterator(arr, ii, procname)
-  result = initPyArrayRandomAccessIterator[NimT](arr, initOffset, incDelta)
+  result = initPyArrayRandAccIter[NimT](arr, initOffset, incDelta)
 
 
 template accessFlat*(arr: ptr PyArrayObject, NimT: typedesc[NumpyCompatibleNimType]):
-    PyArrayRandomAccessIterator[NimT] =
-  ## Return a PyArrayRandomAccessIterator over type `NimT`.
+    PyArrayRandAccIter[NimT] =
+  ## Return a PyArrayRandAccIter over type `NimT`.
   ##
-  ## A PyArrayRandomAccessIterator is an iterator that allows random access to
-  ## the array's data as a flat 1-D array.  Thus, a PyArrayRandomAccessIterator
+  ## A PyArrayRandAccIter is an iterator that allows random access to
+  ## the array's data as a flat 1-D array.  Thus, a PyArrayRandAccIter
   ## is effectively a pointer with range checking.  The iterator position can be
   ## shifted forward or backward by any arbitrary integer amount; in addition,
   ## the iterator can be dereferenced _or_ it can be indexed by any arbitrary
@@ -441,8 +441,8 @@ template accessFlat*(arr: ptr PyArrayObject, NimT: typedesc[NumpyCompatibleNimTy
   ## arbitrarily outside its bounds without any complaints, as long as it is not
   ## dereferenced while outside its bounds.
   ##
-  ## Due to the lack of constraints upon how the PyArrayRandomAccessIterator's
-  ## position can be changed, a PyArrayRandomAccessIterator is slightly less
+  ## Due to the lack of constraints upon how the PyArrayRandAccIter's
+  ## position can be changed, a PyArrayRandAccIter is slightly less
   ## predictable than a PyArrayForwardIter.  So prefer to use
   ## PyArrayForwardIter if you can.
   ##
@@ -467,7 +467,7 @@ template accessFlat*(arr: ptr PyArrayObject, NimT: typedesc[NumpyCompatibleNimTy
 
 
 template accessFlat*(arr: ptr PyArrayObject; NimT: typedesc[NumpyCompatibleNimType];
-    incDelta: int): PyArrayRandomAccessIterator[NimT] =
+    incDelta: int): PyArrayRandAccIter[NimT] =
   # http://nim-lang.org/system.html#instantiationInfo,
   let ii = instantiationInfo()
   accessFlatImpl(arr, NimT, ii, "accessFlat", 0, incDelta)
@@ -475,14 +475,14 @@ template accessFlat*(arr: ptr PyArrayObject; NimT: typedesc[NumpyCompatibleNimTy
 
 template accessFlat*(arr: ptr PyArrayObject; NimT: typedesc[NumpyCompatibleNimType];
     initOffset, incDelta: int):
-    PyArrayRandomAccessIterator[NimT] =
+    PyArrayRandAccIter[NimT] =
   # http://nim-lang.org/system.html#instantiationInfo,
   let ii = instantiationInfo()
   accessFlatImpl(arr, NimT, ii, "accessFlat", initOffset, incDelta)
 
 
-iterator items*[T](iter: PyArrayRandomAccessIterator[T]):
-    PyArrayRandomAccessIterator[T] {.inline.} =
+iterator items*[T](iter: PyArrayRandAccIter[T]):
+    PyArrayRandAccIter[T] {.inline.} =
   let bounds = iter.getBounds()
   var iter = iter
   while iter in bounds:
@@ -512,7 +512,7 @@ proc getBounds*[T](iter: PyArrayForwardIter[T]):
   result = initPyArrayIteratorBounds(iter)
 
 
-proc getBounds*[T](iter: PyArrayRandomAccessIterator[T]):
+proc getBounds*[T](iter: PyArrayRandAccIter[T]):
     PyArrayIteratorBounds[T] {.inline.} =
   ## Return a PyArrayIteratorBounds over type `T`.
   result = initPyArrayIteratorBounds(iter)
