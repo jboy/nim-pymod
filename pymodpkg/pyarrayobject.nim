@@ -299,7 +299,7 @@ export pyarrayobjecttype.descr
 export pyarrayobjecttype.dtype
 
 import pymodpkg/private/pyarrayiterators
-export pyarrayiterators.PyArrayForwardIterator
+export pyarrayiterators.PyArrayForwardIter
 export pyarrayiterators.`[]`
 export pyarrayiterators.`[]=`
 export pyarrayiterators.inc
@@ -361,22 +361,22 @@ proc assertArrayCContigForIterator*(obj: ptr PyArrayObject,
 
 proc iterateFlatImpl(arr: ptr PyArrayObject, NimT: typedesc[NumpyCompatibleNimType],
     ii: InstantiationInfoTuple, procname: string{lit}):
-    PyArrayForwardIterator[NimT] =
+    PyArrayForwardIter[NimT] =
   assertArrayType(arr, NimT, ii, procname)
   assertArrayCContigForIterator(arr, ii, procname)
-  result = initPyArrayForwardIterator[NimT](arr)
+  result = initPyArrayForwardIter[NimT](arr)
 
 
 template iterateFlat*(arr: ptr PyArrayObject, NimT: typedesc[NumpyCompatibleNimType]):
-    PyArrayForwardIterator[NimT] =
-  ## Return a PyArrayForwardIterator over type `NimT`.
+    PyArrayForwardIter[NimT] =
+  ## Return a PyArrayForwardIter over type `NimT`.
   ##
-  ## A PyArrayForwardIterator is an iterator that can only step forward in
+  ## A PyArrayForwardIter is an iterator that can only step forward in
   ## single increments.  That is, it can only be incremented and dereferenced.
   ##
-  ## Due to the limited manner in which the PyArrayForwardIterator's position
-  ## can be changed, a PyArrayForwardIterator is slightly more predictable than
-  ## a PyArrayRandomAccessIterator.  So prefer to use PyArrayForwardIterator
+  ## Due to the limited manner in which the PyArrayForwardIter's position
+  ## can be changed, a PyArrayForwardIter is slightly more predictable than
+  ## a PyArrayRandomAccessIterator.  So prefer to use PyArrayForwardIter
   ## if you can.
   ##
   ## NOTE:  This proc requires that the PyArrayObject data is C-contiguous;
@@ -398,8 +398,8 @@ template iterateFlat*(arr: ptr PyArrayObject, NimT: typedesc[NumpyCompatibleNimT
   iterateFlatImpl(arr, NimT, ii, "iterateFlat")
 
 
-iterator items*[T](iter: PyArrayForwardIterator[T]):
-    PyArrayForwardIterator[T] {.inline.} =
+iterator items*[T](iter: PyArrayForwardIter[T]):
+    PyArrayForwardIter[T] {.inline.} =
   let bounds = iter.getBounds()
   var iter = iter
   while iter in bounds:
@@ -443,8 +443,8 @@ template accessFlat*(arr: ptr PyArrayObject, NimT: typedesc[NumpyCompatibleNimTy
   ##
   ## Due to the lack of constraints upon how the PyArrayRandomAccessIterator's
   ## position can be changed, a PyArrayRandomAccessIterator is slightly less
-  ## predictable than a PyArrayForwardIterator.  So prefer to use
-  ## PyArrayForwardIterator if you can.
+  ## predictable than a PyArrayForwardIter.  So prefer to use
+  ## PyArrayForwardIter if you can.
   ##
   ## NOTE:  This proc requires that the PyArrayObject data is C-contiguous;
   ## else, an AssertionError will be raised.
@@ -506,7 +506,7 @@ template getBounds*(arr: ptr PyArrayObject, NimT: typedesc[NumpyCompatibleNimTyp
   getBoundsImpl(arr, NimT, ii, "getBounds")
 
 
-proc getBounds*[T](iter: PyArrayForwardIterator[T]):
+proc getBounds*[T](iter: PyArrayForwardIter[T]):
     PyArrayIteratorBounds[T] {.inline.} =
   ## Return a PyArrayIteratorBounds over type `T`.
   result = initPyArrayIteratorBounds(iter)

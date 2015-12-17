@@ -176,7 +176,7 @@ proc myNumpyAdd*(arr: ptr PyArrayObject, x: int): ptr PyArrayObject {. exportpy 
     #   Traceback (most recent call last):
     #     File "test_testpymod3.py", line 17, in <module>
     #       testpymod3.myNumpyAdd(b, 5)
-    #   IndexError: PyArrayForwardIterator[int32] dereferenced at pos 0x2324470,
+    #   IndexError: PyArrayForwardIter[int32] dereferenced at pos 0x2324470,
     #   out of bounds [0x2324420, 0x232446c], with sizeof(int32) == 4
     #   Nim traceback (most recent call last):
     #     File "pmgentestpymod3_wrap.nim", line 116, in exportpy_myNumpyAdd

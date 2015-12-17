@@ -43,7 +43,7 @@ proc findMax2*(arr: ptr PyArrayObject): int32 {.exportpy} =
   The array is assumed to have dtype `int32`; otherwise, a ValueError will be
   raised.  No values in the array will be changed.
 
-  This example shows the `for`-loop idiom with a `PyArrayForwardIterator[T]`.
+  This example shows the `for`-loop idiom with a `PyArrayForwardIter[T]`.
   """
   result = low(int32)
   let dt = arr.dtype
@@ -63,7 +63,7 @@ proc findMax3*(arr: ptr PyArrayObject): int32 {.exportpy} =
   The array is assumed to have dtype `int32`; otherwise, a ValueError will be
   raised.  No values in the array will be changed.
 
-  This example shows the `while`-loop idiom with a `PyArrayForwardIterator[T]`.
+  This example shows the `while`-loop idiom with a `PyArrayForwardIter[T]`.
   """
   result = low(int32)
   let dt = arr.dtype

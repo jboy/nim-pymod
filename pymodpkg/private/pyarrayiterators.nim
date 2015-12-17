@@ -43,7 +43,7 @@ proc initPyArrayIteratorBounds*[T](arr: ptr PyArrayObject):
   result = PyArrayIteratorBounds[T](arr: arr, low: low, high: high)
 
 
-type PyArrayForwardIterator*[T] = object
+type PyArrayForwardIter*[T] = object
   ## An iterator that can only move forward incrementally.
   ##
   ## Inspired by ye olde C++ STL ForwardIterator type:
@@ -74,17 +74,17 @@ type PyArrayForwardIterator*[T] = object
     high: ptr T
 
 
-proc initPyArrayForwardIterator*[T](arr: ptr PyArrayObject):
-    PyArrayForwardIterator[T] {. inline .} =
+proc initPyArrayForwardIter*[T](arr: ptr PyArrayObject):
+    PyArrayForwardIter[T] {. inline .} =
   let (low, high) = getLowHighBounds[T](arr)
   when doWithinRangeChecks:
     # Check ranges.  Catch mistakes.
-    result = PyArrayForwardIterator[T](pos: low, arr: arr, low: low, high: high)
+    result = PyArrayForwardIter[T](pos: low, arr: arr, low: low, high: high)
   else:
-    result = PyArrayForwardIterator[T](pos: low, arr: arr)
+    result = PyArrayForwardIter[T](pos: low, arr: arr)
 
 
-proc initPyArrayIteratorBounds*[T](iter: PyArrayForwardIterator[T]):
+proc initPyArrayIteratorBounds*[T](iter: PyArrayForwardIter[T]):
     PyArrayIteratorBounds[T] {. inline .} =
   initPyArrayIteratorBounds[T](iter.arr)
 
@@ -92,38 +92,38 @@ proc initPyArrayIteratorBounds*[T](iter: PyArrayForwardIterator[T]):
 when doWithinRangeChecks:
   # Check ranges.  Catch mistakes.
 
-  template isNotWithinRange[T](fi: PyArrayForwardIterator[T]): bool =
-    ## Test whether the PyArrayForwardIterator is outside of its valid bounds.
+  template isNotWithinRange[T](fi: PyArrayForwardIter[T]): bool =
+    ## Test whether the PyArrayForwardIter is outside of its valid bounds.
     ## This range-checking will be disabled in release builds.
     (fi.pos < fi.low or fi.pos > fi.high)
 
-  proc assertWithinRange[T](fi: PyArrayForwardIterator[T]) =
+  proc assertWithinRange[T](fi: PyArrayForwardIter[T]) =
     # Note: Use a proc rather than a template, to get a fuller stack trace.
     if isNotWithinRange(fi):
-      let msg = "PyArrayForwardIterator[$1] dereferenced at pos $2, out of bounds [$3, $4], with sizeof($1) == $5" %
+      let msg = "PyArrayForwardIter[$1] dereferenced at pos $2, out of bounds [$3, $4], with sizeof($1) == $5" %
           [getCompileTimeType(T), fi.pos.toHex, fi.low.toHex, fi.high.toHex, $sizeof(T)]
       raise newException(RangeError, msg)
 
 
-  proc `[]`*[T](fi: PyArrayForwardIterator[T]): var T =
+  proc `[]`*[T](fi: PyArrayForwardIter[T]): var T =
     assertWithinRange(fi)
     return fi.pos[]
 
-  proc `[]=`*[T](fi: PyArrayForwardIterator[T], val: T) =
+  proc `[]=`*[T](fi: PyArrayForwardIter[T], val: T) =
     assertWithinRange(fi)
     fi.pos[] = val
 
-  proc inc*[T](fi: var PyArrayForwardIterator[T]) {. inline .} =
+  proc inc*[T](fi: var PyArrayForwardIter[T]) {. inline .} =
     fi.pos = offset_ptr(fi.pos)
 
 else:
-  template `[]`*[T](fi: PyArrayForwardIterator[T]): var T =
+  template `[]`*[T](fi: PyArrayForwardIter[T]): var T =
     (fi.pos[])
 
-  template `[]=`*[T](fi: PyArrayForwardIterator[T], val: T): stmt =
+  template `[]=`*[T](fi: PyArrayForwardIter[T], val: T): stmt =
     (fi.pos[] = val)
 
-  proc inc*[T](fi: var PyArrayForwardIterator[T]) {. inline .} =
+  proc inc*[T](fi: var PyArrayForwardIter[T]) {. inline .} =
     fi.pos = cast[ptr T](offset_void_ptr_in_bytes(fi.pos, sizeof(T)))
 
 
@@ -131,20 +131,20 @@ when doSamePyArrayChecks:
   # Check that our iterators are pointing at the same array.
 
   template isNotSamePyArray[T](bounds: PyArrayIteratorBounds[T];
-      fi: PyArrayForwardIterator[T]): bool =
+      fi: PyArrayForwardIter[T]): bool =
     (bounds.arr != fi.arr)
 
   proc assertSamePyArray[T](bounds: PyArrayIteratorBounds[T];
-      fi: PyArrayForwardIterator[T]) =
+      fi: PyArrayForwardIter[T]) =
     # Note: Use a proc rather than a template, to get a fuller stack trace.
     if isNotSamePyArray(bounds, fi):
-      let msg = "A PyArrayForwardIterator[$1] was compared to a PyArrayIteratorBounds[$1], but they point to different PyArrayObjects" %
+      let msg = "A PyArrayForwardIter[$1] was compared to a PyArrayIteratorBounds[$1], but they point to different PyArrayObjects" %
           getCompileTimeType(T)
       raise newException(ValueError, msg)
 
   proc contains*[T](bounds: PyArrayIteratorBounds[T],
-      fi: PyArrayForwardIterator[T]): bool {.inline.} =
-    ## Test whether the PyArrayForwardIterator is within its bounds.
+      fi: PyArrayForwardIter[T]): bool {.inline.} =
+    ## Test whether the PyArrayForwardIter is within its bounds.
     ##
     ## This is intended to be used by user code (in contrast to `isNotWithinRange`,
     ## which is not intended to be used by user code; it is for range-checking
@@ -152,32 +152,32 @@ when doSamePyArrayChecks:
     assertSamePyArray(bounds, fi)
     (fi.pos <= bounds.high)
 
-  template isNotSamePyArray[T](lhs, rhs: PyArrayForwardIterator[T]): bool =
+  template isNotSamePyArray[T](lhs, rhs: PyArrayForwardIter[T]): bool =
     (lhs.arr != rhs.arr)
 
-  proc assertSamePyArray[T](lhs, rhs: PyArrayForwardIterator[T]) =
+  proc assertSamePyArray[T](lhs, rhs: PyArrayForwardIter[T]) =
     # Note: Use a proc rather than a template, to get a fuller stack trace.
     if isNotSamePyArray(lhs, rhs):
-      let msg = "Two PyArrayForwardIterator[$1] were compared, but they point to different PyArrayObjects" %
+      let msg = "Two PyArrayForwardIter[$1] were compared, but they point to different PyArrayObjects" %
           getCompileTimeType(T)
       raise newException(ValueError, msg)
 
-  proc `==`*[T](lhs, rhs: PyArrayForwardIterator[T]): bool {.inline.} =
+  proc `==`*[T](lhs, rhs: PyArrayForwardIter[T]): bool {.inline.} =
     ## Note:  If possible, use the (iter in bounds) idiom instead.
     assertSamePyArray(lhs, rhs)
     (lhs.pos == rhs.pos)
 
-  proc `!=`*[T](lhs, rhs: PyArrayForwardIterator[T]): bool {.inline.} =
+  proc `!=`*[T](lhs, rhs: PyArrayForwardIter[T]): bool {.inline.} =
     ## Note:  If possible, use the (iter in bounds) idiom instead.
     assertSamePyArray(lhs, rhs)
     (lhs.pos != rhs.pos)
 
-  proc `<=`*[T](lhs, rhs: PyArrayForwardIterator[T]): bool {.inline.} =
+  proc `<=`*[T](lhs, rhs: PyArrayForwardIter[T]): bool {.inline.} =
     ## Note:  If possible, use the (iter in bounds) idiom instead.
     assertSamePyArray(lhs, rhs)
     (cast[int](lhs.pos) <= cast[int](rhs.pos))
 
-  proc `<`*[T](lhs, rhs: PyArrayForwardIterator[T]): bool {.inline.} =
+  proc `<`*[T](lhs, rhs: PyArrayForwardIter[T]): bool {.inline.} =
     ## Note:  If possible, use the (iter in bounds) idiom instead.
     assertSamePyArray(lhs, rhs)
     (cast[int](lhs.pos) < cast[int](rhs.pos))
@@ -185,27 +185,27 @@ when doSamePyArrayChecks:
 else:
 
   template contains*[T](bounds: PyArrayIteratorBounds[T],
-      fi: PyArrayForwardIterator[T]): bool =
-    ## Test whether the PyArrayForwardIterator is within its bounds.
+      fi: PyArrayForwardIter[T]): bool =
+    ## Test whether the PyArrayForwardIter is within its bounds.
     ##
     ## This is intended to be used by user code (in contrast to `isNotWithinRange`,
     ## which is not intended to be used by user code; it is for range-checking
     ## that will be disabled in release builds).
     (fi.pos <= bounds.high)
 
-  template `==`*[T](lhs, rhs: PyArrayForwardIterator[T]): bool =
+  template `==`*[T](lhs, rhs: PyArrayForwardIter[T]): bool =
     ## Note:  If possible, use the (iter in bounds) idiom instead.
     (lhs.pos == rhs.pos)
 
-  template `!=`*[T](lhs, rhs: PyArrayForwardIterator[T]): bool =
+  template `!=`*[T](lhs, rhs: PyArrayForwardIter[T]): bool =
     ## Note:  If possible, use the (iter in bounds) idiom instead.
     (lhs.pos != rhs.pos)
 
-  template `<=`*[T](lhs, rhs: PyArrayForwardIterator[T]): bool =
+  template `<=`*[T](lhs, rhs: PyArrayForwardIter[T]): bool =
     ## Note:  If possible, use the (iter in bounds) idiom instead.
     (cast[int](lhs.pos) <= cast[int](rhs.pos))
 
-  template `<`*[T](lhs, rhs: PyArrayForwardIterator[T]): bool =
+  template `<`*[T](lhs, rhs: PyArrayForwardIter[T]): bool =
     ## Note:  If possible, use the (iter in bounds) idiom instead.
     (cast[int](lhs.pos) < cast[int](rhs.pos))
 

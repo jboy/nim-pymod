@@ -23,7 +23,7 @@ proc addVal1*(arr: ptr PyArrayObject, val: int32) {.exportpy} =
   The array is assumed to have dtype `int32`; otherwise, a ValueError will be
   raised.  The elements in the array will be modified in-place.
 
-  This example shows the `for`-loop idiom with a `PyArrayForwardIterator[T]`.
+  This example shows the `for`-loop idiom with a `PyArrayForwardIter[T]`.
   """
   let dt = arr.dtype
   echo "PyArrayObject has shape $1 and dtype $2" % [$arr.shape, $dt]
@@ -41,7 +41,7 @@ proc addVal2*(arr: ptr PyArrayObject, val: int32) {.exportpy} =
   The array is assumed to have dtype `int32`; otherwise, a ValueError will be
   raised.  The elements in the array will be modified in-place.
 
-  This example shows the `while`-loop idiom with a `PyArrayForwardIterator[T]`.
+  This example shows the `while`-loop idiom with a `PyArrayForwardIter[T]`.
   """
   let dt = arr.dtype
   echo "PyArrayObject has shape $1 and dtype $2" % [$arr.shape, $dt]

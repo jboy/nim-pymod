@@ -343,7 +343,7 @@ for the `PyArrayObject` elements.  The preferred method of accessing the
 (appropriately-typed) elements of a `PyArrayObject` instance is to use one of
 the two supplied `PyArrayIterator` types:
 
-* `PyArrayForwardIterator[T]`
+* `PyArrayForwardIter[T]`
   * returned by `.iterateFlat(T)`
   * can only be incremented & dereferenced
   * the fastest & safest iteration style
@@ -376,7 +376,7 @@ release mode).
 PyArrayObject & PyArrayIterator usage example
 ---------------------------------------------
 
-Here is a simple example of how to use `PyArrayObject` & `PyArrayForwardIterator[T]`:
+Here is a simple example of how to use `PyArrayObject` & `PyArrayForwardIter[T]`:
 
 ```Nimrod
 import strutils  # `%`
