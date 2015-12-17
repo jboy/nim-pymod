@@ -343,11 +343,11 @@ for the `PyArrayObject` elements.  The preferred method of accessing the
 (appropriately-typed) elements of a `PyArrayObject` instance is to use one of
 the two supplied `PyArrayIter` types:
 
-* `PyArrayForwardIter[T]`
+* `PyArrayForwardIter[T]`, a [C++-style Forward Iterator](http://www.cplusplus.com/reference/iterator/ForwardIterator/)
   * returned by `.iterateFlat(T)`
   * can only be incremented & dereferenced
   * the fastest & safest iteration style
-* `PyArrayRandAccIter[T]`
+* `PyArrayRandAccIter[T]`, a [C++-style Random-Access Iterator](http://www.cplusplus.com/reference/iterator/RandomAccessIterator/)
   * returned by `.accessFlat(T)`
   * can be incremented or decremented by any integer; offset (using `+` or `-`) by any integer; indexed by any integer; & dereferenced
   * basically a C pointer with bounds-checking
