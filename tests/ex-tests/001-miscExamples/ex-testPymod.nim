@@ -147,7 +147,7 @@ proc myNumpyAdd*(arr: ptr PyArrayObject, x: int): ptr PyArrayObject {. exportpy 
   if dt == np_int64:
     echo("\narr.dtype is ", $dt)
     echo("iterate through arr elems:")
-    var iter = arr.iterateForward(int64)
+    var iter = arr.iterateFlat(int64)
     let bounds = arr.getBounds(int64)
     while iter in bounds:
       echo(" >  ", iter[])
@@ -159,7 +159,7 @@ proc myNumpyAdd*(arr: ptr PyArrayObject, x: int): ptr PyArrayObject {. exportpy 
   elif dt == np_int32:
     echo("\narr.dtype is ", $dt)
     echo("iterate through arr elems:")
-    var iter = arr.iterateForward(int32)
+    var iter = arr.iterateFlat(int32)
     let bounds = arr.getBounds(int32)
     while iter in bounds:
       echo(" >  ", iter[])

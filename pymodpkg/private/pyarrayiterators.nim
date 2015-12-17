@@ -61,7 +61,7 @@ type PyArrayForwardIterator*[T] = object
   ## using the supplied PyArrayIteratorBounds:
   ##
   ##   let bounds = arr.getBounds(int32)
-  ##   var iter = arr.iterateForward(int32)
+  ##   var iter = arr.iterateFlat(int32)
   ##   while iter in bounds:
   ##     doSomethingWith(iter[])
   ##     inc(iter)

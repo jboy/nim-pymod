@@ -359,7 +359,7 @@ proc assertArrayCContigForIterator*(obj: ptr PyArrayObject,
     raise newException(AssertionError, msg)
 
 
-proc iterateForwardImpl(arr: ptr PyArrayObject, NimT: typedesc[NumpyCompatibleNimType],
+proc iterateFlatImpl(arr: ptr PyArrayObject, NimT: typedesc[NumpyCompatibleNimType],
     ii: InstantiationInfoTuple, procname: string{lit}):
     PyArrayForwardIterator[NimT] =
   assertArrayType(arr, NimT, ii, procname)
@@ -367,7 +367,7 @@ proc iterateForwardImpl(arr: ptr PyArrayObject, NimT: typedesc[NumpyCompatibleNi
   result = initPyArrayForwardIterator[NimT](arr)
 
 
-template iterateForward*(arr: ptr PyArrayObject, NimT: typedesc[NumpyCompatibleNimType]):
+template iterateFlat*(arr: ptr PyArrayObject, NimT: typedesc[NumpyCompatibleNimType]):
     PyArrayForwardIterator[NimT] =
   ## Return a PyArrayForwardIterator over type `NimT`.
   ##
@@ -387,7 +387,7 @@ template iterateForward*(arr: ptr PyArrayObject, NimT: typedesc[NumpyCompatibleN
   ##   let dt = arr.dtype
   ##   if dt == np_int32:
   ##       let bounds = arr.getBounds(int32)
-  ##       var iter = arr.iterateForward(int32)
+  ##       var iter = arr.iterateFlat(int32)
   ##       while iter in bounds:
   ##           doSomethingWith(iter[])
   ##           inc(iter)
@@ -395,7 +395,7 @@ template iterateForward*(arr: ptr PyArrayObject, NimT: typedesc[NumpyCompatibleN
 
   # http://nim-lang.org/system.html#instantiationInfo,
   let ii = instantiationInfo()
-  iterateForwardImpl(arr, NimT, ii, "iterateForward")
+  iterateFlatImpl(arr, NimT, ii, "iterateFlat")
 
 
 iterator items*[T](iter: PyArrayForwardIterator[T]):
@@ -410,7 +410,7 @@ iterator items*[T](iter: PyArrayForwardIterator[T]):
 iterator values*(arr: ptr PyArrayObject, NimT: typedesc[NumpyCompatibleNimType]):
     NimT {.inline.} =
   let bounds = arr.getBounds(NimT)
-  var iter = arr.iterateForward(NimT)
+  var iter = arr.iterateFlat(NimT)
   while iter in bounds:
     yield iter[]
     inc(iter)

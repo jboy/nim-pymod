@@ -49,7 +49,7 @@ proc findMax2*(arr: ptr PyArrayObject): int32 {.exportpy} =
   let dt = arr.dtype
   echo "PyArrayObject has shape $1 and dtype $2" % [$arr.shape, $dt]
   if dt == np_int32:
-    for iter in arr.iterateForward(int32):  # Forward-iterate through the array.
+    for iter in arr.iterateFlat(int32):  # Forward-iterate through the array.
       if iter[] > result:
         result = iter[]
   else:
@@ -70,7 +70,7 @@ proc findMax3*(arr: ptr PyArrayObject): int32 {.exportpy} =
   echo "PyArrayObject has shape $1 and dtype $2" % [$arr.shape, $dt]
   if dt == np_int32:
     let bounds = arr.getBounds(int32)  # Iterator bounds
-    var iter = arr.iterateForward(int32)  # Forward iterator
+    var iter = arr.iterateFlat(int32)  # Forward iterator
     while iter in bounds:
       if iter[] > result:
         result = iter[]

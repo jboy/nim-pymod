@@ -344,7 +344,7 @@ for the `PyArrayObject` elements.  The preferred method of accessing the
 the two supplied `PyArrayIterator` types:
 
 * `PyArrayForwardIterator[T]`
-  * returned by `.iterateForward(T)`
+  * returned by `.iterateFlat(T)`
   * can only be incremented & dereferenced
   * the fastest & safest iteration style
 * `PyArrayRandomAccessIterator[T]`
@@ -369,7 +369,7 @@ usage scenarios:
 
 If you attempt to iterate over a Numpy array with non-C-contiguous data,
 an `AssertionError` will be raised (even in release mode).  If you supply
-the incorrect array element data-type when invoking `.iterateForward(T)`
+the incorrect array element data-type when invoking `.iterateFlat(T)`
 or `.accessFlat(T)`, an `ObjectConversionError` will be raised (even in
 release mode).
 
@@ -394,7 +394,7 @@ proc addVal*(arr: ptr PyArrayObject, val: int32) {.exportpy} =
   echo "PyArrayObject has shape $1 and dtype $2" % [$arr.shape, $dt]
   if dt == np_int32:
     let bounds = arr.getBounds(int32)  # Iterator bounds
-    var iter = arr.iterateForward(int32)  # Forward iterator
+    var iter = arr.iterateFlat(int32)  # Forward iterator
     while iter in bounds:
       iter[] += val
       inc(iter)  # Increment the iterator manually.
@@ -455,7 +455,7 @@ will be incremented within the body of the loop:
 
 ```Nimrod
 let bounds = arr.getBounds(int32)  # Iterator bounds
-var iter = arr.iterateForward(int32)  # Forward iterator
+var iter = arr.iterateFlat(int32)  # Forward iterator
 while iter in bounds:
   iter[] += val
   inc(iter)  # Increment the iterator manually
@@ -467,7 +467,7 @@ at the end of the body of the loop; if this is all you need, there is a shorter
 `for` loop idiom that you can use:
 
 ```Nimrod
-for iter in arr.iterateForward(int32):
+for iter in arr.iterateFlat(int32):
   iter[] += val
 ```
 

@@ -25,7 +25,7 @@ proc int32FindMaxWhileLoopForwardIter*(arr: ptr PyArrayObject): int32 {.exportpy
   let dt = arr.dtype
   if dt == np_int32:
     let bounds = arr.getBounds(int32)
-    var iter = arr.iterateForward(int32)
+    var iter = arr.iterateFlat(int32)
     while iter in bounds:
       if iter[] > result:
         result = iter[]
@@ -41,7 +41,7 @@ proc int32FindMaxForLoopForwardIter*(arr: ptr PyArrayObject): int32 {.exportpy} 
   result = low(int32)
   let dt = arr.dtype
   if dt == np_int32:
-    for iter in arr.iterateForward(int32):
+    for iter in arr.iterateFlat(int32):
       if iter[] > result:
         result = iter[]
   else:
