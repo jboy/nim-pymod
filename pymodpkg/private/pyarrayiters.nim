@@ -117,6 +117,12 @@ when doWithinRangeChecks:
   proc inc*[T](fi: var PyArrayForwardIter[T]) {. inline .} =
     fi.pos = offset_ptr(fi.pos)
 
+  proc derefInc*[T](fi: var PyArrayForwardIter[T]): var T =
+    assertWithinRange(fi)
+    let prev: ptr T = fi.pos
+    fi.pos = offset_ptr(prev)
+    result = prev[]
+
 else:
   template `[]`*[T](fi: PyArrayForwardIter[T]): var T =
     (fi.pos[])
@@ -126,6 +132,11 @@ else:
 
   proc inc*[T](fi: var PyArrayForwardIter[T]) {. inline .} =
     fi.pos = cast[ptr T](offset_void_ptr_in_bytes(fi.pos, sizeof(T)))
+
+  proc derefInc*[T](fi: var PyArrayForwardIter[T]): var T {. inline .} =
+    let prev: ptr T = fi.pos
+    fi.pos = offset_ptr(prev)
+    result = prev[]
 
 
 proc incFast*[T](fi: var PyArrayForwardIter[T], positiveDelta: Positive) {. inline .} =
