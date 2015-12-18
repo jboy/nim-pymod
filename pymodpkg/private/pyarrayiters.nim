@@ -81,6 +81,7 @@ proc initPyArrayForwardIter*[T](arr: ptr PyArrayObject):
     # Check ranges.  Catch mistakes.
     result = PyArrayForwardIter[T](pos: low, arr: arr, low: low, high: high)
   else:
+    discard high
     result = PyArrayForwardIter[T](pos: low, arr: arr)
 
 
@@ -120,8 +121,8 @@ else:
   template `[]`*[T](fi: PyArrayForwardIter[T]): var T =
     (fi.pos[])
 
-  template `[]=`*[T](fi: PyArrayForwardIter[T], val: T): stmt =
-    (fi.pos[] = val)
+  proc `[]=`*[T](fi: PyArrayForwardIter[T], val: T) {. inline .} =
+    fi.pos[] = val
 
   proc inc*[T](fi: var PyArrayForwardIter[T]) {. inline .} =
     fi.pos = cast[ptr T](offset_void_ptr_in_bytes(fi.pos, sizeof(T)))
@@ -253,6 +254,7 @@ proc initPyArrayRandAccIter*[T](arr: ptr PyArrayObject; initOffset, incDelta: in
     result = PyArrayRandAccIter[T](pos: initPos, arr: arr, flatstride: flatstride,
         low: low, high: high)
   else:
+    discard high
     result = PyArrayRandAccIter[T](pos: initPos, arr: arr, flatstride: flatstride)
 
 
@@ -314,8 +316,8 @@ else:
   template `[]`*[T](rai: PyArrayRandAccIter[T]): var T =
     (rai.pos[])
 
-  template `[]=`*[T](rai: PyArrayRandAccIter[T], val: T): stmt =
-    (rai.pos[] = val)
+  proc `[]=`*[T](rai: PyArrayRandAccIter[T], val: T) {. inline .} =
+    rai.pos[] = val
 
   proc `[]`*[T](rai: PyArrayRandAccIter[T], idx: int): var T =
     let offset_pos = offset_ptr_in_bytes(rai.pos, idx * rai.flatstride)
