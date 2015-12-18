@@ -303,6 +303,7 @@ export pyarrayiters.PyArrayForwardIter
 export pyarrayiters.`[]`
 export pyarrayiters.`[]=`
 export pyarrayiters.inc
+export pyarrayiters.incFast
 export pyarrayiters.PyArrayRandAccIter
 export pyarrayiters.PyArrayIterBounds
 export pyarrayiters.contains

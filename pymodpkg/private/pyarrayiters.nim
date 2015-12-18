@@ -128,6 +128,10 @@ else:
     fi.pos = cast[ptr T](offset_void_ptr_in_bytes(fi.pos, sizeof(T)))
 
 
+proc incFast*[T](fi: var PyArrayForwardIter[T], positiveDelta: Positive) {. inline .} =
+  fi.pos = offset_ptr(fi.pos, positiveDelta)
+
+
 when doSamePyArrayChecks:
   # Check that our iterators are pointing at the same array.
 
