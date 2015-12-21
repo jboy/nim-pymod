@@ -95,16 +95,18 @@ when doWithinRangeChecks:
 
   template isNotWithinRange[T](fi: PyArrayForwardIter[T]): bool =
     ## Test whether the PyArrayForwardIter is outside of its valid bounds.
-    ## This range-checking will be disabled in release builds.
     (fi.pos < fi.low or fi.pos > fi.high)
 
   proc assertWithinRange[T](fi: PyArrayForwardIter[T]) =
+    ## Assert that the PyArrayForwardIter is within its valid bounds when
+    ## dereferenced.  This bounds-checking will be disabled in release builds.
     # Note: Use a proc rather than a template, to get a fuller stack trace.
     if isNotWithinRange(fi):
-      let msg = "PyArrayForwardIter[$1] dereferenced at pos $2, out of bounds [$3, $4], with sizeof($1) == $5" %
-          [getCompileTimeType(T), fi.pos.toHex, fi.low.toHex, fi.high.toHex, $sizeof(T)]
+      let itertype = fi.getGenericTypeName
+      let msg = "$1[$2] dereferenced at pos $3, out of bounds [$4, $5], with sizeof($2) == $6" %
+          [itertype, getCompileTimeType(T),
+              fi.pos.toHex, fi.low.toHex, fi.high.toHex, $sizeof(T)]
       raise newException(RangeError, msg)
-
 
   proc `[]`*[T](fi: PyArrayForwardIter[T]): var T =
     assertWithinRange(fi)
@@ -114,14 +116,41 @@ when doWithinRangeChecks:
     assertWithinRange(fi)
     fi.pos[] = val
 
+
+  template isTooFarBeyondRange[T](fi: PyArrayForwardIter[T]): bool =
+    ## Test whether the PyArrayForwardIter is more than an allowable tolerance
+    ## (a step of 1x sizeof(T)) outside of its valid bounds.
+    (fi.pos < fi.low or fi.pos > offset_ptr(fi.high))
+
+  proc assertWithinToleranceOfRange[T](fi: PyArrayForwardIter[T]) =
+    ## Assert that the PyArrayForwardIter is within an allowable tolerance
+    ## (a step of 1x sizeof(T)) of its valid bounds when incremented.  This
+    ## bounds-checking will be disabled in release builds.
+    # Note: Use a proc rather than a template, to get a fuller stack trace.
+    if isTooFarBeyondRange(fi):
+      let itertype = fi.getGenericTypeName
+      let msg = "$1[$2] has been incremented to pos $3, out of bounds [$4, $5], with sizeof($2) == $6" %
+          [itertype, getCompileTimeType(T),
+              fi.pos.toHex, fi.low.toHex, fi.high.toHex, $sizeof(T)]
+      raise newException(RangeError, msg)
+
+
   proc inc*[T](fi: var PyArrayForwardIter[T]) {. inline .} =
+    #assertWithinToleranceOfRange(fi)
     fi.pos = offset_ptr(fi.pos)
 
   proc derefInc*[T](fi: var PyArrayForwardIter[T]): var T =
     assertWithinRange(fi)
+    # If it's "within bounds", then it is guaranteed to be "within tolerance of bounds".
+    # So, no need to assertWithinToleranceOfRange(fi).
     let prev: ptr T = fi.pos
     fi.pos = offset_ptr(prev)
     result = prev[]
+
+  proc incFast*[T](fi: var PyArrayForwardIter[T]; positiveDelta: Positive) {. inline .} =
+    ## "Fast forward"
+    assertWithinToleranceOfRange(fi)
+    fi.pos = offset_ptr(fi.pos, positiveDelta)
 
 else:
   template `[]`*[T](fi: PyArrayForwardIter[T]): var T =
@@ -138,9 +167,9 @@ else:
     fi.pos = offset_ptr(prev)
     result = prev[]
 
-
-proc incFast*[T](fi: var PyArrayForwardIter[T], positiveDelta: Positive) {. inline .} =
-  fi.pos = offset_ptr(fi.pos, positiveDelta)
+  proc incFast*[T](fi: var PyArrayForwardIter[T]; positiveDelta: Positive) {. inline .} =
+    ## "Fast forward"
+    fi.pos = offset_ptr(fi.pos, positiveDelta)
 
 
 when doSamePyArrayChecks:
@@ -284,10 +313,11 @@ when doWithinRangeChecks:
   template isNotWithinRange[T](
       rai: PyArrayRandAccIter[T], pos: ptr T): bool =
     ## Test whether the PyArrayRandAccIter is outside of its valid bounds.
-    ## This range-checking will be disabled in release builds.
     (pos < rai.low or pos > rai.high)
 
   proc assertWithinRange[T](rai: PyArrayRandAccIter[T]) =
+    ## Assert that the PyArrayRandAccIter is within its valid bounds when
+    ## dereferenced.  This bounds-checking will be disabled in release builds.
     # Note: Use a proc rather than a template, to get a fuller stack trace.
     if isNotWithinRange(rai, rai.pos):
       let itertype = rai.getGenericTypeName
@@ -308,6 +338,8 @@ when doWithinRangeChecks:
 
   proc assertWithinRange[T](
       rai: PyArrayRandAccIter[T], offset_pos: ptr T) =
+    ## Assert that the PyArrayRandAccIter is within its valid bounds when
+    ## dereferenced.  This bounds-checking will be disabled in release builds.
     # Note: Use a proc rather than a template, to get a fuller stack trace.
     if isNotWithinRange(rai, offset_pos):
       let itertype = rai.getGenericTypeName
