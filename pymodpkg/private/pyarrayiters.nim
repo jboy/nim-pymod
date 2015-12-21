@@ -139,7 +139,7 @@ when doWithinRangeChecks:
     #assertWithinToleranceOfRange(fi)
     fi.pos = offset_ptr(fi.pos)
 
-  proc derefInc*[T](fi: var PyArrayForwardIter[T]): var T =
+  proc derefInc*[T](fi: var PyArrayForwardIter[T]): var T {. inline .} =
     assertWithinRange(fi)
     # If it's "within bounds", then it is guaranteed to be "within tolerance of bounds".
     # So, no need to assertWithinToleranceOfRange(fi).
@@ -382,9 +382,21 @@ proc inc*[T](rai: var PyArrayRandAccIter[T], delta: int) {. inline .} =
 when doWithinRangeChecks:
   proc inc*[T](rai: var PyArrayRandAccIter[T]) {. inline .} =
     rai.pos = offset_ptr_in_bytes(rai.pos, rai.flatstride)
+
+  proc derefInc*[T](rai: var PyArrayRandAccIter[T]): var T {. inline .} =
+    assertWithinRange(rai)
+    let prev: ptr T = rai.pos
+    rai.pos = offset_ptr(prev)
+    result = prev[]
+
 else:
   proc inc*[T](rai: var PyArrayRandAccIter[T]) {. inline .} =
     rai.pos = cast[ptr T](offset_void_ptr_in_bytes(rai.pos, rai.flatstride))
+
+  proc derefInc*[T](rai: var PyArrayRandAccIter[T]): var T {. inline .} =
+    let prev: ptr T = rai.pos
+    rai.pos = offset_ptr(prev)
+    result = prev[]
 
 
 proc dec*[T](rai: var PyArrayRandAccIter[T], delta: int) {. inline .} =
