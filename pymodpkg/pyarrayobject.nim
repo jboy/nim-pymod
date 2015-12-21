@@ -408,6 +408,28 @@ iterator items*[T](iter: PyArrayForwardIter[T]):
     yield iter
     inc(iter)
 
+iterator iterateFlatFast*[T](arr: ptr PyArrayObject; NimT: typedesc[NumpyCompatibleNimType];
+    positiveDelta: Positive): PyArrayForwardIter[T] {.inline.} =
+  ## "Fast forward"
+  # http://nim-lang.org/system.html#instantiationInfo,
+  let ii = instantiationInfo()
+  let bounds = arr.getBounds()
+  var iter = arr.iterateFlatImpl(NimT, ii, "iterateFlatFast")
+  while iter in bounds:
+    yield iter
+    incFast(iter, positiveDelta)
+
+iterator iterateFlatFast*[T](arr: ptr PyArrayObject; NimT: typedesc[NumpyCompatibleNimType];
+    positiveOffset, positiveDelta: Positive): PyArrayForwardIter[T] {.inline.} =
+  ## "Fast forward"
+  # http://nim-lang.org/system.html#instantiationInfo,
+  let ii = instantiationInfo()
+  let bounds = arr.getBounds()
+  var iter = arr.iterateFlatImpl(NimT, ii, "iterateFlatFast")
+  incFast(iter, positiveOffset)
+  while iter in bounds:
+    yield iter
+    incFast(iter, positiveDelta)
 
 iterator values*(arr: ptr PyArrayObject, NimT: typedesc[NumpyCompatibleNimType]):
     NimT {.inline.} =
