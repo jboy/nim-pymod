@@ -315,6 +315,10 @@ export pyarrayiters.`==`
 export pyarrayiters.`!=`
 export pyarrayiters.`<=`
 export pyarrayiters.`<`
+export pyarrayiters.getBounds
+
+import pymodpkg/private/iteratezipdefs
+export iteratezipdefs.iterateZip
 
 
 ## A convenient and plausible maximum number of dimensions to support.
@@ -400,8 +404,55 @@ template iterateFlat*(arr: ptr PyArrayObject, NimT: typedesc[NumpyCompatibleNimT
   iterateFlatImpl(arr, NimT, ii, "iterateFlat")
 
 
+iterator iterateFlat*(arrs: array[1, ptr PyArrayObject];
+    NimT: typedesc[NumpyCompatibleNimType]):
+    PyArrayForwardIter[NimT] {.inline.} =
+  let iterable1 = arrs[0].iterateFlat(NimT)
+  iterateZipImpl1(iterable1)
+
+iterator iterateFlat*(arrs: array[2, ptr PyArrayObject];
+    NimT: typedesc[NumpyCompatibleNimType]):
+    (PyArrayForwardIter[NimT], PyArrayForwardIter[NimT]) {.inline.} =
+  let
+    iterable1 = arrs[0].iterateFlat(NimT)
+    iterable2 = arrs[1].iterateFlat(NimT)
+  iterateZipImpl2(iterable1, iterable2)
+
+iterator iterateFlat*(arrs: array[3, ptr PyArrayObject];
+    NimT: typedesc[NumpyCompatibleNimType]):
+    (PyArrayForwardIter[NimT], PyArrayForwardIter[NimT], PyArrayForwardIter[NimT]) {.inline.} =
+  let
+    iterable1 = arrs[0].iterateFlat(NimT)
+    iterable2 = arrs[1].iterateFlat(NimT)
+    iterable3 = arrs[2].iterateFlat(NimT)
+  iterateZipImpl3(iterable1, iterable2, iterable3)
+
+iterator iterateFlat*(arrs: array[4, ptr PyArrayObject];
+    NimT: typedesc[NumpyCompatibleNimType]):
+    (PyArrayForwardIter[NimT], PyArrayForwardIter[NimT], PyArrayForwardIter[NimT],
+        PyArrayForwardIter[NimT]) {.inline.} =
+  let
+    iterable1 = arrs[0].iterateFlat(NimT)
+    iterable2 = arrs[1].iterateFlat(NimT)
+    iterable3 = arrs[2].iterateFlat(NimT)
+    iterable4 = arrs[3].iterateFlat(NimT)
+  iterateZipImpl4(iterable1, iterable2, iterable3, iterable4)
+
+iterator iterateFlat*(arrs: array[5, ptr PyArrayObject];
+    NimT: typedesc[NumpyCompatibleNimType]):
+    (PyArrayForwardIter[NimT], PyArrayForwardIter[NimT], PyArrayForwardIter[NimT],
+        PyArrayForwardIter[NimT], PyArrayForwardIter[NimT]) {.inline.} =
+  let
+    iterable1 = arrs[0].iterateFlat(NimT)
+    iterable2 = arrs[1].iterateFlat(NimT)
+    iterable3 = arrs[2].iterateFlat(NimT)
+    iterable4 = arrs[3].iterateFlat(NimT)
+    iterable5 = arrs[4].iterateFlat(NimT)
+  iterateZipImpl5(iterable1, iterable2, iterable3, iterable4, iterable5)
+
+
 iterator items*[T](iter: PyArrayForwardIter[T]):
-    PyArrayForwardIter[T] {.inline.} =
+    PyArrayForwardIter[T] {. inline .} =
   let bounds = iter.getBounds()
   var iter = iter
   while iter in bounds:
@@ -409,7 +460,7 @@ iterator items*[T](iter: PyArrayForwardIter[T]):
     inc(iter)
 
 iterator iterateFlatFast*[T](arr: ptr PyArrayObject; NimT: typedesc[NumpyCompatibleNimType];
-    positiveDelta: Positive): PyArrayForwardIter[T] {.inline.} =
+    positiveDelta: Positive): PyArrayForwardIter[T] {. inline .} =
   ## "Fast forward"
   # http://nim-lang.org/system.html#instantiationInfo,
   let ii = instantiationInfo()
@@ -420,7 +471,7 @@ iterator iterateFlatFast*[T](arr: ptr PyArrayObject; NimT: typedesc[NumpyCompati
     incFast(iter, positiveDelta)
 
 iterator iterateFlatFast*[T](arr: ptr PyArrayObject; NimT: typedesc[NumpyCompatibleNimType];
-    positiveOffset, positiveDelta: Positive): PyArrayForwardIter[T] {.inline.} =
+    positiveOffset, positiveDelta: Positive): PyArrayForwardIter[T] {. inline .} =
   ## "Fast forward"
   # http://nim-lang.org/system.html#instantiationInfo,
   let ii = instantiationInfo()
@@ -432,7 +483,7 @@ iterator iterateFlatFast*[T](arr: ptr PyArrayObject; NimT: typedesc[NumpyCompati
     incFast(iter, positiveDelta)
 
 iterator values*(arr: ptr PyArrayObject, NimT: typedesc[NumpyCompatibleNimType]):
-    NimT {.inline.} =
+    NimT {. inline .} =
   let bounds = arr.getBounds(NimT)
   var iter = arr.iterateFlat(NimT)
   while iter in bounds:
@@ -506,7 +557,7 @@ template accessFlat*(arr: ptr PyArrayObject; NimT: typedesc[NumpyCompatibleNimTy
 
 
 iterator items*[T](iter: PyArrayRandAccIter[T]):
-    PyArrayRandAccIter[T] {.inline.} =
+    PyArrayRandAccIter[T] {. inline .} =
   let bounds = iter.getBounds()
   var iter = iter
   while iter in bounds:
@@ -520,7 +571,6 @@ proc getBoundsImpl(arr: ptr PyArrayObject, NimT: typedesc[NumpyCompatibleNimType
   assertArrayType(arr, NimT, ii, procname)
   result = initPyArrayIterBounds[NimT](arr)
 
-
 template getBounds*(arr: ptr PyArrayObject, NimT: typedesc[NumpyCompatibleNimType]):
     PyArrayIterBounds[NimT] =
   ## Return a PyArrayIterBounds over type `NimT`.
@@ -528,18 +578,6 @@ template getBounds*(arr: ptr PyArrayObject, NimT: typedesc[NumpyCompatibleNimTyp
   # http://nim-lang.org/system.html#instantiationInfo,
   let ii = instantiationInfo()
   getBoundsImpl(arr, NimT, ii, "getBounds")
-
-
-proc getBounds*[T](iter: PyArrayForwardIter[T]):
-    PyArrayIterBounds[T] {.inline.} =
-  ## Return a PyArrayIterBounds over type `T`.
-  result = initPyArrayIterBounds(iter)
-
-
-proc getBounds*[T](iter: PyArrayRandAccIter[T]):
-    PyArrayIterBounds[T] {.inline.} =
-  ## Return a PyArrayIterBounds over type `T`.
-  result = initPyArrayIterBounds(iter)
 
 
 ## Data type descriptors:

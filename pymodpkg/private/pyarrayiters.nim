@@ -21,26 +21,29 @@ import pymodpkg/private/pyarrayobjecttype
 
 
 proc getLowHighBounds[NT](a: ptr PyArrayObject):
-    tuple[low: ptr NT, high: ptr NT] {. inline .} =
+    tuple[low: ptr NT, high: ptr NT, numElems: int] {. inline .} =
   let low: ptr NT = a.data(NT)
-  let num_elems = a.elcount
+  let numElems: int = int(a.elcount)
   # We subtract 1 from `num_elems` to get the Nim-idiom `high` position
   # (the highest valid data position), rather than the usual C-idiom of
   # "1 beyond the highest valid data position".
-  let high = offset_ptr(low, num_elems - 1)
-  result = (low, high)
+  let high = offset_ptr(low, numElems - 1)
+  result = (low, high, numElems)
 
 
 type PyArrayIterBounds*[T] = object
   arr: ptr PyArrayObject
   low: ptr T
   high: ptr T
+  numElems: int
 
 
 proc initPyArrayIterBounds*[T](arr: ptr PyArrayObject):
     PyArrayIterBounds[T] {. inline .} =
-  let (low, high) = getLowHighBounds[T](arr)
-  result = PyArrayIterBounds[T](arr: arr, low: low, high: high)
+  let (low, high, numElems) = getLowHighBounds[T](arr)
+  result = PyArrayIterBounds[T](arr: arr, low: low, high: high, numElems: numElems)
+
+proc numElems*[T](bounds: PyArrayIterBounds[T]): int {. inline .} = bounds.numElems
 
 
 type PyArrayForwardIter*[T] = object
@@ -76,18 +79,13 @@ type PyArrayForwardIter*[T] = object
 
 proc initPyArrayForwardIter*[T](arr: ptr PyArrayObject):
     PyArrayForwardIter[T] {. inline .} =
-  let (low, high) = getLowHighBounds[T](arr)
+  let (low, high, _) = getLowHighBounds[T](arr)
   when doWithinRangeChecks:
     # Check ranges.  Catch mistakes.
     result = PyArrayForwardIter[T](pos: low, arr: arr, low: low, high: high)
   else:
     discard high
     result = PyArrayForwardIter[T](pos: low, arr: arr)
-
-
-proc initPyArrayIterBounds*[T](iter: PyArrayForwardIter[T]):
-    PyArrayIterBounds[T] {. inline .} =
-  initPyArrayIterBounds[T](iter.arr)
 
 
 when doWithinRangeChecks:
@@ -290,7 +288,7 @@ type PyArrayRandAccIter*[T] = object
 
 proc initPyArrayRandAccIter*[T](arr: ptr PyArrayObject; initOffset, incDelta: int):
     PyArrayRandAccIter[T] {. inline .} =
-  let (low, high) = getLowHighBounds[T](arr)
+  let (low, high, _) = getLowHighBounds[T](arr)
   let initPos = offset_ptr(low, initOffset)
   let flatstride = incDelta * sizeof(T)
   when doWithinRangeChecks:
@@ -302,9 +300,9 @@ proc initPyArrayRandAccIter*[T](arr: ptr PyArrayObject; initOffset, incDelta: in
     result = PyArrayRandAccIter[T](pos: initPos, arr: arr, flatstride: flatstride)
 
 
-proc initPyArrayIterBounds*[T](iter: PyArrayRandAccIter[T]):
-    PyArrayIterBounds[T] {. inline .} =
-  initPyArrayIterBounds[T](iter.arr)
+proc elemStep*[T](rai: PyArrayRandAccIter[T]): int {. inline .} =
+  ## Return the number of elements stepped per increment.
+  (rai.flatstride div sizeof(T))
 
 
 when doWithinRangeChecks:
@@ -514,4 +512,52 @@ else:
   template `<`*[T](lhs, rhs: PyArrayRandAccIter[T]): bool =
     ## Note:  If possible, use the (iter in bounds) idiom instead.
     (cast[int](lhs.pos) < cast[int](rhs.pos))
+
+
+proc getBounds*[T](iter: PyArrayForwardIter[T]): PyArrayIterBounds[T] {.inline.} =
+  ## Return a PyArrayIterBounds over type `T`.
+  result = initPyArrayIterBounds[T](iter.arr)
+
+proc getBounds*[T](iter: PyArrayRandAccIter[T]): PyArrayIterBounds[T] {.inline.} =
+  ## Return a PyArrayIterBounds over type `T`.
+  result = initPyArrayIterBounds[T](iter.arr)
+
+
+proc getNumElemsRemaining*[T](iter: PyArrayForwardIter[T]; bounds: PyArrayIterBounds[T]):
+    int {.inline.} =
+  ## Get the number of distinct elements remaining, that are accessible by
+  ## single increments of `iter` within `bounds`.  Return 0 if `iter` is not
+  ## within `bounds` (because in this case, any for-loop or while-loop should
+  ## exit immediately).
+  let hasNotWrapped: bool = cast[int](iter.pos) >= cast[int](bounds.low)
+  let numBytes: int = cast[int](bounds.high) - cast[int](iter.pos)
+  # if (numBytes == 0), then (iter.pos == bounds.high).
+  # So there are no more steps, but 1 more element remaining (ie, this one).
+  if numBytes >= 0 and hasNotWrapped:
+    let numSteps: int = numBytes div sizeof(T)
+    result = numSteps + 1
+  else:
+    result = 0
+
+
+proc getNumElemsRemaining*[T](iter: PyArrayRandAccIter[T]; bounds: PyArrayIterBounds[T]):
+    int {.inline.} =
+  ## Get the number of distinct elements remaining, that are accessible by
+  ## single increments of `iter` within `bounds`.  Return 0 if `iter` is not
+  ## within `bounds` (because in this case, any for-loop or while-loop should
+  ## exit immediately).
+  let isNotBeforeLow: bool = cast[int](iter.pos) >= cast[int](bounds.low)
+  let numBytes: int = cast[int](bounds.high) - cast[int](iter.pos)
+  # if (numBytes == 0), then (iter.pos == bounds.high).
+  # So there are no more steps, but 1 more element remaining (ie, this one).
+  if numBytes >= 0 and isNotBeforeLow:
+    # OK, there's at least 1 element remaining (this one).  But how many more?
+    # We must be careful:  The flatstrides of the PyArrayRandAccIter might not
+    # fit exactly into the total number of bytes remaining.  (There might be
+    # both an initial offset and an increment delta.)
+    let strideBytes: int = iter.flatstride
+    let numSteps: int = numBytes div strideBytes
+    result = numSteps + 1
+  else:
+    result = 0
 
