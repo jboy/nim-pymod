@@ -1,3 +1,4 @@
+* Since we now use unsigned arithmetic `+%` in `ptrutils`, remove `cast[int]` from PyArrayIter ptr pos comparisons.
 * Allow exporting of the Nim types `npy_intp`, `Py_ssize_t`, `csize`.
 * Add a command-line option to `pmgen.py` to enable Nim release mode.
 * Add a function to the compiled Python module that returns bool of whether the module was compiled in release mode.
