@@ -451,8 +451,21 @@ iterator iterateFlat*(arrs: array[5, ptr PyArrayObject];
   iterateZipImpl5(iterable1, iterable2, iterable3, iterable4, iterable5)
 
 
-iterator items*[T](iter: PyArrayForwardIter[T]):
-    PyArrayForwardIter[T] {. inline .} =
+iterator items*[T](iter: PyArrayForwardIter[T]): T {. inline .} =
+  let bounds = iter.getBounds()
+  var iter = iter
+  while iter in bounds:
+    yield iter[]
+    inc(iter)
+
+iterator mitems*[T](iter: PyArrayForwardIter[T]): var T {. inline .} =
+  let bounds = iter.getBounds()
+  var iter = iter
+  while iter in bounds:
+    yield iter[]
+    inc(iter)
+
+iterator iitems*[T](iter: PyArrayForwardIter[T]): PyArrayForwardIter[T] {. inline .} =
   let bounds = iter.getBounds()
   var iter = iter
   while iter in bounds:
@@ -556,8 +569,21 @@ template accessFlat*(arr: ptr PyArrayObject; NimT: typedesc[NumpyCompatibleNimTy
   accessFlatImpl(arr, NimT, ii, "accessFlat", initOffset, incDelta)
 
 
-iterator items*[T](iter: PyArrayRandAccIter[T]):
-    PyArrayRandAccIter[T] {. inline .} =
+iterator items*[T](iter: PyArrayRandAccIter[T]): T {. inline .} =
+  let bounds = iter.getBounds()
+  var iter = iter
+  while iter in bounds:
+    yield iter[]
+    inc(iter)
+
+iterator mitems*[T](iter: PyArrayRandAccIter[T]): var T {. inline .} =
+  let bounds = iter.getBounds()
+  var iter = iter
+  while iter in bounds:
+    yield iter[]
+    inc(iter)
+
+iterator iitems*[T](iter: PyArrayRandAccIter[T]): PyArrayRandAccIter[T] {. inline .} =
   let bounds = iter.getBounds()
   var iter = iter
   while iter in bounds:

@@ -41,7 +41,18 @@ proc int32FindMaxForLoopForwardIter*(arr: ptr PyArrayObject): int32 {.exportpy} 
   result = low(int32)
   let dt = arr.dtype
   if dt == np_int32:
-    for iter in arr.iterateFlat(int32):
+    for val in arr.iterateFlat(int32):
+      if val > result:
+        result = val
+  else:
+    let msg = "expected input array of dtype $1, received dtype $2" % [$np_int32, $dt]
+    raise newException(ValueError, msg)
+
+proc int32FindMaxForLoopForwardIter_i*(arr: ptr PyArrayObject): int32 {.exportpy} =
+  result = low(int32)
+  let dt = arr.dtype
+  if dt == np_int32:
+    for iter in arr.iterateFlat(int32).iitems:
       if iter[] > result:
         result = iter[]
   else:
@@ -369,11 +380,22 @@ proc int32FindMaxWhileLoopRandaccIterExcludeLastM_2*(arr: ptr PyArrayObject; m: 
 
 # for loop, Rand Acc Iter
 
-proc int32FindMaxForLoopRandAccIterDeref*(arr: ptr PyArrayObject): int32 {.exportpy} =
+proc int32FindMaxForLoopRandaccIterDeref*(arr: ptr PyArrayObject): int32 {.exportpy} =
   result = low(int32)
   let dt = arr.dtype
   if dt == np_int32:
-    for iter in arr.accessFlat(int32):
+    for val in arr.accessFlat(int32):
+      if val > result:
+        result = val
+  else:
+    let msg = "expected input array of dtype $1, received dtype $2" % [$np_int32, $dt]
+    raise newException(ValueError, msg)
+
+proc int32FindMaxForLoopRandaccIterDeref_i*(arr: ptr PyArrayObject): int32 {.exportpy} =
+  result = low(int32)
+  let dt = arr.dtype
+  if dt == np_int32:
+    for iter in arr.accessFlat(int32).iitems:
       if iter[] > result:
         result = iter[]
   else:
@@ -381,11 +403,11 @@ proc int32FindMaxForLoopRandAccIterDeref*(arr: ptr PyArrayObject): int32 {.expor
     raise newException(ValueError, msg)
 
 
-proc int32FindMaxForLoopRandAccIterIndex0*(arr: ptr PyArrayObject): int32 {.exportpy} =
+proc int32FindMaxForLoopRandaccIterIndex0_i*(arr: ptr PyArrayObject): int32 {.exportpy} =
   result = low(int32)
   let dt = arr.dtype
   if dt == np_int32:
-    for iter in arr.accessFlat(int32):
+    for iter in arr.accessFlat(int32).iitems:
       if iter[0] > result:
         result = iter[0]
   else:
@@ -397,7 +419,18 @@ proc int32FindMaxForLoopRandaccIterDeltaN*(arr: ptr PyArrayObject; n: int): int3
   result = low(int32)
   let dt = arr.dtype
   if dt == np_int32:
-    for iter in arr.accessFlat(int32, n):
+    for val in arr.accessFlat(int32, n):
+      if val > result:
+        result = val
+  else:
+    let msg = "expected input array of dtype $1, received dtype $2" % [$np_int32, $dt]
+    raise newException(ValueError, msg)
+
+proc int32FindMaxForLoopRandaccIterDeltaN_i*(arr: ptr PyArrayObject; n: int): int32 {.exportpy} =
+  result = low(int32)
+  let dt = arr.dtype
+  if dt == np_int32:
+    for iter in arr.accessFlat(int32, n).iitems:
       if iter[] > result:
         result = iter[]
   else:
@@ -405,11 +438,11 @@ proc int32FindMaxForLoopRandaccIterDeltaN*(arr: ptr PyArrayObject; n: int): int3
     raise newException(ValueError, msg)
 
 
-proc int32FindMaxForLoopRandaccIterExcludeFirstM*(arr: ptr PyArrayObject; m: int): int32 {.exportpy} =
+proc int32FindMaxForLoopRandaccIterExcludeFirstM_i*(arr: ptr PyArrayObject; m: int): int32 {.exportpy} =
   result = low(int32)
   let dt = arr.dtype
   if dt == np_int32:
-    for iter in arr.accessFlat(int32, 1, m):
+    for iter in arr.accessFlat(int32, m, 1).iitems:
       if iter[0] > result:
         result = iter[0]
   else:
@@ -417,11 +450,11 @@ proc int32FindMaxForLoopRandaccIterExcludeFirstM*(arr: ptr PyArrayObject; m: int
     raise newException(ValueError, msg)
 
 
-proc int32FindMaxForLoopRandaccIterExcludeLastM*(arr: ptr PyArrayObject; m: int): int32 {.exportpy} =
+proc int32FindMaxForLoopRandaccIterExcludeLastM_i*(arr: ptr PyArrayObject; m: int): int32 {.exportpy} =
   result = low(int32)
   let dt = arr.dtype
   if dt == np_int32:
-    for iter in arr.accessFlat(int32, 1, m):
+    for iter in arr.accessFlat(int32, m, 1).iitems:
       if iter[-m] > result:
         result = iter[-m]
   else:
@@ -435,7 +468,7 @@ initPyModule("",
     # while loop, Forward Iter
     int32FindMaxWhileLoopForwardIter,
     # for loop, Forward Iter
-    int32FindMaxForLoopForwardIter,
+    int32FindMaxForLoopForwardIter, int32FindMaxForLoopForwardIter_i,
     # while loop, Rand Acc Iter
     int32FindMaxWhileLoopRandaccIterDeref, int32FindMaxWhileLoopRandaccIterIndex0,
     int32FindMaxWhileLoopRandaccIterDerefPlusZeroOffset,
@@ -456,7 +489,8 @@ initPyModule("",
     int32FindMaxWhileLoopRandaccIterExcludeFirstM_1, int32FindMaxWhileLoopRandaccIterExcludeFirstM_2,
     int32FindMaxWhileLoopRandaccIterExcludeLastM_1, int32FindMaxWhileLoopRandaccIterExcludeLastM_2,
     # for loop, Rand Acc Iter
-    int32FindMaxForLoopRandAccIterDeref, int32FindMaxForLoopRandAccIterIndex0,
-    int32FindMaxForLoopRandaccIterDeltaN,
-    int32FindMaxForLoopRandaccIterExcludeFirstM,
-    int32FindMaxForLoopRandaccIterExcludeLastM)
+    int32FindMaxForLoopRandaccIterDeref, int32FindMaxForLoopRandaccIterDeref_i,
+    int32FindMaxForLoopRandaccIterIndex0_i,
+    int32FindMaxForLoopRandaccIterDeltaN, int32FindMaxForLoopRandaccIterDeltaN_i,
+    int32FindMaxForLoopRandaccIterExcludeFirstM_i,
+    int32FindMaxForLoopRandaccIterExcludeLastM_i)
