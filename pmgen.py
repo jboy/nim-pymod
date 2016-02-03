@@ -57,6 +57,8 @@ NIM_COMPILER_FLAG_OPTIONS = dict(
         nimSetIsRelease=["-d:release"],
 )
 NIM_COMPILER_COMMAND = "%s %%s %s" % (NIM_COMPILER_EXE_PATH, " ".join(NIM_COMPILER_FLAGS))
+NIM_COMPILER_DEFINED_SYMBOLS = "pmgen pymodEnabled pyarrayEnabled".split()
+NIM_COMPILER_SYMBOL_DEFS = " ".join("--define:%s" % s for s in NIM_COMPILER_DEFINED_SYMBOLS)
 
 MAKE_EXE_PATH = "make"
 
@@ -84,7 +86,7 @@ PMGEN_PREFIX = "pmgen"
 PMGEN_RULE_TARGET = "pmgen"
 
 MAKEFILE_FNAME_TEMPLATE = "Makefile.pmgen-%s"
-MAKEFILE_PMGEN_VARIABLE = """PMGEN = --define:pmgen %s --noLinking --noMain"""
+MAKEFILE_PMGEN_VARIABLE = """PMGEN = %s %%s --noLinking --noMain""" % NIM_COMPILER_SYMBOL_DEFS
 MAKEFILE2_FNAME_TEMPLATE = "Makefile"
 
 MAKEFILE_CLEAN_RULES = """allclean: clean soclean
