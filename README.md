@@ -124,7 +124,7 @@ In a Python interpreter, you can import the module and invoke the `greet` functi
 
 You can also invoke the built-in Python interpreter `help` function about the `greet` function:
 
-```Python
+```
 >>> help(hw.greet)
 Help on built-in function greet in module hw:
 
