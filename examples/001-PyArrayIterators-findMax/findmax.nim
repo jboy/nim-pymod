@@ -29,7 +29,7 @@ proc findMax1*(arr: ptr PyArrayObject): int32 {.exportpy} =
   let dt = arr.dtype
   echo "PyArrayObject has shape $1 and dtype $2" % [$arr.shape, $dt]
   if dt == np_int32:
-    for val in arr.values(int32):  # Read each array value, one-by-one.
+    for val in arr.values(int32):  # Yield each array value, one-by-one.
       if val > result:
         result = val
   else:
@@ -49,7 +49,7 @@ proc findMax2*(arr: ptr PyArrayObject): int32 {.exportpy} =
   let dt = arr.dtype
   echo "PyArrayObject has shape $1 and dtype $2" % [$arr.shape, $dt]
   if dt == np_int32:
-    for iter in arr.iterateFlat(int32):  # Forward-iterate through the array.
+    for iter in arr.iterateFlat(int32).iitems:  # Forward-iterate through the array.
       if iter[] > result:
         result = iter[]
   else:
@@ -58,6 +58,46 @@ proc findMax2*(arr: ptr PyArrayObject): int32 {.exportpy} =
 
 
 proc findMax3*(arr: ptr PyArrayObject): int32 {.exportpy} =
+  docstring"""Find & return the maximum value in the supplied Numpy array.
+
+  The array is assumed to have dtype `int32`; otherwise, a ValueError will be
+  raised.  No values in the array will be changed.
+
+  This example shows the `for`-loop idiom with a `PyArrayForwardIter[T]`.
+  """
+  result = low(int32)
+  let dt = arr.dtype
+  echo "PyArrayObject has shape $1 and dtype $2" % [$arr.shape, $dt]
+  if dt == np_int32:
+    for val in arr.iterateFlat(int32):  # Yield read-only values.
+      if val > result:
+        result = val
+  else:
+    let msg = "expected input array of dtype $1, received dtype $2" % [$np_int32, $dt]
+    raise newException(ValueError, msg)
+
+
+proc findMax4*(arr: ptr PyArrayObject): int32 {.exportpy} =
+  docstring"""Find & return the maximum value in the supplied Numpy array.
+
+  The array is assumed to have dtype `int32`; otherwise, a ValueError will be
+  raised.  No values in the array will be changed.
+
+  This example shows the `for`-loop idiom with a `PyArrayForwardIter[T]`.
+  """
+  result = low(int32)
+  let dt = arr.dtype
+  echo "PyArrayObject has shape $1 and dtype $2" % [$arr.shape, $dt]
+  if dt == np_int32:
+    for mval in arr.iterateFlat(int32).mitems:  # Yield mutable values.
+      if mval > result:
+        result = mval
+  else:
+    let msg = "expected input array of dtype $1, received dtype $2" % [$np_int32, $dt]
+    raise newException(ValueError, msg)
+
+
+proc findMax5*(arr: ptr PyArrayObject): int32 {.exportpy} =
   docstring"""Find & return the maximum value in the supplied Numpy array.
 
   The array is assumed to have dtype `int32`; otherwise, a ValueError will be
@@ -80,7 +120,7 @@ proc findMax3*(arr: ptr PyArrayObject): int32 {.exportpy} =
     raise newException(ValueError, msg)
 
 
-proc findMax4*(arr: ptr PyArrayObject): int32 {.exportpy} =
+proc findMax6*(arr: ptr PyArrayObject): int32 {.exportpy} =
   docstring"""Find & return the maximum value in the supplied Numpy array.
 
   The array is assumed to have dtype `int32`; otherwise, a ValueError will be
@@ -93,15 +133,57 @@ proc findMax4*(arr: ptr PyArrayObject): int32 {.exportpy} =
   let dt = arr.dtype
   echo "PyArrayObject has shape $1 and dtype $2" % [$arr.shape, $dt]
   if dt == np_int32:
-    for iter in arr.accessFlat(int32):  # Flat-iterate through the array.
-      if iter[] > result:
-        result = iter[]
+    for iter in arr.accessFlat(int32).iitems:  # Flat-iterate through the array.
+      if iter[0] > result:
+        result = iter[0]
   else:
     let msg = "expected input array of dtype $1, received dtype $2" % [$np_int32, $dt]
     raise newException(ValueError, msg)
 
 
-proc findMax5*(arr: ptr PyArrayObject): int32 {.exportpy} =
+proc findMax7*(arr: ptr PyArrayObject): int32 {.exportpy} =
+  docstring"""Find & return the maximum value in the supplied Numpy array.
+
+  The array is assumed to have dtype `int32`; otherwise, a ValueError will be
+  raised.  No values in the array will be changed.
+
+  This example shows the `for`-loop idiom with a
+  `PyArrayRandAccIter[T]`.
+  """
+  result = low(int32)
+  let dt = arr.dtype
+  echo "PyArrayObject has shape $1 and dtype $2" % [$arr.shape, $dt]
+  if dt == np_int32:
+    for val in arr.accessFlat(int32):  # Yield read-only values.
+      if val > result:
+        result = val
+  else:
+    let msg = "expected input array of dtype $1, received dtype $2" % [$np_int32, $dt]
+    raise newException(ValueError, msg)
+
+
+proc findMax8*(arr: ptr PyArrayObject): int32 {.exportpy} =
+  docstring"""Find & return the maximum value in the supplied Numpy array.
+
+  The array is assumed to have dtype `int32`; otherwise, a ValueError will be
+  raised.  No values in the array will be changed.
+
+  This example shows the `for`-loop idiom with a
+  `PyArrayRandAccIter[T]`.
+  """
+  result = low(int32)
+  let dt = arr.dtype
+  echo "PyArrayObject has shape $1 and dtype $2" % [$arr.shape, $dt]
+  if dt == np_int32:
+    for mval in arr.accessFlat(int32).mitems:  # Yield mutable values.
+      if mval > result:
+        result = mval
+  else:
+    let msg = "expected input array of dtype $1, received dtype $2" % [$np_int32, $dt]
+    raise newException(ValueError, msg)
+
+
+proc findMax9*(arr: ptr PyArrayObject): int32 {.exportpy} =
   docstring"""Find & return the maximum value in the supplied Numpy array.
 
   The array is assumed to have dtype `int32`; otherwise, a ValueError will be
@@ -125,4 +207,5 @@ proc findMax5*(arr: ptr PyArrayObject): int32 {.exportpy} =
     raise newException(ValueError, msg)
 
 
-initPyModule("_findmax", findMax1, findMax2, findMax3, findMax4, findMax5)
+initPyModule("_findmax", findMax1, findMax2, findMax3, findMax4, findMax5,
+    findMax6, findMax7, findMax8, findMax9)
