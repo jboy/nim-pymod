@@ -461,20 +461,21 @@ while iter in bounds:
   inc(iter)  # Increment the iterator manually
 ```
 
-However, this `while` loop idiom is more verbose than it often needs to be.
-Often, you will only need to increment the forward iterator once per iteration,
-at the end of the body of the loop; if this is all you need, there are shorter
-`for` loop idioms that you can use:
+However, this `while` loop idiom is sometimes more verbose than it needs to be.
+Often, you only need to increment the forward iterator once per iteration,
+at the end of the body of the loop.  If this is all you need, there are 4 iterators
+(`values(arr, T)`, `items(iter)`, `mitems(iter)` & `iitems(iter)`) that you can use,
+which enable shorter `for` loop idioms.  For example:
 
 ```Nimrod
-for iter in iitems(arr.iterateFlat(int32)):  # `iitems()` iterator yields a PyArrayIter.
+for iter in iitems(arr.iterateFlat(int32)):  # `iitems(iter)` iterator yields a PyArrayIter.
   iter[] += val
 ```
 
 or:
 
 ```Nimrod
-for mval in mitems(arr.iterateFlat(int32)):  # `mitems()` iterator yields a mutable value.
+for mval in mitems(arr.iterateFlat(int32)):  # `mitems(iter)` iterator yields a mutable value.
   mval += val
 ```
 
@@ -483,7 +484,7 @@ And if you don't need to modify the array data at all, there are even shorter
 
 ```Nimrod
 var maxVal: int32 = low(int32)
-for v in arr.values(int32):  # This uses the `values(T)` iterator.
+for v in arr.values(int32):  # This uses the `values(arr, T)` iterator.
   if v > maxVal:
     maxVal = v
 ```
@@ -492,7 +493,7 @@ or:
 
 ```Nimrod
 var maxVal: int32 = low(int32)
-for v in arr.iterateFlat(int32):  # This uses the implicit `items()` iterator.
+for v in arr.iterateFlat(int32):  # This uses the implicit `items(iter)` iterator.
   if v > maxVal:
     maxVal = v
 ```
@@ -564,7 +565,7 @@ you might use a loop like this:
 ```Nimrod
 let greenIdx = 1
 let numChans = img.shape[2]
-for g in img.accessFlat(uint8, greenIdx, numChans):  # implicit `items()` iterator.
+for g in img.accessFlat(uint8, greenIdx, numChans):  # implicit `items(iter)` iterator.
   processGreenComponent(g)
 ```
 
