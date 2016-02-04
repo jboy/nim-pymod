@@ -467,7 +467,7 @@ at the end of the body of the loop; if this is all you need, there are shorter
 `for` loop idioms that you can use:
 
 ```Nimrod
-for iter in iitems(arr.iterateFlat(int32)):  # `iitems()` iterator yields an iter
+for iter in iitems(arr.iterateFlat(int32)):  # `iitems()` iterator yields a PyArrayIter.
   iter[] += val
 ```
 
@@ -483,7 +483,7 @@ And if you don't need to modify the array data at all, there are even shorter
 
 ```Nimrod
 var maxVal: int32 = low(int32)
-for v in arr.values(int32):
+for v in arr.values(int32):  # This uses the `values(T)` iterator.
   if v > maxVal:
     maxVal = v
 ```
@@ -505,7 +505,7 @@ use a `while` loop:
 let bounds = arr.getBounds(int32)  # Iterator bounds
 var iter = arr.accessFlat(int32)  # Random access iterator
 while iter in bounds:
-  iter[] += val
+  iter[0] += val  # or equivalently: iter[] += val
   inc(iter, incDelta)  # Increment the iterator manually
 ```
 
@@ -516,7 +516,7 @@ use the 1-argument form of `accessFlat` with the `iitems()` iterator:
 
 ```Nimrod
 for iter in arr.accessFlat(int32).iitems:
-  iter[] += val
+  iter[0] += val  # or equivalently: iter[] += val
 ```
 
 If you want to modify mutable values, but you don't need arbitrary index or offset
@@ -527,9 +527,8 @@ for mval in arr.accessFlat(int32).mitems:
   mval += val
 ```
 
-If you want to increment by a certain specific delta each time, use the
-2-argument form of `accessFlat` with any of the `items()`, `mitems()` or `iitems()`
-iterators:
+If you want to increment by a certain specific delta each time, use the 2-argument
+form of `accessFlat` with any of the `items()`, `mitems()` or `iitems()` iterators:
 
 ```Nimrod
 for iter in arr.accessFlat(int32, incDelta).iitems:
