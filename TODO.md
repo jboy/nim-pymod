@@ -1,4 +1,6 @@
 * Since we now use unsigned arithmetic `+%` in `ptrutils`, remove `cast[int]` from PyArrayIter ptr pos comparisons.
+* Change the default deref operator of PyArrayForwardIterator to check below the bounds, in addition to above the bounds, in case the memory address wraps around because the array is right at the top of the memory.
+  * Provide an optimised iterator, that checks just once up front that the memory address won't wrap round within 1 increment after the end of the PyArray, and then doesn't need to check again.
 * Allow exporting of the Nim types `npy_intp`, `Py_ssize_t`, `csize`.
 * Add a command-line option to `pmgen.py` to enable Nim release mode.
 * Add a function to the compiled Python module that returns bool of whether the module was compiled in release mode.
