@@ -463,25 +463,41 @@ while iter in bounds:
 
 However, this `while` loop idiom is more verbose than it often needs to be.
 Often, you will only need to increment the forward iterator once per iteration,
-at the end of the body of the loop; if this is all you need, there is a shorter
-`for` loop idiom that you can use:
+at the end of the body of the loop; if this is all you need, there are shorter
+`for` loop idioms that you can use:
 
 ```Nimrod
-for iter in arr.iterateFlat(int32):
+for iter in iitems(arr.iterateFlat(int32)):  # `iitems()` iterator yields an iter
   iter[] += val
 ```
 
-And if you don't need to modify the array data at all, there is an even shorter
-`for` loop idiom that yields a succession of (read-only) array values:
+or:
+
+```Nimrod
+for mval in mitems(arr.iterateFlat(int32)):  # `mitems()` iterator yields a mutable value.
+  mval += val
+```
+
+And if you don't need to modify the array data at all, there are even shorter
+`for` loop idioms that yield a succession of (read-only) array values:
 
 ```Nimrod
 var maxVal: int32 = low(int32)
-for val in arr.values(int32):
-  if val > maxVal:
-    maxVal = val
+for v in arr.values(int32):
+  if v > maxVal:
+    maxVal = v
 ```
 
-Likewise for `PyArrayRandAccIter[T]`, there are 4 loop idioms, which
+or:
+
+```Nimrod
+var maxVal: int32 = low(int32)
+for v in arr.iterateFlat(int32):  # This uses the implicit `items()` iterator.
+  if v > maxVal:
+    maxVal = v
+```
+
+Likewise for `PyArrayRandAccIter[T]`, there are several loop idioms, which
 offer different levels of control & convenience.  For the most flexibility,
 use a `while` loop:
 
@@ -493,22 +509,38 @@ while iter in bounds:
   inc(iter, incDelta)  # Increment the iterator manually
 ```
 
-There are 3 different `for` loop forms available for `PyArrayRandAccIter[T]`,
+There are multiple different `for` loop forms available for `PyArrayRandAccIter[T]`,
 to make it convenient to iterate over C-contiguous N-dimensional arrays.  If you want to
 visit every iterator position in turn, but retain the ability to index/offset arbitrarily,
-use the 1-argument form of `accessFlat`:
+use the 1-argument form of `accessFlat` with the `iitems()` iterator:
 
 ```Nimrod
-for iter in arr.accessFlat(int32):
+for iter in arr.accessFlat(int32).iitems:
   iter[] += val
 ```
 
-If you want to increment by a certain specific delta each time, use the
-2-argument form of `accessFlat`:
+If you want to modify mutable values, but you don't need arbitrary index or offset
+capability, you can use the `mitems()` iterator:
 
 ```Nimrod
-for iter in arr.accessFlat(int32, incDelta):
+for mval in arr.accessFlat(int32).mitems:
+  mval += val
+```
+
+If you want to increment by a certain specific delta each time, use the
+2-argument form of `accessFlat` with any of the `items()`, `mitems()` or `iitems()`
+iterators:
+
+```Nimrod
+for iter in arr.accessFlat(int32, incDelta).iitems:
   iter[] += val
+```
+
+or:
+
+```Nimrod
+for mval in arr.accessFlat(int32, incDelta).mitems:
+  mval += val
 ```
 
 And finally, if you want the iteration to begin at a certain initial offset,
@@ -516,8 +548,15 @@ then increment by a certain specific delta each time, use the 3-argument form
 of `accessFlat`:
 
 ```Nimrod
-for iter in arr.accessFlat(int32, initialOffset, incDelta):
+for iter in arr.accessFlat(int32, initialOffset, incDelta).iitems:
   iter[] += val
+```
+
+or:
+
+```Nimrod
+for mval in arr.accessFlat(int32, initialOffset, incDelta).mitems:
+  mval += val
 ```
 
 For example, if you want to visit just the "green" channel of an RGB image,
@@ -526,8 +565,8 @@ you might use a loop like this:
 ```Nimrod
 let greenIdx = 1
 let numChans = img.shape[2]
-for iter in img.accessFlat(uint8, greenIdx, numChans):
-  processGreenComponent(iter[])
+for g in img.accessFlat(uint8, greenIdx, numChans):  # implicit `items()` iterator.
+  processGreenComponent(g)
 ```
 
 These code examples are all available in full in the
