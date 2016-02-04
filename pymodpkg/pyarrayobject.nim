@@ -503,6 +503,14 @@ iterator values*(arr: ptr PyArrayObject, NimT: typedesc[NumpyCompatibleNimType])
     yield iter[]
     inc(iter)
 
+iterator mvalues*(arr: ptr PyArrayObject, NimT: typedesc[NumpyCompatibleNimType]):
+    var NimT {. inline .} =
+  let bounds = arr.getBounds(NimT)
+  var iter = arr.iterateFlat(NimT)
+  while iter in bounds:
+    yield iter[]
+    inc(iter)
+
 
 proc accessFlatImpl(arr: ptr PyArrayObject; NimT: typedesc[NumpyCompatibleNimType];
     ii: InstantiationInfoTuple; procname: string{lit}; initOffset, incDelta: int):

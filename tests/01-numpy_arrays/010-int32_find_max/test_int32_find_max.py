@@ -13,12 +13,17 @@ ndims_to_test = [1, 2, 3, 4]
 # for loop, values
 
 @pytest.mark.parametrize("ndim", ndims_to_test)
-def test_int32FindMaxForLoopValues(pymod_test_mod, seeded_random_number_generator, ndim):
+@pytest.mark.parametrize("nim_test_proc_name", [
+        "int32FindMaxForLoopValues",
+        "int32FindMaxForLoopValues_m",
+])
+def test_int32FindMaxForLoopValues(pymod_test_mod, seeded_random_number_generator,
+        ndim, nim_test_proc_name):
     arg = array_utils.get_random_Nd_array_of_ndim_and_type(ndim, numpy.int32)
     print ("\nrandom number seed = %d\nndim = %d, shape = %s\narg =\n%s" % \
             (seeded_random_number_generator, ndim, arg.shape, arg))
     expectedRes = arg.max()
-    res = pymod_test_mod.int32FindMaxForLoopValues(arg)
+    res = getattr(pymod_test_mod, nim_test_proc_name)(arg)
     print ("res = %s" % str(res))
     assert res == expectedRes
 
@@ -41,6 +46,7 @@ def test_int32FindMaxWhileLoopForwardIter(pymod_test_mod, seeded_random_number_g
 @pytest.mark.parametrize("ndim", ndims_to_test)
 @pytest.mark.parametrize("nim_test_proc_name", [
         "int32FindMaxForLoopForwardIter",
+        "int32FindMaxForLoopForwardIter_m",
         "int32FindMaxForLoopForwardIter_i",
 ])
 def test_int32FindMaxForLoopForwardIter(pymod_test_mod, seeded_random_number_generator,
@@ -181,6 +187,7 @@ def test_int32FindMaxWhileLoopRandaccIterExcludeLastM_1(pymod_test_mod, seeded_r
 @pytest.mark.parametrize("ndim", ndims_to_test)
 @pytest.mark.parametrize("nim_test_proc_name", [
         "int32FindMaxForLoopRandaccIterDeref",
+        "int32FindMaxForLoopRandaccIterDeref_m",
         "int32FindMaxForLoopRandaccIterDeref_i",
         "int32FindMaxForLoopRandaccIterIndex0_i",
 ])
@@ -199,6 +206,7 @@ def test_int32FindMaxForLoopRandaccIterDerefAlternatives(pymod_test_mod, seeded_
 @pytest.mark.parametrize("ndim", ndims_to_test)
 @pytest.mark.parametrize("nim_test_proc_name", [
         "int32FindMaxForLoopRandaccIterDeltaN",
+        "int32FindMaxForLoopRandaccIterDeltaN_m",
         "int32FindMaxForLoopRandaccIterDeltaN_i",
 ])
 @pytest.mark.parametrize("n", [1, 2, 3, 4, 5, 10, 100, 1000])
@@ -218,6 +226,8 @@ def test_int32FindMaxForLoopRandaccIterDeltaN_1(pymod_test_mod, seeded_random_nu
 
 @pytest.mark.parametrize("ndim", ndims_to_test)
 @pytest.mark.parametrize("nim_test_proc_name", [
+        "int32FindMaxForLoopRandaccIterExcludeFirstM",
+        "int32FindMaxForLoopRandaccIterExcludeFirstM_m",
         "int32FindMaxForLoopRandaccIterExcludeFirstM_i",
 ])
 @pytest.mark.parametrize("m", [1, 2, 3, 4, 5, 10, 100, 1000])
