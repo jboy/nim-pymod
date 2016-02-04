@@ -11,6 +11,9 @@ FUNCS_TO_RUN1 = [
         ("addVal1", av.addVal1),
         ("addVal2", av.addVal2),
         ("addVal3", av.addVal3),
+        ("addVal4", av.addVal4),
+        ("addVal5", av.addVal5),
+        ("addVal6", av.addVal6),
 ]
 
 for name, func in FUNCS_TO_RUN1:
@@ -28,6 +31,8 @@ for name, func in FUNCS_TO_RUN1:
 FUNCS_TO_RUN2 = [
         ("addValEachDelta1", av.addValEachDelta1),
         ("addValEachDelta2", av.addValEachDelta2),
+        ("addValEachDelta3", av.addValEachDelta3),
+        ("addValEachDelta4", av.addValEachDelta4),
 ]
 
 for name, func in FUNCS_TO_RUN2:
@@ -44,7 +49,8 @@ for name, func in FUNCS_TO_RUN2:
 
 
 FUNCS_TO_RUN3 = [
-        ("addValEachDeltaInitOffset", av.addValEachDeltaInitOffset),
+        ("addValEachDeltaInitOffset1", av.addValEachDeltaInitOffset1),
+        ("addValEachDeltaInitOffset2", av.addValEachDeltaInitOffset2),
 ]
 
 for name, func in FUNCS_TO_RUN3:

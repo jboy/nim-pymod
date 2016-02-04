@@ -30,8 +30,8 @@ proc arange_int32*(num: int): ptr PyArrayObject {.exportpy} =
 
   result = createSimpleNew([num], np_int32)
   var i: int32 = 0  # Note: `int32` is not the same type as `int`.
-  for iter in result.iterateFlat(int32):
-    iter[] = i
+  for mval in result.iterateFlat(int32).mitems:
+    mval = i
     inc(i)
 
 
