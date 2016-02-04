@@ -464,11 +464,17 @@ while iter in bounds:
 However, this `while` loop idiom is sometimes more verbose than it needs to be.
 Often, you only need to increment the forward iterator once per iteration,
 at the end of the body of the loop.  If this is all you need, there are 4 iterators
-(`values(arr, T)`, `items(iter)`, `mitems(iter)` & `iitems(iter)`) that you can use,
-which enable shorter `for` loop idioms.  For example:
+that you can use, which enable shorter `for` loop idioms:
+
+* `values(arr, T) -> T`
+* `items(PyArrayIter[T]) -> T`
+* `mitems(PyArrayIter[T]) -> var T`
+* `iitems(PyArrayIter[T]) -> PyArrayIter[T]`
+
+For example, if you need to modify the items in the array:
 
 ```Nimrod
-for iter in iitems(arr.iterateFlat(int32)):  # `iitems(iter)` iterator yields a PyArrayIter.
+for iter in iitems(arr.iterateFlat(int32)):  # `iitems(iter)` iterator yields a PyArrayIter[T].
   iter[] += val
 ```
 
@@ -479,8 +485,8 @@ for mval in mitems(arr.iterateFlat(int32)):  # `mitems(iter)` iterator yields a 
   mval += val
 ```
 
-And if you don't need to modify the array data at all, there are even shorter
-`for` loop idioms that yield a succession of (read-only) array values:
+If you don't need to modify the array data at all, there are even shorter `for` loop
+idioms that yield a succession of (read-only) array values:
 
 ```Nimrod
 var maxVal: int32 = low(int32)
