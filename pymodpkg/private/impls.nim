@@ -495,6 +495,10 @@ proc countNumIdentsToDefine(param_node: NimNode): int {. compileTime .} =
         # Decrement the count.
         dec(result)
         prev_state = WasEmpty
+      of nnkNilLit:
+        # A ptr node can be followed by a nil as our Nim stand-in for None.
+        dec(result)
+        prev_state = WasEmpty
       else:
         expectKind(n, nnkEmpty)
 
@@ -513,6 +517,8 @@ proc getDefaultValue(proc_params: NimNode) : string {. compileTime .} =
         result = $(potential_default.floatVal)
     of nnkStrLit:
         result = "\"" & potential_default.strVal & "\""
+    of nnkNilLit:
+        result = "NULL"
     else:
         result = nil
 
