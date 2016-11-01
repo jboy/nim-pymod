@@ -507,7 +507,9 @@ proc countNumIdentsToDefine(param_node: NimNode): int {. compileTime .} =
     error(msg & treeRepr(param_node))
 
 
-proc getDefaultValue(proc_params: NimNode) : string {. compileTime .} =
+proc getDefaultValueInC(proc_params: NimNode) : string {. compileTime .} =
+    # Return a string of the default value (in C code), if any.
+    # This value will be written into the "_capi.c" C code file.
     let potential_default = proc_params[proc_params.len-1]
 
     case potential_default.kind
@@ -619,7 +621,7 @@ proc exportpyImpl*(
       verifyValidCIdent(param_name, name_node)
 
       param_name_type_tuple_seq[storage_idx] =
-          new_ParamNameTypeTuple(param_name, verified_param_type, getDefaultValue(param_node))
+          new_ParamNameTypeTuple(param_name, verified_param_type, getDefaultValueInC(param_node))
 
       inc(storage_idx)
 
