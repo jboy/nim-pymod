@@ -108,6 +108,10 @@ Use the Python script `pmgen.py` to auto-generate & compile the boilerplate code
 
     python path/to/pmgen.py greeting.nim
 
+If you installed ``pymod`` via Nimble then you can just run the following:
+
+    python $(nimble path pymod | tail -n 1)/pmgen.py greetings.nim
+
 There will now be a compiled Python extension module `hw.so` in the current directory.
 (It is called `hw` because that is the name that was specified in the `initPyModule()` macro).
 
