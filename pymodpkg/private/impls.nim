@@ -229,7 +229,7 @@ proc verifyProcParamType(py_object_type_defs: PyObjectTypeDefTable,
 
 proc verifyProcDef(proc_def_node: NimNode, error_msg: string): string {. compileTime .} =
   expectKind(proc_def_node, nnkProcDef)
-  let proc_name_node = proc_def_node.name
+  let proc_name_node = proc_def_node[0]
   if proc_name_node.kind == nnkEmpty:
     # We can't allow unnamed procs, because we need to be able
     # to call the proc from the C code!
